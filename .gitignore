@@ -25,3 +25,6 @@ Pods/
 
 # macOS
 .DS_Store
+
+# Reste von Git-Lock-Dateien (Fernzugriff kann diese nicht löschen)
+.git_locks_to_delete/
