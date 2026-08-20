@@ -101,11 +101,20 @@ struct DocumentView: View {
                     Button("Schließen", systemImage: "xmark") {
                         dismiss()
                     }
+                    .accessibilityHint("Schließt das Dokument")
                 }
             }
         }
         .task {
             content = loadMarkdown(from: fileURL)
+            switch content {
+            case .success:
+                UIAccessibility.post(notification: .screenChanged, argument: nil)
+            case .failure(let error):
+                UIAccessibility.post(notification: .announcement, argument: error.localizedDescription)
+            case .none:
+                break
+            }
         }
     }
 }
