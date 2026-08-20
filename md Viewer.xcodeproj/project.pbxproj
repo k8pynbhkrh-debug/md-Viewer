@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0711351D3037043600AC131E /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0711351C3037043600AC131E /* MarkdownUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		0711350D3037029E00AC131E /* md Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "md Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0711352030370C1700AC131E /* Exceptions for "md Viewer" folder in "md Viewer" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0711350C3037029E00AC131E /* md Viewer */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0711350F3037029E00AC131E /* md Viewer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0711352030370C1700AC131E /* Exceptions for "md Viewer" folder in "md Viewer" target */,
+			);
 			path = "md Viewer";
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0711351D3037043600AC131E /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = "md Viewer";
 			packageProductDependencies = (
+				0711351C3037043600AC131E /* MarkdownUI */,
 			);
 			productName = "md Viewer";
 			productReference = 0711350D3037029E00AC131E /* md Viewer.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = 071135043037029D00AC131E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0711351B3037043500AC131E /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0711350E3037029E00AC131E /* Products */;
 			projectDirPath = "";
@@ -252,7 +274,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "md Viewer/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -283,7 +306,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "md Viewer/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -328,6 +352,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0711351B3037043500AC131E /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0711351C3037043600AC131E /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0711351B3037043500AC131E /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 071135053037029D00AC131E /* Project object */;
 }
