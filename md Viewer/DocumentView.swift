@@ -36,19 +36,18 @@ private func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
         }
     }
 
-    // Check file attributes
-    guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
-          let fileSize = attributes[.size] as? UInt64 else {
+    // Check file size (using resourceValues to avoid file timestamp APIs)
+    guard let resourceValues = try? url.resourceValues(forKeys: [.fileSizeKey]),
+          let fileSize = resourceValues.fileSize else {
         return .failure(.notReadable)
     }
 
-    // Check file size
-    if fileSize > maxFileSize {
-        return .failure(.tooLarge(fileSize))
+    let size = UInt64(fileSize)
+    if size > maxFileSize {
+        return .failure(.tooLarge(size))
     }
 
-    // Check for empty file
-    if fileSize == 0 {
+    if size == 0 {
         return .failure(.empty)
     }
 
