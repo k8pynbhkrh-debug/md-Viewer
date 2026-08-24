@@ -84,6 +84,11 @@ struct DocumentView: View {
                 case .success(let markdown):
                     ScrollView {
                         Markdown(markdown)
+                            .markdownBlockStyle(\.table) { configuration in
+                                ScrollView(.horizontal, showsIndicators: true) {
+                                    configuration.label
+                                }
+                            }
                             .padding()
                     }
                 case .failure(let error):
