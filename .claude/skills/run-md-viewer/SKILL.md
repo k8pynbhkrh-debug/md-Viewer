@@ -22,6 +22,7 @@ DRIVER=".claude/skills/run-md-viewer/driver.sh"
 "$DRIVER" open /path/to/some.md         # simulate opening a markdown file (Share Sheet equivalent)
 "$DRIVER" screenshot out.png            # save a PNG of the simulator screen
 "$DRIVER" terminate                     # stop the app
+"$DRIVER" test                          # run the md ViewerTests unit test target
 ```
 
 Individual steps (`build`, `boot`, `install`, `launch`, `device-id`) are
@@ -43,6 +44,23 @@ xcodebuild -project "md Viewer.xcodeproj" -scheme "md Viewer" \
 
 First build resolves 3 SPM packages (`swift-markdown-ui`, `NetworkImage`,
 `swift-cmark`) — takes longer the first time, cached after.
+
+## Test
+
+`"$DRIVER" test` runs `xcodebuild test -scheme "md Viewer"`, which builds
+and executes the `md ViewerTests` target (Swift Testing framework, not
+XCTest) on the same simulator. The target was added by script
+(`xcodeproj` Ruby gem — Xcode.app was never opened), so there's no
+`.xcscheme` committed; the default scheme picks up the test target via
+the `TestTargetID` project attribute. Currently covers `loadMarkdown(from:)`
+in `DocumentView.swift` (all its `DocumentError` cases, including the
+`size > maxFileSize` vs `size >= maxFileSize` boundary — verified by
+temporarily flipping that operator and confirming `exactlyAtSizeLimit()`
+fails, then reverting).
+
+`loadMarkdown` and `maxFileSize` are intentionally not `private` (plain
+`internal`) so `@testable import md_Viewer` can see them — note the
+module name is `md_Viewer` (underscore), not `md Viewer`.
 
 ## Run (human path)
 
@@ -76,6 +94,31 @@ non-interactive and scriptable.
   test dismiss/close flows, terminate + relaunch instead (`driver.sh
   terminate && driver.sh launch`), which returns the app to its initial
   empty state.
+- **`LSSupportsOpeningDocumentsInPlace` alone does not make the app's
+  Documents folder show up in Files → "Auf meinem iPhone"/"On My
+  iPhone".** Needed `UIFileSharingEnabled = YES` too (see commit
+  `d809233`). Without it, Files' "On My iPhone" section stays empty even
+  though `simctl openurl` handoff (the app's actual designed opening path)
+  works fine regardless.
+- **Wide markdown tables need an explicit horizontal `ScrollView`.**
+  `swift-markdown-ui`'s default table style squeezes columns to fit the
+  screen width instead of scrolling, which mangles anything with more
+  than ~4 columns (word-by-word wrapping inside cells). Fixed in
+  `DocumentView.swift` via `.markdownBlockStyle(\.table) { configuration in
+  ScrollView(.horizontal) { configuration.label } }`.
+- **AppleScript/System Events GUI automation is unreliable here for
+  clicks specifically.** `tell application "System Events" to click at
+  {x,y}` worked a few times after granting Terminal Accessibility access,
+  then started failing with "osascript hat keine Berechtigung für den
+  Hilfszugriff" (-25211) with no clear trigger, and didn't recover even
+  after re-confirming the permission was still granted. Plain AX queries
+  (`position of window`, `UI elements of ...`) and `keystroke` commands
+  (e.g. Cmd+Shift+H for Home) kept working throughout — only synthetic
+  `click`/`click at` broke. `screencapture` also needs a separate Screen
+  Recording grant for Terminal (untested whether that would have helped
+  the click issue). Net effect: don't rely on tap-driven UI testing here;
+  use `simctl openurl` (functionally equivalent to the Files-app/Share
+  Sheet hand-off) and `simctl` install/launch/screenshot instead.
 
 ## Troubleshooting
 

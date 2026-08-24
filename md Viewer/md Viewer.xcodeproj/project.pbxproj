@@ -8,10 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		0711351D3037043600AC131E /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0711351C3037043600AC131E /* MarkdownUI */; };
+		7A93A0912E8E5C037FE69918 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2CBBCA03C04D370582E232 /* Foundation.framework */; };
+		E7FBEE15B98351D9C8E0BE3F /* DocumentViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516C6 /* DocumentViewTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2EC6718D044A70245DE56EF0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 071135053037029D00AC131E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0711350C3037029E00AC131E;
+			remoteInfo = "md Viewer";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0711350D3037029E00AC131E /* md Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "md Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "md ViewerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		65AC828D8063669DA40516C6 /* DocumentViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DocumentViewTests.swift; sourceTree = "<group>"; };
+		CC2CBBCA03C04D370582E232 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -44,6 +59,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB323A99DF8F2D54FAFDCE8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A93A0912E8E5C037FE69918 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -52,6 +75,8 @@
 			children = (
 				0711350F3037029E00AC131E /* md Viewer */,
 				0711350E3037029E00AC131E /* Products */,
+				4717F035A3A76BEE67E34CC4 /* md ViewerTests */,
+				DD7E58049FA652DEAB47FBE2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,8 +84,34 @@
 			isa = PBXGroup;
 			children = (
 				0711350D3037029E00AC131E /* md Viewer.app */,
+				3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		20FFD7D8511A4264530C58A2 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CC2CBBCA03C04D370582E232 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		4717F035A3A76BEE67E34CC4 /* md ViewerTests */ = {
+			isa = PBXGroup;
+			children = (
+				65AC828D8063669DA40516C6 /* DocumentViewTests.swift */,
+			);
+			name = "md ViewerTests";
+			path = "md ViewerTests";
+			sourceTree = "<group>";
+		};
+		DD7E58049FA652DEAB47FBE2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				20FFD7D8511A4264530C58A2 /* iOS */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -89,6 +140,24 @@
 			productReference = 0711350D3037029E00AC131E /* md Viewer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A0B3F236ABC82F80A82DFE6B /* md ViewerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4BE599179D6CCDFB5340DF6D /* Build configuration list for PBXNativeTarget "md ViewerTests" */;
+			buildPhases = (
+				C1F61160C5C900E712B006BF /* Sources */,
+				BB323A99DF8F2D54FAFDCE8E /* Frameworks */,
+				0D09F6778CADC0946C266BCC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2F875DF39DDD9FFF7F5F234D /* PBXTargetDependency */,
+			);
+			name = "md ViewerTests";
+			productName = "md ViewerTests";
+			productReference = 3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -101,6 +170,10 @@
 				TargetAttributes = {
 					0711350C3037029E00AC131E = {
 						CreatedOnToolsVersion = 26.4;
+					};
+					A0B3F236ABC82F80A82DFE6B = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 0711350C3037029E00AC131E;
 					};
 				};
 			};
@@ -122,12 +195,20 @@
 			projectRoot = "";
 			targets = (
 				0711350C3037029E00AC131E /* md Viewer */,
+				A0B3F236ABC82F80A82DFE6B /* md ViewerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0711350B3037029E00AC131E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D09F6778CADC0946C266BCC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -144,7 +225,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C1F61160C5C900E712B006BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7FBEE15B98351D9C8E0BE3F /* DocumentViewTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2F875DF39DDD9FFF7F5F234D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "md Viewer";
+			target = 0711350C3037029E00AC131E /* md Viewer */;
+			targetProxy = 2EC6718D044A70245DE56EF0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		07113516303702A000AC131E /* Debug */ = {
@@ -332,6 +430,45 @@
 			};
 			name = Release;
 		};
+		B173A41430B88134BEB7EADD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2Y8RS9U52W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/md Viewer.app/md Viewer";
+			};
+			name = Debug;
+		};
+		F1E9FF151610D3B585F52D81 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2Y8RS9U52W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/md Viewer.app/md Viewer";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -349,6 +486,15 @@
 			buildConfigurations = (
 				07113519303702A000AC131E /* Debug */,
 				0711351A303702A000AC131E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4BE599179D6CCDFB5340DF6D /* Build configuration list for PBXNativeTarget "md ViewerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1E9FF151610D3B585F52D81 /* Release */,
+				B173A41430B88134BEB7EADD /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

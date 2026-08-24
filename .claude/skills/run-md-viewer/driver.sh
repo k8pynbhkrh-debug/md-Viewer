@@ -95,6 +95,15 @@ cmd_full() {
   cmd_launch
 }
 
+cmd_test() {
+  log "Running unit tests on device $DEVICE_ID ..."
+  (cd "$XCODE_DIR" && xcodebuild test \
+    -project "$PROJECT" \
+    -scheme "$SCHEME" \
+    -destination "id=$DEVICE_ID" \
+    -derivedDataPath "$BUILD_DIR")
+}
+
 case "${1:-}" in
   build) cmd_build ;;
   boot) cmd_boot ;;
@@ -104,6 +113,7 @@ case "${1:-}" in
   open) cmd_open "${2:?usage: driver.sh open <path/to/file.md>}" ;;
   screenshot) cmd_screenshot "${2:-}" ;;
   full) cmd_full ;;
+  test) cmd_test ;;
   device-id) echo "$DEVICE_ID" ;;
   *)
     cat >&2 <<EOF
@@ -118,6 +128,7 @@ Commands:
   open <file>           open a .md file in the running app (simulates Files/Share Sheet)
   screenshot [path]     save a PNG screenshot (default: skill_dir/screenshot.png)
   full                  build + boot + install + launch
+  test                  run the md ViewerTests unit test target (xcodebuild test)
   device-id             print the resolved simulator UDID
 
 Env overrides:

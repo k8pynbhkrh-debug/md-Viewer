@@ -2,7 +2,7 @@ import SwiftUI
 import MarkdownUI
 
 /// The maximum file size the app will attempt to open (5 MB).
-private let maxFileSize: UInt64 = 5 * 1024 * 1024
+let maxFileSize: UInt64 = 5 * 1024 * 1024
 
 /// Errors that can occur when loading a Markdown file.
 enum DocumentError: LocalizedError {
@@ -28,7 +28,7 @@ enum DocumentError: LocalizedError {
 /// Loads the contents of a Markdown file at the given URL with error handling.
 ///
 /// Handles security-scoped resource access for files opened via "Open With".
-private func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
+func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
     let isSecurityScoped = url.startAccessingSecurityScopedResource()
     defer {
         if isSecurityScoped {
