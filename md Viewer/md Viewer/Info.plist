@@ -21,7 +21,7 @@
 			</array>
 		</dict>
 	</array>
-	<key>UTImportedTypeDeclarations</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeIdentifier</key>
@@ -40,9 +40,7 @@
 					<string>markdown</string>
 				</array>
 				<key>public.mime-type</key>
-				<array>
-					<string>text/markdown</string>
-				</array>
+				<string>text/markdown</string>
 			</dict>
 		</dict>
 	</array>
