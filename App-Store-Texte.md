@@ -98,9 +98,9 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 ---
 
-## Offener Blocker: App Icon fehlt komplett
+## App Icon — Platzhalter vorhanden
 
-`md Viewer/md Viewer/Assets.xcassets/AppIcon.appiconset/` enthält nur die `Contents.json`-Struktur (Slots für Light/Dark/Tinted 1024×1024), aber **keine einzige Bilddatei**. Ohne mindestens das Light-Icon (1024×1024, kein Alpha-Kanal) lässt sich die App nicht archivieren/einreichen — das ist laut eurem Plan bewusst Aufgabe von dir/einem Designer, nicht von mir, aber es blockiert Phase 7 komplett, bis es da ist.
+`AppIcon.appiconset` enthält jetzt ein programmatisch generiertes Icon (Light/Dark/Tinted, 1024×1024, kein Alpha-Kanal): blauer Farbverlauf, weiße Karte, "M↓"-Markdown-Mark. Kein KI-Bildmodell in dieser Umgebung verfügbar, daher mit Pillow gezeichnet statt "echt" designt. Reicht zum Archivieren/Testen, ist aber ausdrücklich ein Platzhalter — vor der finalen Einreichung von dir/einem Designer gegenprüfen oder ersetzen lassen.
 
 ## Noch offen für Screenshots
 
