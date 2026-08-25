@@ -12,28 +12,33 @@ private let privacyPolicyURL = URL(string: "https://k8pynbhkrh-debug.github.io/m
 
 struct ContentView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text")
-                .imageScale(.large)
-                .font(.system(size: 44))
-                .foregroundStyle(.tint)
-                .accessibilityHidden(true)
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 16) {
+                    Image(systemName: "doc.text")
+                        .imageScale(.large)
+                        .font(.system(size: 44))
+                        .foregroundStyle(.tint)
+                        .accessibilityHidden(true)
 
-            Text("md Viewer")
-                .font(.title2)
-                .bold()
+                    Text("md Viewer")
+                        .font(.title2)
+                        .bold()
 
-            Text("Öffne eine Markdown-Datei über „Teilen“ oder die Dateien-App, um sie hier anzuzeigen.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                    Text("Öffne eine Markdown-Datei über „Teilen“ oder die Dateien-App, um sie hier anzuzeigen.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
 
-            Link("Datenschutz & Impressum", destination: privacyPolicyURL)
-                .font(.footnote)
-                .padding(.top, 8)
+                    Link("Datenschutz & Impressum", destination: privacyPolicyURL)
+                        .font(.footnote)
+                        .padding(.top, 8)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, minHeight: geometry.size.height)
+            }
         }
-        .padding()
     }
 }
 
