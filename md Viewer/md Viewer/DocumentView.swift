@@ -89,6 +89,11 @@ struct DocumentView: View {
                                     configuration.label
                                 }
                             }
+                            .markdownBlockStyle(\.codeBlock) { configuration in
+                                ScrollView(.horizontal, showsIndicators: true) {
+                                    configuration.label
+                                }
+                            }
                             .padding()
                     }
                 case .failure(let error):

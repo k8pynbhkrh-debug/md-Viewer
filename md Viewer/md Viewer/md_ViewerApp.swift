@@ -23,6 +23,7 @@ struct md_ViewerApp: App {
                 }
                 .fullScreenCover(item: $fileURL) { url in
                     DocumentView(fileURL: url)
+                        .id(url)
                 }
         }
     }
