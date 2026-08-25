@@ -104,6 +104,11 @@ cmd_test() {
     -derivedDataPath "$BUILD_DIR")
 }
 
+cmd_mutate() {
+  log "Running mutation testing (muter) ..."
+  (cd "$XCODE_DIR" && muter run "$@")
+}
+
 case "${1:-}" in
   build) cmd_build ;;
   boot) cmd_boot ;;
@@ -114,6 +119,7 @@ case "${1:-}" in
   screenshot) cmd_screenshot "${2:-}" ;;
   full) cmd_full ;;
   test) cmd_test ;;
+  mutate) shift; cmd_mutate "$@" ;;
   device-id) echo "$DEVICE_ID" ;;
   *)
     cat >&2 <<EOF
@@ -129,6 +135,7 @@ Commands:
   screenshot [path]     save a PNG screenshot (default: skill_dir/screenshot.png)
   full                  build + boot + install + launch
   test                  run the md ViewerTests unit test target (xcodebuild test)
+  mutate [muter args]   run mutation testing (muter run ...) — see muter.conf.yml
   device-id             print the resolved simulator UDID
 
 Env overrides:

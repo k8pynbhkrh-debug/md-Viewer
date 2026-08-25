@@ -28,3 +28,7 @@ Pods/
 
 # Reste von Git-Lock-Dateien (Fernzugriff kann diese nicht löschen)
 .git_locks_to_delete/
+
+# Muter (Mutation Testing) — Arbeitskopie und Logs, die bei jedem Lauf neu entstehen
+md Viewer_mutated/
+muter_logs/

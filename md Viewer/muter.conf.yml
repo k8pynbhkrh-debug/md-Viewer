@@ -1,0 +1,15 @@
+arguments:
+- -project
+- md Viewer.xcodeproj
+- -scheme
+- md Viewer
+- -destination
+- platform=iOS Simulator,name=iPhone 17
+- -derivedDataPath
+- ../build/DerivedData-mutation
+- -enableCodeCoverage
+- "YES"
+- test
+executable: /usr/bin/xcodebuild
+exclude: []
+excludeCalls: []
