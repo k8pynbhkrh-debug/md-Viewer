@@ -102,6 +102,11 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 `AppIcon.appiconset` enthält jetzt ein programmatisch generiertes Icon (Light/Dark/Tinted, 1024×1024, kein Alpha-Kanal): blauer Farbverlauf, weiße Karte, "M↓"-Markdown-Mark. Kein KI-Bildmodell in dieser Umgebung verfügbar, daher mit Pillow gezeichnet statt "echt" designt. Reicht zum Archivieren/Testen, ist aber ausdrücklich ein Platzhalter — vor der finalen Einreichung von dir/einem Designer gegenprüfen oder ersetzen lassen.
 
-## Noch offen für Screenshots
+## Screenshots — vorhanden
 
-App Store Connect verlangt Screenshots in der größten unterstützten Displaygröße pro Gerätefamilie (aktuell 6,9″ iPhone, ggf. 13″ iPad, da die App auch iPad unterstützt). Kann mit dem `run-md-viewer`-Skill im Simulator erzeugt werden — sag Bescheid, wenn das als Nächstes dran soll.
+In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß):
+
+- `01-empty-state.png` — Empty State mit App-Icon-Symbol und Datenschutz-Link
+- `02-dokument.png` — offenes Dokument mit Überschriften, Task-Liste, Tabelle (mit Status-Emoji), Codeblock, Zitat
+
+Beide mit derselben Beispieldatei erzeugt (nicht Teil des Repos, da nur Show-Content — bei Bedarf sag Bescheid, dann lege ich sie auch ab). Auf dem iPad nutzt der Inhalt nicht die volle Breite (kein iPad-optimiertes Layout) — funktional korrekt, aber optisch nicht ideal für ein Marketing-Bild; bei Bedarf separat nachbessern.
