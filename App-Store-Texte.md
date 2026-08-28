@@ -104,14 +104,15 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 ## Screenshots — vorhanden
 
-In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Je 5 Stück, Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen:
+In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen:
 
 - `01-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
 - `02-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
 - `03-tabelle.png` — breite 7-Spalten-Tabelle (horizontal scrollbar) + Kennzahlen-Tabelle
 - `04-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON)
 - `05-sprachen.png` — Emoji (farbig), Arabisch/Hebräisch (RTL), CJK, Kyrillisch, Devanagari, Thai, Mathe-Symbole
+- `06-oeffnen-mit.png` — **nur iPhone**: „Öffnen mit → md Viewer" in der Dateien-App (echtes Gerätefoto von Eric, auf 1320×2868 hochskaliert, Dateinamen im Hintergrund neutralisiert). Zeigt den Einstieg in die App.
 
 Beispieldateien: `scratchpad/final/` (nicht im Repo, reiner Show-Content). Der Text füllt auf iPhone wie iPad die volle Breite (~24 pt Rand); MarkdownUI würde sonst auf die natürliche Inhaltsbreite schrumpfen und links kleben.
 
-Noch offen: ein Screenshot des „Öffnen mit"-/Teilen-Flows. GUI-Automation im Simulator schlug fehl (synthetische Klicks unzuverlässig, siehe Skill-Notizen). Optionen: Startbildschirm-Screenshot beschreibt den Flow bereits, oder auf echtem iPhone aufnehmen.
+Hinweise zu `06-oeffnen-mit.png`: Statusleiste zeigt 21:17 / 29 % Akku (kein Blocker, bei Bedarf kosmetisch nachbessern). Ein iPad-Pendant fehlt — GUI-Automation im Simulator für den Dateien-App-Kontextmenü-Flow schlug fehl (synthetische Klicks unzuverlässig).
