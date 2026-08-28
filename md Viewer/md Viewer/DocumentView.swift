@@ -128,12 +128,12 @@ struct DocumentView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                     .markdownMargin(top: 0, bottom: 16)
                                 }
+                                // Fill the available width (MarkdownUI otherwise sizes
+                                // to the content's natural width and pins it leading,
+                                // which looks broken on iPad). ~24pt side margins.
+                                .frame(width: max(0, geometry.size.width - 48), alignment: .leading)
+                                .padding(.horizontal, 24)
                                 .padding(.vertical)
-                                // Keep a comfortable, centered reading measure on wide
-                                // screens (iPad, landscape) instead of letting text run
-                                // edge to edge. On phones this collapses to a normal
-                                // 16pt margin.
-                                .padding(.horizontal, max(16, (geometry.size.width - 688) / 2))
                         }
                     }
                 case .failure(let error):
