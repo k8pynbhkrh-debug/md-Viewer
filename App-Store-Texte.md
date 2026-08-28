@@ -45,7 +45,7 @@ Weil die meisten Markdown-Viewer heute vollwertige Editoren mit Dateiverwaltung,
 FUNKTIONEN
 
 • Öffnen über "Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. aus Mail-Anhängen oder AirDrop)
-• Sauberes Markdown-Rendering: Überschriften, Listen, Tabellen (horizontal scrollbar), Codeblöcke, Zitate, Links, Bilder
+• Sauberes Markdown-Rendering: Überschriften, Listen, Aufgabenlisten, Tabellen (horizontal scrollbar), Codeblöcke mit Syntax-Hervorhebung, Zitate, Links, Bilder
 • Volle Unicode-Unterstützung: Emoji, arabische und hebräische Schrift (rechts-nach-links), chinesische, japanische und koreanische Zeichen
 • Unterstützt Dynamic Type und VoiceOver
 • Automatisches Dark Mode / Light Mode
@@ -98,15 +98,20 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 ---
 
-## App Icon — Platzhalter vorhanden
+## App Icon — final
 
-`AppIcon.appiconset` enthält jetzt ein programmatisch generiertes Icon (Light/Dark/Tinted, 1024×1024, kein Alpha-Kanal): blauer Farbverlauf, weiße Karte, "M↓"-Markdown-Mark. Kein KI-Bildmodell in dieser Umgebung verfügbar, daher mit Pillow gezeichnet statt "echt" designt. Reicht zum Archivieren/Testen, ist aber ausdrücklich ein Platzhalter — vor der finalen Einreichung von dir/einem Designer gegenprüfen oder ersetzen lassen.
+`AppIcon.appiconset` enthält das finale Icon (Light/Dark/Tinted, 1024×1024, Primary ohne Alpha-Kanal): weiße Fläche, schwarzes Dokument-Glyph mit „MD" und Unterstrich. Erzeugt aus Erics Vorlage `App Icon.png` (Repo-Wurzel) — vollflächig zugeschnitten, ohne vorgerenderte Ecken/Schatten/Glow (die Apple ablehnt).
 
 ## Screenshots — vorhanden
 
-In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß):
+In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Je 5 Stück, Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen:
 
-- `01-empty-state.png` — Empty State mit App-Icon-Symbol und Datenschutz-Link
-- `02-dokument.png` — offenes Dokument mit Überschriften, Task-Liste, Tabelle (mit Status-Emoji), Codeblock, Zitat
+- `01-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
+- `02-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
+- `03-tabelle.png` — breite 7-Spalten-Tabelle (horizontal scrollbar) + Kennzahlen-Tabelle
+- `04-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON)
+- `05-sprachen.png` — Emoji (farbig), Arabisch/Hebräisch (RTL), CJK, Kyrillisch, Devanagari, Thai, Mathe-Symbole
 
-Beide mit derselben Beispieldatei erzeugt (nicht Teil des Repos, da nur Show-Content — bei Bedarf sag Bescheid, dann lege ich sie auch ab). Auf dem iPad nutzt der Inhalt nicht die volle Breite (kein iPad-optimiertes Layout) — funktional korrekt, aber optisch nicht ideal für ein Marketing-Bild; bei Bedarf separat nachbessern.
+Beispieldateien: `scratchpad/final/` (nicht im Repo, reiner Show-Content). Das iPad-Layout zeigt den Text jetzt in einer zentrierten Lesespalte (~690 pt) statt randlos — Commit „iPad: Markdown in zentrierter Lesespalte".
+
+Noch offen: ein Screenshot des „Öffnen mit"-/Teilen-Flows. GUI-Automation im Simulator schlug fehl (synthetische Klicks unzuverlässig, siehe Skill-Notizen). Optionen: Startbildschirm-Screenshot beschreibt den Flow bereits, oder auf echtem iPhone aufnehmen.
