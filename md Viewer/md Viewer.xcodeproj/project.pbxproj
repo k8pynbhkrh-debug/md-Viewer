@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0711351D3037043600AC131E /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0711351C3037043600AC131E /* MarkdownUI */; };
+		6577216D633AD899B25D261C /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 02A4013D95F2D7E0A55AEF14 /* Highlightr */; };
 		7A93A0912E8E5C037FE69918 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2CBBCA03C04D370582E232 /* Foundation.framework */; };
 		E7FBEE15B98351D9C8E0BE3F /* DocumentViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516C6 /* DocumentViewTests.swift */; };
 /* End PBXBuildFile section */
@@ -56,6 +57,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0711351D3037043600AC131E /* MarkdownUI in Frameworks */,
+				6577216D633AD899B25D261C /* Highlightr in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,6 +137,7 @@
 			name = "md Viewer";
 			packageProductDependencies = (
 				0711351C3037043600AC131E /* MarkdownUI */,
+				02A4013D95F2D7E0A55AEF14 /* Highlightr */,
 			);
 			productName = "md Viewer";
 			productReference = 0711350D3037029E00AC131E /* md Viewer.app */;
@@ -188,6 +191,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				0711351B3037043500AC131E /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				F2AE9BEF13E209557D26B9E8 /* XCRemoteSwiftPackageReference "Highlightr" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0711350E3037029E00AC131E /* Products */;
@@ -510,9 +514,22 @@
 				minimumVersion = 2.4.1;
 			};
 		};
+		F2AE9BEF13E209557D26B9E8 /* XCRemoteSwiftPackageReference "Highlightr" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/raspu/Highlightr";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		02A4013D95F2D7E0A55AEF14 /* Highlightr */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2AE9BEF13E209557D26B9E8 /* XCRemoteSwiftPackageReference "Highlightr" */;
+			productName = Highlightr;
+		};
 		0711351C3037043600AC131E /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0711351B3037043500AC131E /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
