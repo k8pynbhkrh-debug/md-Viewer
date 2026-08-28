@@ -82,19 +82,26 @@ struct DocumentView: View {
                 case .none:
                     ProgressView("Laden …")
                 case .success(let markdown):
-                    ScrollView {
-                        Markdown(markdown)
-                            .markdownBlockStyle(\.table) { configuration in
-                                ScrollView(.horizontal, showsIndicators: true) {
-                                    configuration.label
+                    GeometryReader { geometry in
+                        ScrollView {
+                            Markdown(markdown)
+                                .markdownBlockStyle(\.table) { configuration in
+                                    ScrollView(.horizontal, showsIndicators: true) {
+                                        configuration.label
+                                    }
                                 }
-                            }
-                            .markdownBlockStyle(\.codeBlock) { configuration in
-                                ScrollView(.horizontal, showsIndicators: true) {
-                                    configuration.label
+                                .markdownBlockStyle(\.codeBlock) { configuration in
+                                    ScrollView(.horizontal, showsIndicators: true) {
+                                        configuration.label
+                                    }
                                 }
-                            }
-                            .padding()
+                                .padding(.vertical)
+                                // Keep a comfortable, centered reading measure on wide
+                                // screens (iPad, landscape) instead of letting text run
+                                // edge to edge. On phones this collapses to a normal
+                                // 16pt margin.
+                                .padding(.horizontal, max(16, (geometry.size.width - 688) / 2))
+                        }
                     }
                 case .failure(let error):
                     ContentUnavailableView {
