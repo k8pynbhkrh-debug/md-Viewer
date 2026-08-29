@@ -111,8 +111,8 @@ In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 �
 - `03-tabelle.png` — breite 7-Spalten-Tabelle (horizontal scrollbar) + Kennzahlen-Tabelle
 - `04-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON)
 - `05-sprachen.png` — Emoji (farbig), Arabisch/Hebräisch (RTL), CJK, Kyrillisch, Devanagari, Thai, Mathe-Symbole
-- `06-oeffnen-mit.png` — **nur iPhone**: „Öffnen mit → md Viewer" in der Dateien-App (echtes Gerätefoto von Eric, auf 1320×2868 hochskaliert, Dateinamen im Hintergrund neutralisiert). Zeigt den Einstieg in die App.
+- `06-oeffnen-mit.png` — **nur iPhone**: „Öffnen mit → md Viewer" in der Dateien-App (Ordner „Downloads", Listenansicht). Zeigt den Einstieg in die App. Am 29.08.2026 im Simulator neu aufgenommen (nativ 1320×2868, Light Mode, saubere Statusleiste, aktuelles App-Icon in der App-Liste) — ersetzt das alte hochskalierte Gerätefoto mit dem veralteten blauen Icon.
 
 Beispieldateien: `App-Store-Screenshots/demo-dokumente/` (reiner Show-Content, jetzt im Repo, damit ein Screenshot-Lauf reproduzierbar ist). Der Text füllt auf iPhone wie iPad die volle Breite (~24 pt Rand); MarkdownUI würde sonst auf die natürliche Inhaltsbreite schrumpfen und links kleben.
 
-Hinweise zu `06-oeffnen-mit.png`: Statusleiste zeigt 21:17 / 29 % Akku (kein Blocker, bei Bedarf kosmetisch nachbessern). Ein iPad-Pendant fehlt — GUI-Automation im Simulator für den Dateien-App-Kontextmenü-Flow schlug fehl (synthetische Klicks unzuverlässig).
+Der Kontextmenü-Flow für `06-oeffnen-mit.png` wurde manuell im Simulator geklickt (synthetische Klicks sind hier unzuverlässig): Demo-Dateien nach `<md-Viewer-Container>/Documents/Downloads/` legen (erscheint über `UIFileSharingEnabled` als „Auf meinem iPhone → md Viewer → Downloads"), Dateien-App → gedrückt halten → „Öffnen mit". Ein iPad-Pendant fehlt weiterhin.
