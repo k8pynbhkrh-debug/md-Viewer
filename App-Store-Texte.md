@@ -106,12 +106,14 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen. iPhone- und iPad-Set am 29.08.2026 komplett neu erzeugt (aktueller Build, saubere Statusleiste 09:41 / voller Akku / WLAN):
 
-- `01-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
-- `02-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
-- `03-tabelle.png` — breite 7-Spalten-Tabelle (horizontal scrollbar) + Kennzahlen-Tabelle
-- `04-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON)
-- `05-sprachen.png` — Emoji (farbig), Arabisch/Hebräisch (RTL), CJK, Kyrillisch, Devanagari, Thai, Mathe-Symbole
-- `06-oeffnen-mit.png` — „Öffnen mit → md Viewer" in der Dateien-App (Ordner „Downloads", Listenansicht). Zeigt den Einstieg in die App. Am 29.08.2026 im Simulator neu aufgenommen (iPhone **und** iPad, nativ, Light Mode, saubere Statusleiste, aktuelles App-Icon in der App-Liste) — ersetzt beim iPhone das alte hochskalierte Gerätefoto mit dem veralteten blauen Icon.
+Reihenfolge (identisch für iPhone und iPad) — das „Öffnen mit" steht bewusst an Position 1, weil es den Einstieg in die App zeigt:
+
+- `01-oeffnen-mit.png` — „Öffnen mit → md Viewer" in der Dateien-App (Ordner „Downloads", Listenansicht). Zeigt den Einstieg in die App. Am 29.08.2026 im Simulator neu aufgenommen (iPhone **und** iPad, nativ, Light Mode, saubere Statusleiste, aktuelles App-Icon in der App-Liste) — ersetzt beim iPhone das alte hochskalierte Gerätefoto mit dem veralteten blauen Icon.
+- `02-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
+- `03-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
+- `04-tabelle.png` — breite 7-Spalten-Tabelle (horizontal scrollbar) + Kennzahlen-Tabelle
+- `05-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON)
+- `06-sprachen.png` — Emoji (farbig), Arabisch/Hebräisch (RTL), CJK, Kyrillisch, Devanagari, Thai, Mathe-Symbole
 
 Beispieldateien: `App-Store-Screenshots/demo-dokumente/` (reiner Show-Content, jetzt im Repo, damit ein Screenshot-Lauf reproduzierbar ist). Der Text füllt auf iPhone wie iPad die volle Breite (~24 pt Rand); MarkdownUI würde sonst auf die natürliche Inhaltsbreite schrumpfen und links kleben.
 
