@@ -104,7 +104,7 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 ## Screenshots — vorhanden
 
-In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen. iPhone-Set am 29.08.2026 neu erzeugt (aktueller Build, saubere Statusleiste 09:41 / voller Akku / WLAN):
+In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen. iPhone- und iPad-Set am 29.08.2026 komplett neu erzeugt (aktueller Build, saubere Statusleiste 09:41 / voller Akku / WLAN):
 
 - `01-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
 - `02-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
