@@ -104,7 +104,7 @@ Frage "Verwendet die App Verschlüsselung?" → **Nein** (nur Standard-iOS-Trans
 
 ## Screenshots — vorhanden
 
-In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen:
+In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 — exakt Apples aktuelle Pflichtgrößen, geprüft per Pixelmaß). Light Mode, im Simulator (iPhone 17 Pro Max / iPad Pro 13″) aufgenommen. iPhone-Set am 29.08.2026 neu erzeugt (aktueller Build, saubere Statusleiste 09:41 / voller Akku / WLAN):
 
 - `01-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
 - `02-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
@@ -113,6 +113,6 @@ In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 �
 - `05-sprachen.png` — Emoji (farbig), Arabisch/Hebräisch (RTL), CJK, Kyrillisch, Devanagari, Thai, Mathe-Symbole
 - `06-oeffnen-mit.png` — **nur iPhone**: „Öffnen mit → md Viewer" in der Dateien-App (echtes Gerätefoto von Eric, auf 1320×2868 hochskaliert, Dateinamen im Hintergrund neutralisiert). Zeigt den Einstieg in die App.
 
-Beispieldateien: `scratchpad/final/` (nicht im Repo, reiner Show-Content). Der Text füllt auf iPhone wie iPad die volle Breite (~24 pt Rand); MarkdownUI würde sonst auf die natürliche Inhaltsbreite schrumpfen und links kleben.
+Beispieldateien: `App-Store-Screenshots/demo-dokumente/` (reiner Show-Content, jetzt im Repo, damit ein Screenshot-Lauf reproduzierbar ist). Der Text füllt auf iPhone wie iPad die volle Breite (~24 pt Rand); MarkdownUI würde sonst auf die natürliche Inhaltsbreite schrumpfen und links kleben.
 
 Hinweise zu `06-oeffnen-mit.png`: Statusleiste zeigt 21:17 / 29 % Akku (kein Blocker, bei Bedarf kosmetisch nachbessern). Ein iPad-Pendant fehlt — GUI-Automation im Simulator für den Dateien-App-Kontextmenü-Flow schlug fehl (synthetische Klicks unzuverlässig).
