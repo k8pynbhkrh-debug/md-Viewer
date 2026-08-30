@@ -57,3 +57,5 @@ Rechtlich/datenschutzrechtlich ist das Projekt in der aktuellen Form unkritisch 
 ---
 
 **Offene Entscheidung an Dich:** Sollen wir die Share-Sheet-Erweiterung (Punkt 1) von Anfang an mitbauen, oder erst als Plan B, falls Apple beim Review tatsächlich "zu simpel" sagt?
+
+**Entschieden (30.08.2026): von Anfang an mitgebaut.** Target `ShareExtension` (`com.eribert.md-Viewer.ShareExtension`), `com.apple.share-services`, aktiviert für Markdown-/Text-Anhänge. Rendert das geteilte Dokument direkt im Teilen-Menü (eigenes Blatt mit „Fertig") — kein Umweg über die Haupt-App. Nutzt dieselbe `loadMarkdown(from:)`-Logik (jetzt in `Shared/MarkdownDocument.swift`) und MarkdownUI, aber ohne Highlightr, um im Speicherbudget der Extension zu bleiben. Simulator-Test + Unit-Tests grün. Damit ist das Guideline-4.2-Risiko deutlich kleiner.

@@ -44,7 +44,7 @@ Weil die meisten Markdown-Viewer heute vollwertige Editoren mit Dateiverwaltung,
 
 FUNKTIONEN
 
-• Öffnen über "Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. aus Mail-Anhängen oder AirDrop)
+• Öffnen über "Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. aus Mail-Anhängen oder AirDrop) — die Teilen-Erweiterung zeigt das Dokument sofort formatiert an, ohne die App zu wechseln
 • Sauberes Markdown-Rendering: Überschriften, Listen, Aufgabenlisten, Tabellen (horizontal scrollbar), Codeblöcke mit Syntax-Hervorhebung, Zitate, Links, Bilder
 • Volle Unicode-Unterstützung: Emoji, arabische und hebräische Schrift (rechts-nach-links), chinesische, japanische und koreanische Zeichen
 • Unterstützt Dynamic Type und VoiceOver

@@ -9,6 +9,20 @@ The app is a plain SwiftUI `WindowGroup` (no `DocumentGroup`) that opens
 Share Sheet, or a registered UTI), not browsed from inside the app. The
 driver simulates that hand-off with `simctl openurl`.
 
+There is also a **Share extension** target `ShareExtension`
+(`com.eribert.md-Viewer.ShareExtension`, `com.apple.share-services`) that
+renders a shared Markdown/text file in a sheet right inside the share
+sheet. It's built + embedded automatically as a dependency of the app
+target (`PlugIns/ShareExtension.appex`). `DocumentError` / `maxFileSize` /
+`loadMarkdown(from:)` moved to `md Viewer/Shared/MarkdownDocument.swift`,
+which is a member of both the app and the extension target (added as
+explicit file refs — it lives outside the app's synchronized root folder).
+The extension can't be driven from the CLI (no way to invoke a share
+sheet); test it by hand: Files → long-press a `.md` → Teilen → top icon
+row → "md Viewer" (enable via "Mehr" first if hidden). It should show a
+sheet with "Fertig" top-right (the main app instead shows an "X" /
+"Schließen" top-left).
+
 ## Run (agent path)
 
 Use the driver at `.claude/skills/run-md-viewer/driver.sh`. It resolves a
@@ -122,8 +136,13 @@ non-interactive and scriptable.
   `test.md` twice produces `test-1.md`, `test-2.md`, etc. inside the app's
   Inbox — expected OS behavior, not a bug. The screenshot's title bar
   shows the *imported* name, which may differ from your source file.
-- **Bundle ID:** `com.eribert.md-Viewer`. **Scheme:** `md Viewer` (there's
+- **Bundle ID:** `com.eribert.md-Viewer` (extension:
+  `com.eribert.md-Viewer.ShareExtension`). **Scheme:** `md Viewer` (there's
   also an `MarkdownUI` scheme from the SPM package — don't use that one).
+- **Archiving needs `-allowProvisioningUpdates`** now that the extension
+  target exists — its App ID/profile must be registered with Apple once
+  (Xcode "Distribute App" does it, or pass the flag to `xcodebuild archive`).
+  Simulator builds and `xcodebuild test` are unaffected.
 - No GUI-click harness is wired up (no `cliclick`/`idb` in this
   environment) — the driver can launch, install, open documents, and
   screenshot, but not tap buttons like the empty-state's close (X). To
