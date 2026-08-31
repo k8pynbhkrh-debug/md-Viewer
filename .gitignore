@@ -32,3 +32,7 @@ Pods/
 # Muter (Mutation Testing) — Arbeitskopie und Logs, die bei jedem Lauf neu entstehen
 md Viewer_mutated/
 muter_logs/
+
+# Rohe Bildschirmaufnahmen (gross) — die komprimierte Fassung liegt in docs/
+/Bildschirmaufnahme*.MP4
+/Bildschirmaufnahme*.mov
