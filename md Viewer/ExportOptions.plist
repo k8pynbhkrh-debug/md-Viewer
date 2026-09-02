@@ -9,7 +9,16 @@
 	<key>teamID</key>
 	<string>2Y8RS9U52W</string>
 	<key>signingStyle</key>
-	<string>automatic</string>
+	<string>manual</string>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.eribert.md-Viewer</key>
+		<string>md Viewer App Store</string>
+		<key>com.eribert.md-Viewer.ShareExtension</key>
+		<string>md Viewer ShareExtension App Store</string>
+	</dict>
 	<key>uploadSymbols</key>
 	<true/>
 	<key>manageAppVersionAndBuildNumber</key>
