@@ -22,6 +22,8 @@ struct DocumentView: View {
     @State private var isSaving = false
     @State private var saveError: String?
     @State private var showCloseConfirmation = false
+    @State private var showSaveConfirmation = false
+    @State private var showRevertConfirmation = false
     @FocusState private var editorFocused: Bool
 
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
@@ -100,6 +102,26 @@ struct DocumentView: View {
                 Button("Abbrechen", role: .cancel) {}
             } message: {
                 Text("Die Änderungen wurden noch nicht gespeichert.")
+            }
+            .confirmationDialog(
+                "Änderungen speichern?",
+                isPresented: $showSaveConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("In Datei speichern", role: .destructive) { Task { await save() } }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Die Originaldatei „\(fileURL.lastPathComponent)“ wird mit dem bearbeiteten Text überschrieben.")
+            }
+            .confirmationDialog(
+                "Änderungen verwerfen?",
+                isPresented: $showRevertConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Verwerfen", role: .destructive) { revert() }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Der Text wird auf die zuletzt gespeicherte Fassung zurückgesetzt.")
             }
             .overlay {
                 if isSaving {
@@ -195,16 +217,27 @@ struct DocumentView: View {
                     .disabled(isSaving)
                     .accessibilityHint("Zeigt die Markdown-Vorschau der Änderungen")
                 }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
+                        showRevertConfirmation = true
+                    }
+                    .disabled(isSaving || !hasUnsavedChanges)
+                    .accessibilityHint("Verwirft die Änderungen und stellt die gespeicherte Fassung wieder her")
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Speichern", systemImage: "checkmark") {
-                        Task { await save() }
+                        showSaveConfirmation = true
                     }
-                    .disabled(isSaving)
-                    .accessibilityHint("Speichert die Änderungen in der Datei")
+                    .tint(.red)
+                    .disabled(isSaving || !hasUnsavedChanges)
+                    .accessibilityHint("Überschreibt die Datei mit dem bearbeiteten Text")
                 }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("Fertig") { editorFocused = false }
+                    Button("Tastatur ausblenden", systemImage: "keyboard.chevron.compact.down") {
+                        editorFocused = false
+                    }
+                    .labelStyle(.iconOnly)
                 }
             } else {
                 ToolbarItem(placement: .primaryAction) {
@@ -221,6 +254,12 @@ struct DocumentView: View {
                 }
             }
         }
+    }
+
+    /// Discards the working draft and restores the last saved text.
+    private func revert() {
+        editedText = savedText
+        hasDraft = false
     }
 
     /// Writes the current draft back to the file and returns to the preview.
