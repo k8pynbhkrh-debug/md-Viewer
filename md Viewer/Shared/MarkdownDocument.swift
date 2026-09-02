@@ -79,7 +79,9 @@ nonisolated func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
 /// Saves the given text back to the file at `url`, overwriting its current content.
 ///
 /// Handles security-scoped resource access for files opened via "Open With",
-/// mirroring `loadMarkdown(from:)`.
+/// mirroring `loadMarkdown(from:)`. The write goes through `NSFileCoordinator`
+/// so documents opened in place (iCloud Drive, the Files app) are updated
+/// safely alongside other processes that may be observing the file.
 nonisolated func saveMarkdown(text: String, to url: URL) throws {
     let isSecurityScoped = url.startAccessingSecurityScopedResource()
     defer {
@@ -92,9 +94,17 @@ nonisolated func saveMarkdown(text: String, to url: URL) throws {
         throw DocumentError.invalidEncoding
     }
 
-    do {
-        try data.write(to: url, options: .atomic)
-    } catch {
+    var coordinatorError: NSError?
+    var writeError: Error?
+    NSFileCoordinator().coordinate(writingItemAt: url, options: .forReplacing, error: &coordinatorError) { writeURL in
+        do {
+            try data.write(to: writeURL, options: .atomic)
+        } catch {
+            writeError = error
+        }
+    }
+
+    if coordinatorError != nil || writeError != nil {
         throw DocumentError.notWritable
     }
 }

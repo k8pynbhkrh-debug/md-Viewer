@@ -18,6 +18,7 @@ struct DocumentView: View {
     @State private var isSaving = false
     @State private var saveError: String? = nil
     @State private var showCloseConfirmation = false
+    @FocusState private var editorFocused: Bool
 
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
     private func syntaxTheme(for scheme: ColorScheme) -> String {
@@ -58,6 +59,8 @@ struct DocumentView: View {
                     if isEditing {
                         TextEditor(text: $editedText)
                             .font(.system(.body, design: .monospaced))
+                            .focused($editorFocused)
+                            .scrollDismissesKeyboard(.interactively)
                             .padding(.horizontal, 24)
                             .padding(.vertical)
                     } else {
@@ -129,11 +132,18 @@ struct DocumentView: View {
                         .disabled(isSaving)
                         .accessibilityHint("Speichert die Änderungen in der Datei")
                     }
+                    ToolbarItem(placement: .keyboard) {
+                        Spacer()
+                    }
+                    ToolbarItem(placement: .keyboard) {
+                        Button("Fertig") { editorFocused = false }
+                    }
                 } else if case .success(let markdown) = content {
                     ToolbarItem(placement: .primaryAction) {
                         Button("Bearbeiten", systemImage: "pencil") {
                             editedText = markdown
                             isEditing = true
+                            editorFocused = true
                         }
                         .accessibilityHint("Bearbeitet den Markdown-Text")
                     }
