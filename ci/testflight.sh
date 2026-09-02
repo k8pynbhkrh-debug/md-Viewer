@@ -2,7 +2,19 @@
 #
 # Baut ein Release-Archive von "md Viewer" und lädt es zu TestFlight hoch.
 #
-# Voraussetzung: ein App-Store-Connect-API-Key (Rolle "App Manager" oder höher).
+# Voraussetzungen:
+#  1. App-Store-Connect-API-Key (Rolle "App Manager" genügt für den Upload).
+#  2. Ein "Apple Distribution"-Zertifikat im Login-Schlüsselbund dieses Macs
+#     (`security find-identity -v -p codesigning` muss es zeigen). Backup:
+#     ~/Downloads/md-viewer-Apple-Distribution-BACKUP.p12 (Passwort: mdviewer)
+#     – sicher aufbewahren, Apple gibt den privaten Schlüssel nicht erneut aus.
+#  3. Installierte App-Store-Provisioning-Profile "md Viewer App Store" und
+#     "md Viewer ShareExtension App Store" (in md Viewer/ExportOptions.plist
+#     referenziert). Neu erzeugen unter developer.apple.com, wenn das
+#     Distribution-Zertifikat wechselt.
+#  Cloud Signing (automatisches Erzeugen von Zert/Profil) geht mit einem
+#  App-Manager-Key NICHT – dafür bräuchte der API-Key die Rolle "Admin".
+#
 # Aufruf:
 #
 #   ci/testflight.sh \
@@ -59,7 +71,6 @@ xcodebuild -exportArchive \
   -archivePath "$ARCHIVE_PATH" \
   -exportOptionsPlist "$XCODE_DIR/ExportOptions.plist" \
   -exportPath "$EXPORT_DIR" \
-  -allowProvisioningUpdates \
   -authenticationKeyPath "$KEY_DEST_DIR/AuthKey_${KEY_ID}.p8" \
   -authenticationKeyID "$KEY_ID" \
   -authenticationKeyIssuerID "$ISSUER_ID"
