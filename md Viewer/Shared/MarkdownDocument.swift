@@ -81,8 +81,27 @@ nonisolated func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
 /// Handles security-scoped resource access for files opened via "Open With",
 /// mirroring `loadMarkdown(from:)`. The write goes through `NSFileCoordinator`
 /// so documents opened in place (iCloud Drive, the Files app) are updated
-/// safely alongside other processes that may be observing the file.
+/// safely alongside other processes observing the file. An existing file is
+/// replaced via `replaceItemAt(_:withItemAt:)`, which keeps its metadata and
+/// document identity intact instead of swapping the inode underneath other
+/// presenters.
+///
+/// Rejects empty / whitespace-only and oversized content up front so we never
+/// write a file that `loadMarkdown(from:)` would then refuse to reopen.
 nonisolated func saveMarkdown(text: String, to url: URL) throws {
+    if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        throw DocumentError.empty
+    }
+
+    guard let data = text.data(using: .utf8) else {
+        throw DocumentError.invalidEncoding
+    }
+
+    let size = UInt64(data.count)
+    if size > maxFileSize {
+        throw DocumentError.tooLarge(size)
+    }
+
     let isSecurityScoped = url.startAccessingSecurityScopedResource()
     defer {
         if isSecurityScoped {
@@ -90,15 +109,25 @@ nonisolated func saveMarkdown(text: String, to url: URL) throws {
         }
     }
 
-    guard let data = text.data(using: .utf8) else {
-        throw DocumentError.invalidEncoding
-    }
-
     var coordinatorError: NSError?
     var writeError: Error?
     NSFileCoordinator().coordinate(writingItemAt: url, options: .forReplacing, error: &coordinatorError) { writeURL in
         do {
-            try data.write(to: writeURL, options: .atomic)
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: writeURL.path) {
+                let replacementDirectory = try fileManager.url(
+                    for: .itemReplacementDirectory,
+                    in: .userDomainMask,
+                    appropriateFor: writeURL,
+                    create: true
+                )
+                let stagedURL = replacementDirectory.appendingPathComponent(writeURL.lastPathComponent)
+                try data.write(to: stagedURL, options: .atomic)
+                _ = try fileManager.replaceItemAt(writeURL, withItemAt: stagedURL)
+                try? fileManager.removeItem(at: replacementDirectory)
+            } else {
+                try data.write(to: writeURL, options: .atomic)
+            }
         } catch {
             writeError = error
         }

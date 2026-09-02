@@ -15,8 +15,12 @@ struct DocumentView: View {
 
     @State private var isEditing = false
     @State private var editedText = ""
+    /// Set once the user has entered the editor for this document and not yet
+    /// saved or discarded. While set, `editedText` — not the last saved text —
+    /// is the version shown in the preview and checked for unsaved changes.
+    @State private var hasDraft = false
     @State private var isSaving = false
-    @State private var saveError: String? = nil
+    @State private var saveError: String?
     @State private var showCloseConfirmation = false
     @FocusState private var editorFocused: Bool
 
@@ -40,13 +44,19 @@ struct DocumentView: View {
             ?? Color(uiColor: .secondarySystemBackground)
     }
 
-    /// The last saved text, used to detect unsaved edits.
+    /// The last text written to disk.
     private var savedText: String {
         (try? content?.get()) ?? ""
     }
 
+    /// The version currently on screen: the working draft if one exists,
+    /// otherwise the saved file.
+    private var displayedText: String {
+        hasDraft ? editedText : savedText
+    }
+
     private var hasUnsavedChanges: Bool {
-        isEditing && editedText != savedText
+        hasDraft && editedText != savedText
     }
 
     var body: some View {
@@ -55,46 +65,11 @@ struct DocumentView: View {
                 switch content {
                 case .none:
                     ProgressView("Laden …")
-                case .success(let markdown):
+                case .success:
                     if isEditing {
-                        TextEditor(text: $editedText)
-                            .font(.system(.body, design: .monospaced))
-                            .focused($editorFocused)
-                            .scrollDismissesKeyboard(.interactively)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical)
+                        editor
                     } else {
-                        GeometryReader { geometry in
-                            ScrollView {
-                                Markdown(markdown)
-                                    .markdownCodeSyntaxHighlighter(
-                                        HighlightrSyntaxHighlighter(highlightr: highlightr)
-                                    )
-                                    .markdownBlockStyle(\.table) { configuration in
-                                        ScrollView(.horizontal, showsIndicators: true) {
-                                            configuration.label
-                                                .fixedSize(horizontal: false, vertical: true)
-                                        }
-                                        .markdownMargin(top: 0, bottom: 16)
-                                    }
-                                    .markdownBlockStyle(\.codeBlock) { configuration in
-                                        ScrollView(.horizontal, showsIndicators: false) {
-                                            configuration.label
-                                                .fixedSize(horizontal: false, vertical: true)
-                                                .padding(12)
-                                        }
-                                        .background(codeBlockBackground)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        .markdownMargin(top: 0, bottom: 16)
-                                    }
-                                    // Fill the available width (MarkdownUI otherwise sizes
-                                    // to the content's natural width and pins it leading,
-                                    // which looks broken on iPad). ~24pt side margins.
-                                    .frame(width: max(0, geometry.size.width - 48), alignment: .leading)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical)
-                            }
-                        }
+                        preview(markdown: displayedText)
                     }
                 case .failure(let error):
                     ContentUnavailableView {
@@ -106,51 +81,13 @@ struct DocumentView: View {
             }
             .navigationTitle(fileURL.lastPathComponent)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Schließen", systemImage: "xmark") {
-                        if hasUnsavedChanges {
-                            showCloseConfirmation = true
-                        } else {
-                            dismiss()
-                        }
-                    }
-                    .accessibilityHint("Schließt das Dokument")
-                }
-
-                if isEditing {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Vorschau", systemImage: "eye") {
-                            isEditing = false
-                        }
-                        .accessibilityHint("Zeigt die Markdown-Vorschau")
-                    }
-                    ToolbarItem(placement: .primaryAction) {
-                        Button("Speichern", systemImage: "checkmark") {
-                            save()
-                        }
-                        .disabled(isSaving)
-                        .accessibilityHint("Speichert die Änderungen in der Datei")
-                    }
-                    ToolbarItem(placement: .keyboard) {
-                        Spacer()
-                    }
-                    ToolbarItem(placement: .keyboard) {
-                        Button("Fertig") { editorFocused = false }
-                    }
-                } else if case .success(let markdown) = content {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button("Bearbeiten", systemImage: "pencil") {
-                            editedText = markdown
-                            isEditing = true
-                            editorFocused = true
-                        }
-                        .accessibilityHint("Bearbeitet den Markdown-Text")
-                    }
-                }
-            }
-            .alert("Fehler", isPresented: .constant(saveError != nil)) {
-                Button("OK") { saveError = nil }
+            .toolbar { toolbarContent }
+            .alert(
+                "Fehler",
+                isPresented: Binding(get: { saveError != nil },
+                                     set: { if !$0 { saveError = nil } })
+            ) {
+                Button("OK", role: .cancel) { saveError = nil }
             } message: {
                 Text(saveError ?? "")
             }
@@ -163,6 +100,13 @@ struct DocumentView: View {
                 Button("Abbrechen", role: .cancel) {}
             } message: {
                 Text("Die Änderungen wurden noch nicht gespeichert.")
+            }
+            .overlay {
+                if isSaving {
+                    ProgressView("Speichern …")
+                        .padding(24)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
             }
         }
         .onChange(of: colorScheme) { _, _ in
@@ -182,16 +126,123 @@ struct DocumentView: View {
         }
     }
 
-    /// Writes the edited text back to the file and returns to the preview.
-    private func save() {
+    private var editor: some View {
+        TextEditor(text: $editedText)
+            .font(.system(.body, design: .monospaced))
+            .focused($editorFocused)
+            .scrollDismissesKeyboard(.interactively)
+            .padding(.horizontal, 24)
+            .padding(.vertical)
+            // Requesting focus only once the editor is actually in the hierarchy;
+            // setting it in the "Bearbeiten" action (before this view mounts) is
+            // dropped by SwiftUI and leaves the keyboard down.
+            .onAppear { editorFocused = true }
+    }
+
+    private func preview(markdown: String) -> some View {
+        GeometryReader { geometry in
+            ScrollView {
+                Markdown(markdown)
+                    .markdownCodeSyntaxHighlighter(
+                        HighlightrSyntaxHighlighter(highlightr: highlightr)
+                    )
+                    .markdownBlockStyle(\.table) { configuration in
+                        ScrollView(.horizontal, showsIndicators: true) {
+                            configuration.label
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .markdownMargin(top: 0, bottom: 16)
+                    }
+                    .markdownBlockStyle(\.codeBlock) { configuration in
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            configuration.label
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(12)
+                        }
+                        .background(codeBlockBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .markdownMargin(top: 0, bottom: 16)
+                    }
+                    // Fill the available width (MarkdownUI otherwise sizes
+                    // to the content's natural width and pins it leading,
+                    // which looks broken on iPad). ~24pt side margins.
+                    .frame(width: max(0, geometry.size.width - 48), alignment: .leading)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical)
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button("Schließen", systemImage: "xmark") {
+                if hasUnsavedChanges {
+                    showCloseConfirmation = true
+                } else {
+                    dismiss()
+                }
+            }
+            .accessibilityHint("Schließt das Dokument")
+        }
+
+        if case .success = content {
+            if isEditing {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Vorschau", systemImage: "eye") {
+                        isEditing = false
+                    }
+                    .disabled(isSaving)
+                    .accessibilityHint("Zeigt die Markdown-Vorschau der Änderungen")
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Speichern", systemImage: "checkmark") {
+                        Task { await save() }
+                    }
+                    .disabled(isSaving)
+                    .accessibilityHint("Speichert die Änderungen in der Datei")
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Fertig") { editorFocused = false }
+                }
+            } else {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Bearbeiten", systemImage: "pencil") {
+                        // Keep an in-progress draft; only seed from the saved
+                        // text on the first entry into the editor.
+                        if !hasDraft {
+                            editedText = savedText
+                            hasDraft = true
+                        }
+                        isEditing = true
+                    }
+                    .accessibilityHint("Bearbeitet den Markdown-Text")
+                }
+            }
+        }
+    }
+
+    /// Writes the current draft back to the file and returns to the preview.
+    ///
+    /// The file I/O runs off the main actor because `NSFileCoordinator` can
+    /// block for seconds on an iCloud / Files document that other presenters
+    /// hold; `isSaving` drives the progress overlay for that window.
+    @MainActor
+    private func save() async {
+        let text = editedText
+        let url = fileURL
         isSaving = true
+        defer { isSaving = false }
         do {
-            try saveMarkdown(text: editedText, to: fileURL)
-            content = .success(editedText)
+            try await Task.detached(priority: .userInitiated) {
+                try saveMarkdown(text: text, to: url)
+            }.value
+            content = .success(text)
+            hasDraft = false
             isEditing = false
         } catch {
             saveError = (error as? DocumentError)?.errorDescription ?? "Speichern fehlgeschlagen."
         }
-        isSaving = false
     }
 }

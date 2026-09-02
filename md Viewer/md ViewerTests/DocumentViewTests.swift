@@ -160,4 +160,48 @@ struct SaveMarkdownTests {
             return true
         }
     }
+
+    @Test("throws .empty for whitespace-only text and leaves the file untouched")
+    func rejectsEmpty() throws {
+        let url = try makeTempFile(contents: Data("# Original".utf8))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        #expect {
+            try saveMarkdown(text: "   \n\t\n", to: url)
+        } throws: { error in
+            guard case DocumentError.empty = error else { return false }
+            return true
+        }
+        #expect(try String(contentsOf: url, encoding: .utf8) == "# Original")
+    }
+
+    @Test("throws .tooLarge for content over the size limit")
+    func rejectsTooLarge() throws {
+        let url = try makeTempFile(contents: Data("# Original".utf8))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let oversized = String(repeating: "a", count: Int(maxFileSize) + 1)
+        #expect {
+            try saveMarkdown(text: oversized, to: url)
+        } throws: { error in
+            guard case DocumentError.tooLarge = error else { return false }
+            return true
+        }
+        #expect(try String(contentsOf: url, encoding: .utf8) == "# Original")
+    }
+
+    @Test("preserves the file when replacing existing content (round-trips via loadMarkdown)")
+    func roundTripsThroughLoad() throws {
+        let url = try makeTempFile(contents: Data("# Alt".utf8))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let updated = "# Neu\n\nGeänderter Inhalt."
+        try saveMarkdown(text: updated, to: url)
+
+        guard case .success(let reloaded) = loadMarkdown(from: url) else {
+            Issue.record("Expected loadMarkdown to succeed after saveMarkdown")
+            return
+        }
+        #expect(reloaded == updated)
+    }
 }

@@ -2,7 +2,86 @@
 
 Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Connect. Zeichenlimits sind Apples aktuelle Vorgaben (Stand August 2026).
 
+> **Version 1.1 (02.09.2026):** Die App hat jetzt einen optionalen Edit-Modus (Datei
+> direkt bearbeiten und überspeichern). Die betroffenen Store-Texte sind unten im
+> Abschnitt **„Version 1.1 — geänderte Texte"** revidiert; die 1.0-Fassungen bleiben
+> zum Vergleich stehen. Vor der Einreichung die 1.1-Fassungen in App Store Connect
+> übernehmen.
+
 ---
+
+## Version 1.1 — geänderte Texte
+
+### Neu in dieser Version / Release Notes (max. 4000 Zeichen)
+
+```
+Neu in 1.1:
+
+• Edit-Modus: Markdown-Dateien lassen sich jetzt direkt in der App bearbeiten. Oben rechts auf „Bearbeiten" tippen, Text ändern, mit „Speichern" zurück in die Datei schreiben. Wer nur lesen will, merkt nichts davon — die App öffnet weiterhin direkt in der Vorschau.
+• Beim Schließen mit ungespeicherten Änderungen fragt die App nach.
+• Kleinere Verbesserungen bei Tastatur und Bedienung.
+```
+
+### Untertitel / Subtitle (max. 30 Zeichen) — 1.1
+
+```
+Markdown lesen & bearbeiten
+```
+(27 Zeichen)
+
+### Werbetext / Promotional Text (max. 170 Zeichen) — 1.1
+
+```
+Fokussierter, werbefreier Markdown-Viewer: .md-Datei öffnen, sofort schön formatiert lesen — Tabellen, Code, Listen. Bei Bedarf direkt bearbeiten und speichern.
+```
+(156 Zeichen)
+
+### Beschreibung (max. 4000 Zeichen) — 1.1
+
+```
+md Viewer macht genau eine Sache richtig gut: Markdown-Dateien lesbar anzeigen.
+
+Kein Datei-Browser. Kein Konto. Keine Cloud. Kein Tracking. Öffne eine .md-Datei über die Dateien-App oder das Teilen-Menü — md Viewer zeigt sie sofort schön formatiert an: Überschriften, Listen, Tabellen, fett/kursiv, Codeblöcke mit Syntax-Hervorhebung und Zitate. Kein Rohtext, keine Symbole zum Entziffern.
+
+Und wenn du doch etwas ändern musst: Ein Tipp auf „Bearbeiten" öffnet den Text im Editor, „Speichern" schreibt ihn zurück in die Datei. Kein Zwischenspeichern, kein Export, keine zweite Kopie.
+
+WARUM SO REDUZIERT?
+
+Weil die meisten Markdown-Apps heute vollwertige Editoren mit Dateiverwaltung, Cloud-Sync und Menüs sind — praktisch, aber überladen, wenn man einfach nur eine Datei lesen (und gelegentlich schnell korrigieren) will, die einem gerade geschickt wurde. md Viewer macht bewusst nichts anderes. Datei antippen, lesen, bei Bedarf ändern, fertig.
+
+FUNKTIONEN
+
+• Öffnen über „Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. aus Mail-Anhängen oder AirDrop) — die Teilen-Erweiterung zeigt das Dokument sofort formatiert an, ohne die App zu wechseln
+• Sauberes Markdown-Rendering: Überschriften, Listen, Aufgabenlisten, Tabellen (horizontal scrollbar), Codeblöcke mit Syntax-Hervorhebung, Zitate, Links, Bilder
+• Optionaler Edit-Modus: Datei direkt bearbeiten und überspeichern, mit Nachfrage bei ungespeicherten Änderungen
+• Volle Unicode-Unterstützung: Emoji, arabische und hebräische Schrift (rechts-nach-links), chinesische, japanische und koreanische Zeichen
+• Unterstützt Dynamic Type und VoiceOver
+• Automatisches Dark Mode / Light Mode
+• Läuft komplett offline, keine Netzwerkzugriffe im Code
+
+DATENSCHUTZ
+
+md Viewer erhebt keinerlei Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete und bearbeitete Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet.
+
+Für wen ist die App? Für alle, die regelmäßig .md-Dateien bekommen oder verwalten — Notizen, READMEs, technische Doku, Protokolle — und sie einfach nur schnell und sauber lesen (und ab und zu bearbeiten) wollen, ohne einen vollen Editor zu öffnen.
+```
+
+### Schlüsselwörter / Keywords (max. 100 Zeichen) — 1.1
+
+```
+markdown,md,viewer,reader,editor,bearbeiten,text,dokument,tabelle,code,notizen,offline,readme
+```
+(92 Zeichen)
+
+### Kategorie — 1.1
+
+Unverändert (Primär: Produktivität, Sekundär optional: Dienstprogramme). Die
+Bearbeiten-Funktion erlaubt weiterhin die Altersfreigabe 4+ (kein UGC im Sinne
+von geteilten/öffentlichen Inhalten — rein lokale Dateibearbeitung).
+
+---
+
+## Version 1.0 — Originaltexte (Referenz)
 
 ## App-Name (max. 30 Zeichen)
 
