@@ -9,14 +9,23 @@ The app is a plain SwiftUI `WindowGroup` (no `DocumentGroup`) that opens
 Share Sheet, or a registered UTI), not browsed from inside the app. The
 driver simulates that hand-off with `simctl openurl`.
 
+Since v1.1 the app also has an **edit mode**: `DocumentView` shows a
+"Bearbeiten" (pencil) button top-right; tapping it swaps the `Markdown`
+preview for a `TextEditor`, and "Speichern" (checkmark) writes the text
+back to `fileURL` via `saveMarkdown(text:to:)`. "Vorschau" (eye) returns
+to a rendered preview of the *draft* without saving; closing with unsaved
+changes shows a confirmation dialog. The Share extension is unaffected —
+it stays read-only display (no edit button).
+
 There is also a **Share extension** target `ShareExtension`
 (`com.eribert.md-Viewer.ShareExtension`, `com.apple.share-services`) that
 renders a shared Markdown/text file in a sheet right inside the share
 sheet. It's built + embedded automatically as a dependency of the app
 target (`PlugIns/ShareExtension.appex`). `DocumentError` / `maxFileSize` /
-`loadMarkdown(from:)` moved to `md Viewer/Shared/MarkdownDocument.swift`,
-which is a member of both the app and the extension target (added as
-explicit file refs — it lives outside the app's synchronized root folder).
+`loadMarkdown(from:)` / `saveMarkdown(text:to:)` moved to
+`md Viewer/Shared/MarkdownDocument.swift`, which is a member of both the
+app and the extension target (added as explicit file refs — it lives
+outside the app's synchronized root folder).
 The extension can't be driven from the CLI (no way to invoke a share
 sheet); test it by hand: Files → long-press a `.md` → Teilen → top icon
 row → "md Viewer" (enable via "Mehr" first if hidden). It should show a
@@ -28,6 +37,17 @@ sheet with "Fertig" top-right (the main app instead shows an "X" /
 Use the driver at `.claude/skills/run-md-viewer/driver.sh`. It resolves a
 named simulator (default `"iPhone 17"`), builds with a local, gitignored
 `DerivedData` path (`build/DerivedData-sim`), and wraps `simctl`.
+
+If the driver reports `No simulator named 'iPhone 17' found` (a fresh
+machine may have the iOS runtime installed but zero devices), create one
+and pass its UDID via `MD_VIEWER_SIM_UDID`:
+
+```bash
+xcrun simctl create "iPhone 17" \
+  com.apple.CoreSimulator.SimDeviceType.iPhone-17 \
+  com.apple.CoreSimulator.SimRuntime.iOS-26-4      # -> prints a UDID
+export MD_VIEWER_SIM_UDID=<that-udid>
+```
 
 ```bash
 DRIVER=".claude/skills/run-md-viewer/driver.sh"
@@ -66,15 +86,23 @@ and executes the `md ViewerTests` target (Swift Testing framework, not
 XCTest) on the same simulator. The target was added by script
 (`xcodeproj` Ruby gem — Xcode.app was never opened), so there's no
 `.xcscheme` committed; the default scheme picks up the test target via
-the `TestTargetID` project attribute. Currently covers `loadMarkdown(from:)`
-in `DocumentView.swift` (all its `DocumentError` cases, including the
-`size > maxFileSize` vs `size >= maxFileSize` boundary — verified by
-temporarily flipping that operator and confirming `exactlyAtSizeLimit()`
-fails, then reverting).
+the `TestTargetID` project attribute. Covers `loadMarkdown(from:)` (all
+its `DocumentError` cases, including the `size > maxFileSize` vs
+`size >= maxFileSize` boundary — verified by temporarily flipping that
+operator and confirming `exactlyAtSizeLimit()` fails, then reverting) and
+`saveMarkdown(text:to:)` (round-trip, round-trip back through
+`loadMarkdown`, file creation, and the `.empty` / `.tooLarge` /
+`.notWritable` rejections). Both live in
+`md Viewer/Shared/MarkdownDocument.swift`.
 
-`loadMarkdown` and `maxFileSize` are intentionally not `private` (plain
-`internal`) so `@testable import md_Viewer` can see them — note the
-module name is `md_Viewer` (underscore), not `md Viewer`.
+`loadMarkdown` / `saveMarkdown` / `maxFileSize` are intentionally not
+`private` (plain `internal`) so `@testable import md_Viewer` can see
+them — note the module name is `md_Viewer` (underscore), not `md Viewer`.
+
+The edit-mode UI wiring in `DocumentView` (button → `save()` →
+`saveMarkdown`) is **not** covered by an automated test — there is no
+UITest target and synthetic taps are unreliable here (see Gotchas). Smoke
+-test the Bearbeiten → type → Speichern loop by hand in Xcode.
 
 ## Mutation testing
 
@@ -89,6 +117,14 @@ via `md Viewer/muter.conf.yml`. Run it with:
 noticeably longer). It leaves a `md Viewer_mutated/` working copy and
 `md Viewer/muter_logs/` behind — both gitignored, safe to `rm -rf` after
 inspecting a report; `cmd_mutate` doesn't clean these up itself.
+
+**Known broken with muter 16 (2026-09):** the run discovers files and
+mutants fine, then aborts with `Could not find xctestrun file at path:
+.../md Viewer_mutated/Debug` — muter looks for the `.xctestrun` in
+`<project>/Debug` instead of the DerivedData `Build/Products` dir, so no
+mutants are ever tested. Not caused by the source under test. Until
+muter is fixed or the driver works around it, rely on the unit tests for
+the save/load paths.
 
 **Requires a persisted shared scheme to actually work.** Muter uses
 "mutant schemata": it builds once with every mutation embedded behind
@@ -136,6 +172,17 @@ non-interactive and scriptable.
   `test.md` twice produces `test-1.md`, `test-2.md`, etc. inside the app's
   Inbox — expected OS behavior, not a bug. The screenshot's title bar
   shows the *imported* name, which may differ from your source file.
+- **Edit mode saves to whatever URL `onOpenURL` handed over.** `simctl
+  openurl file://…` and the Files-app "Öffnen mit" flow both copy the
+  file into `…/Documents/Inbox/` first, so "Speichern" writes to that
+  Inbox copy, not your original on disk — the original is untouched. A
+  true in-place edit (original updated) only happens for documents opened
+  from a provider that supports it (iCloud Drive, "On My iPhone", another
+  app's shared container) where the URL is security-scoped and outside
+  the sandbox; `saveMarkdown` coordinates that write with
+  `NSFileCoordinator` + `replaceItemAt`. `saveMarkdown` refuses empty /
+  whitespace-only and >5 MB input (throws `.empty` / `.tooLarge`) so it
+  never produces a file `loadMarkdown` would then reject.
 - **Bundle ID:** `com.eribert.md-Viewer` (extension:
   `com.eribert.md-Viewer.ShareExtension`). **Scheme:** `md Viewer` (there's
   also an `MarkdownUI` scheme from the SPM package — don't use that one).
