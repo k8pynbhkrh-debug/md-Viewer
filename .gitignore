@@ -20,6 +20,10 @@ xcuserdata/
 .swiftpm/
 .build/
 
+# App-Store-Connect API-Keys / Secrets — niemals committen
+*.p8
+AuthKey_*
+
 # CocoaPods (falls je genutzt)
 Pods/
 
