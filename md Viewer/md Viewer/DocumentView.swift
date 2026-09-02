@@ -223,42 +223,45 @@ struct DocumentView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button("Schließen", systemImage: "xmark") {
-                if hasUnsavedChanges {
-                    showCloseConfirmation = true
-                } else {
-                    dismiss()
+        if isEditing {
+            // In edit mode the leading button steps back to the preview — it
+            // does NOT close the document. The draft is kept, so the user can
+            // resume editing; the "X" (close) only exists in preview mode.
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Vorschau", systemImage: "chevron.backward") {
+                    if !hasUnsavedChanges { hasDraft = false }
+                    isEditing = false
                 }
+                .disabled(isSaving)
+                .accessibilityHint("Zurück zur Vorschau; die Änderungen bleiben erhalten")
             }
-            .accessibilityHint("Schließt das Dokument")
-        }
-
-        if case .success = content {
-            if isEditing {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Vorschau", systemImage: "eye") {
-                        isEditing = false
-                    }
-                    .disabled(isSaving)
-                    .accessibilityHint("Zeigt die Markdown-Vorschau der Änderungen")
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
+                    showRevertConfirmation = true
                 }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
-                        showRevertConfirmation = true
-                    }
-                    .disabled(isSaving || !hasUnsavedChanges)
-                    .accessibilityHint("Verwirft die Änderungen und stellt die gespeicherte Fassung wieder her")
+                .disabled(isSaving || !hasUnsavedChanges)
+                .accessibilityHint("Verwirft die Änderungen und stellt die gespeicherte Fassung wieder her")
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button("Speichern", systemImage: "checkmark") {
+                    showSaveConfirmation = true
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Speichern", systemImage: "checkmark") {
-                        showSaveConfirmation = true
+                .tint(.red)
+                .disabled(isSaving || !hasUnsavedChanges)
+                .accessibilityHint("Überschreibt die Datei mit dem bearbeiteten Text")
+            }
+        } else {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Schließen", systemImage: "xmark") {
+                    if hasUnsavedChanges {
+                        showCloseConfirmation = true
+                    } else {
+                        dismiss()
                     }
-                    .tint(.red)
-                    .disabled(isSaving || !hasUnsavedChanges)
-                    .accessibilityHint("Überschreibt die Datei mit dem bearbeiteten Text")
                 }
-            } else {
+                .accessibilityHint("Schließt das Dokument")
+            }
+            if case .success = content {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Bearbeiten", systemImage: "pencil") { beginEditing() }
                         .accessibilityHint("Bearbeitet den Markdown-Text")
