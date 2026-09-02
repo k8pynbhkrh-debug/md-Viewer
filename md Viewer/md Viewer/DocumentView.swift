@@ -149,6 +149,20 @@ struct DocumentView: View {
             switch content {
             case .success:
                 UIAccessibility.post(notification: .screenChanged, argument: nil)
+                #if DEBUG
+                // App-Store-Screenshot-Lauf: mit diesem Startargument direkt in
+                // den Editor und mit einer sichtbaren Änderung, damit der rote
+                // Speichern-Haken und "Zurücksetzen" aktiv sind. Synthetische
+                // Taps im Simulator sind hier unzuverlässig. Nur DEBUG.
+                if ProcessInfo.processInfo.arguments.contains("-mdviewerScreenshotEdit"),
+                   case .success(let text) = content {
+                    beginEditing()
+                    editedText = text.replacingOccurrences(
+                        of: "- [ ] Release-Notes schreiben",
+                        with: "- [x] Release-Notes schreiben"
+                    )
+                }
+                #endif
             case .failure(let error):
                 UIAccessibility.post(notification: .announcement, argument: error.localizedDescription)
             case .none:
@@ -170,7 +184,12 @@ struct DocumentView: View {
             // Requesting focus only once the editor is actually in the hierarchy;
             // setting it in the "Bearbeiten" action (before this view mounts) is
             // dropped by SwiftUI and leaves the keyboard down.
-            .onAppear { editorFocused = true }
+            .onAppear {
+                #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-mdviewerScreenshotEdit") { return }
+                #endif
+                editorFocused = true
+            }
     }
 
     private func preview(markdown: String) -> some View {

@@ -104,6 +104,24 @@ The edit-mode UI wiring in `DocumentView` (button → `save()` →
 UITest target and synthetic taps are unreliable here (see Gotchas). Smoke
 -test the Bearbeiten → type → Speichern loop by hand in Xcode.
 
+## App-Store-Screenshot vom Editor
+
+Synthetic taps can't reliably open the editor, so `DocumentView` has a
+`#if DEBUG` launch-argument hook: launch with `-mdviewerScreenshotEdit`,
+then `openurl` a file, and the view opens straight in edit mode with one
+demo edit applied (so the red Save checkmark and "Zurücksetzen" are
+active) and no keyboard. Used for `App-Store-Screenshots/*/02-bearbeiten.png`.
+
+```bash
+xcrun simctl launch <udid> com.eribert.md-Viewer -mdviewerScreenshotEdit
+xcrun simctl openurl <udid> "file://<abs path to a .md>"
+xcrun simctl io <udid> screenshot out.png
+```
+
+Screenshot sim sizes: iPhone 6.9" = iPhone 17 Pro Max (1320×2868), iPad
+13" = iPad Pro 13-inch (2064×2752). Clean status bar via
+`xcrun simctl status_bar <udid> override --time 09:41 --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode notSupported`.
+
 ## Mutation testing
 
 `muter` (`brew install muter-mutation-testing/formulae/muter`) is set up
