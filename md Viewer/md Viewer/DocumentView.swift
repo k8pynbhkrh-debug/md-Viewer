@@ -161,6 +161,9 @@ struct DocumentView: View {
         TextEditor(text: $editedText)
             .font(.system(.body, design: .monospaced))
             .focused($editorFocused)
+            // Dismiss the keyboard by dragging down over the text, the way the
+            // message list works in chat apps — no explicit "hide keyboard"
+            // button. Switching to the preview or saving also drops it.
             .scrollDismissesKeyboard(.interactively)
             .padding(.horizontal, 24)
             .padding(.vertical)
@@ -240,13 +243,6 @@ struct DocumentView: View {
                     .tint(.red)
                     .disabled(isSaving || !hasUnsavedChanges)
                     .accessibilityHint("Überschreibt die Datei mit dem bearbeiteten Text")
-                }
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Tastatur ausblenden", systemImage: "keyboard.chevron.compact.down") {
-                        editorFocused = false
-                    }
-                    .labelStyle(.iconOnly)
                 }
             } else {
                 ToolbarItem(placement: .primaryAction) {
