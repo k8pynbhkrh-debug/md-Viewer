@@ -49,7 +49,10 @@ EXPORT_DIR="$BUILD_DIR/testflight-export"
 KEY_DEST_DIR="$HOME/.appstoreconnect/private_keys"
 
 mkdir -p "$KEY_DEST_DIR"
-cp "$KEY_PATH" "$KEY_DEST_DIR/AuthKey_${KEY_ID}.p8"
+KEY_DEST="$KEY_DEST_DIR/AuthKey_${KEY_ID}.p8"
+if [ ! "$KEY_PATH" -ef "$KEY_DEST" ]; then
+  cp "$KEY_PATH" "$KEY_DEST"
+fi
 
 echo "▸ Archive …"
 rm -rf "$ARCHIVE_PATH"
