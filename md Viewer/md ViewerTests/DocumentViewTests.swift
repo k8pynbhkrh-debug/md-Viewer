@@ -161,6 +161,44 @@ struct SaveMarkdownTests {
         }
     }
 
+    // Contract — postcondition on failure: a throwing save leaves the file
+    // byte-for-byte as it was.
+    @Test("leaves an existing file untouched when the write itself fails")
+    func atomicOnWriteFailure() throws {
+        let original = "# Wichtig\n\nDarf nicht kaputtgehen."
+        let url = try makeTempFile(contents: Data(original.utf8))
+        defer {
+            try? FileManager.default.setAttributes([.immutable: false], ofItemAtPath: url.path)
+            try? FileManager.default.removeItem(at: url)
+        }
+
+        // Make the file (and its directory entry) unreplaceable.
+        try FileManager.default.setAttributes([.immutable: true], ofItemAtPath: url.path)
+
+        #expect {
+            try saveMarkdown(text: "# Ersetzt", to: url)
+        } throws: { error in
+            guard case DocumentError.notWritable = error else { return false }
+            return true
+        }
+        #expect(try String(contentsOf: url, encoding: .utf8) == original)
+    }
+
+    // Contract — postcondition on success: an existing file's metadata is
+    // carried over to the replacement rather than reset to defaults.
+    @Test("carries over the existing file's POSIX permissions")
+    func preservesFileMetadata() throws {
+        let url = try makeTempFile(contents: Data("# Alt".utf8))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+
+        try saveMarkdown(text: "# Neu", to: url)
+
+        let permissions = try FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions] as? Int
+        #expect(permissions == 0o600)
+    }
+
     @Test("throws .empty for whitespace-only text and leaves the file untouched")
     func rejectsEmpty() throws {
         let url = try makeTempFile(contents: Data("# Original".utf8))

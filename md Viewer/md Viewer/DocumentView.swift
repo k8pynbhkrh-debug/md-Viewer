@@ -61,6 +61,15 @@ struct DocumentView: View {
         hasDraft && editedText != savedText
     }
 
+    /// State-machine invariant for the edit/preview flow. The editor is only
+    /// ever entered through `beginEditing()`, which first establishes a draft,
+    /// so being in edit mode implies an active draft. `displayedText` and
+    /// `hasUnsavedChanges` depend on this: with no draft, the on-disk text
+    /// (`savedText`) is authoritative.
+    private var draftStateIsConsistent: Bool {
+        !isEditing || hasDraft
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -241,34 +250,52 @@ struct DocumentView: View {
                 }
             } else {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Bearbeiten", systemImage: "pencil") {
-                        // Keep an in-progress draft; only seed from the saved
-                        // text on the first entry into the editor.
-                        if !hasDraft {
-                            editedText = savedText
-                            hasDraft = true
-                        }
-                        isEditing = true
-                    }
-                    .accessibilityHint("Bearbeitet den Markdown-Text")
+                    Button("Bearbeiten", systemImage: "pencil") { beginEditing() }
+                        .accessibilityHint("Bearbeitet den Markdown-Text")
                 }
             }
         }
     }
 
+    /// Enters the editor.
+    ///
+    /// - Postcondition: `isEditing && hasDraft`. A fresh draft is seeded from the
+    ///   saved text on first entry; an in-progress draft is kept on re-entry so
+    ///   switching to the preview and back never discards edits.
+    private func beginEditing() {
+        if !hasDraft {
+            editedText = savedText
+            hasDraft = true
+        }
+        isEditing = true
+        assert(isEditing && hasDraft && draftStateIsConsistent)
+    }
+
     /// Discards the working draft and restores the last saved text.
+    ///
+    /// - Postcondition: `!hasDraft && editedText == savedText` — the next edit
+    ///   starts a fresh draft from disk.
     private func revert() {
         editedText = savedText
         hasDraft = false
+        assert(!hasDraft && editedText == savedText && draftStateIsConsistent)
     }
 
     /// Writes the current draft back to the file and returns to the preview.
+    ///
+    /// - Precondition: called only with unsaved changes present (the button is
+    ///   disabled otherwise).
+    /// - Postcondition (success): `savedText == <written text> && !hasDraft &&
+    ///   !isEditing` — disk, in-memory content and draft state all agree.
+    /// - Postcondition (failure): `saveError` is set and the draft is untouched,
+    ///   so the user can retry or keep editing.
     ///
     /// The file I/O runs off the main actor because `NSFileCoordinator` can
     /// block for seconds on an iCloud / Files document that other presenters
     /// hold; `isSaving` drives the progress overlay for that window.
     @MainActor
     private func save() async {
+        assert(hasUnsavedChanges, "save() precondition violated: nothing to save")
         let text = editedText
         let url = fileURL
         isSaving = true
@@ -280,6 +307,7 @@ struct DocumentView: View {
             content = .success(text)
             hasDraft = false
             isEditing = false
+            assert(savedText == text && !hasDraft && !isEditing && draftStateIsConsistent)
         } catch {
             saveError = (error as? DocumentError)?.errorDescription ?? "Speichern fehlgeschlagen."
         }

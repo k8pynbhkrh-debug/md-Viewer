@@ -76,19 +76,36 @@ nonisolated func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
     return .success(content)
 }
 
-/// Saves the given text back to the file at `url`, overwriting its current content.
+/// Overwrites the file at `url` with `text`.
 ///
-/// Handles security-scoped resource access for files opened via "Open With",
-/// mirroring `loadMarkdown(from:)`. The write goes through `NSFileCoordinator`
-/// so documents opened in place (iCloud Drive, the Files app) are updated
-/// safely alongside other processes observing the file. An existing file is
-/// replaced via `replaceItemAt(_:withItemAt:)`, which keeps its metadata and
-/// document identity intact instead of swapping the inode underneath other
-/// presenters.
+/// ## Contract
 ///
-/// Rejects empty / whitespace-only and oversized content up front so we never
-/// write a file that `loadMarkdown(from:)` would then refuse to reopen.
+/// - Precondition: `url` is a file URL.
+/// - Postcondition (returns normally): the file at `url` exists and, decoded as
+///   UTF-8, equals `text`; consequently `loadMarkdown(from: url)` returns
+///   `.success(text)`. If the file already existed, its metadata (permissions,
+///   extended attributes, creation date) is carried over rather than reset to
+///   defaults.
+/// - Postcondition (throws): the file at `url` is left byte-for-byte as it was.
+///   The new content is staged in a temporary location and swapped in with a
+///   single `replaceItemAt(_:withItemAt:)`, so a failure at any step —
+///   validation, encoding, file coordination or disk I/O — never leaves a
+///   partially written or truncated file.
+/// - Invariant: content that would make `loadMarkdown(from:)` fail is rejected
+///   before anything is written — empty / whitespace-only (`.empty`), larger
+///   than `maxFileSize` (`.tooLarge`), and non-UTF-8 (`.invalidEncoding`; not
+///   reachable for a Swift `String`, kept for symmetry with `loadMarkdown`).
+///
+/// Security-scoped resource access is handled for files opened via "Open With",
+/// mirroring `loadMarkdown(from:)`. The coordinated write (`NSFileCoordinator`,
+/// `.forReplacing`) keeps documents opened in place (iCloud Drive, the Files
+/// app) in sync with other processes observing the file.
 nonisolated func saveMarkdown(text: String, to url: URL) throws {
+    precondition(url.isFileURL, "saveMarkdown(text:to:) requires a file URL, got scheme \(url.scheme ?? "nil")")
+
+    // Precondition on the content, surfaced as typed errors rather than traps
+    // because it originates from user input: reject anything loadMarkdown would
+    // later refuse, before touching the file.
     if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
         throw DocumentError.empty
     }
@@ -136,4 +153,10 @@ nonisolated func saveMarkdown(text: String, to url: URL) throws {
     if coordinatorError != nil || writeError != nil {
         throw DocumentError.notWritable
     }
+
+    // Postcondition (DEBUG only): the file now decodes exactly to `text`.
+    assert(
+        (try? Data(contentsOf: url)).flatMap { String(data: $0, encoding: .utf8) } == text,
+        "saveMarkdown(text:to:) postcondition violated: file content differs from the written text"
+    )
 }
