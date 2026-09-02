@@ -201,14 +201,12 @@ Aktuell nur Erklärtext + Datenschutz-Link. Ergänzen:
 
 ---
 
-## Offene Entscheidungen (vor dem Bauen klären)
+## Entschieden (02.09.2026)
 
-1. **Nur „Einfügen", oder auch „Leeres Dokument"?** (Vorschlag: beides, das
-   leere ist ein Einzeiler.)
-2. **`.txt` mitöffnen in 1.2** — ja/nein? (Vorschlag: ja, sehr klein und
-   thematisch identisch.)
-3. **Default-Dateiname** aus der ersten Überschrift ableiten, oder immer
-   `„Dokument"` vorschlagen? (Vorschlag: erste Überschrift, sonst `„Dokument"`.)
-4. **Speicherort merken?** Für 1.2 nein — der Exporter-Dialog pro Speicherung
-   reicht. (Security-Scoped Bookmarks erst, wenn „zuletzt genutzt" gewünscht
-   ist.)
+1. **„Einfügen" und „Leeres Dokument"** — beide Buttons im Empty-State.
+2. **`.txt` mitöffnen ist Teil von 1.2** (`public.plain-text` in beiden
+   Info.plists + „Als Markdown speichern").
+3. **Default-Dateiname aus der ersten `#`-Überschrift**, sonst `„Dokument"`.
+4. **Speicherort wird nicht gemerkt** — der Exporter-Dialog pro Speicherung
+   genügt. Security-Scoped Bookmarks / „zuletzt genutzt" erst in einem späteren
+   Release, falls gewünscht.
