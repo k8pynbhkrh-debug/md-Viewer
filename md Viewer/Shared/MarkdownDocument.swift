@@ -11,6 +11,7 @@ let maxFileSize: UInt64 = 5 * 1024 * 1024
 /// compiles with `MainActor` default isolation.
 enum DocumentError: LocalizedError, Sendable {
     case notReadable
+    case notWritable
     case tooLarge(UInt64)
     case invalidEncoding
     case empty
@@ -19,6 +20,8 @@ enum DocumentError: LocalizedError, Sendable {
         switch self {
         case .notReadable:
             "Die Datei konnte nicht gelesen werden."
+        case .notWritable:
+            "Die Datei konnte nicht gespeichert werden."
         case .tooLarge(let size):
             "Die Datei ist zu groß (\(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))). Maximal 5 MB werden unterstützt."
         case .invalidEncoding:
@@ -71,4 +74,27 @@ nonisolated func loadMarkdown(from url: URL) -> Result<String, DocumentError> {
     }
 
     return .success(content)
+}
+
+/// Saves the given text back to the file at `url`, overwriting its current content.
+///
+/// Handles security-scoped resource access for files opened via "Open With",
+/// mirroring `loadMarkdown(from:)`.
+nonisolated func saveMarkdown(text: String, to url: URL) throws {
+    let isSecurityScoped = url.startAccessingSecurityScopedResource()
+    defer {
+        if isSecurityScoped {
+            url.stopAccessingSecurityScopedResource()
+        }
+    }
+
+    guard let data = text.data(using: .utf8) else {
+        throw DocumentError.invalidEncoding
+    }
+
+    do {
+        try data.write(to: url, options: .atomic)
+    } catch {
+        throw DocumentError.notWritable
+    }
 }

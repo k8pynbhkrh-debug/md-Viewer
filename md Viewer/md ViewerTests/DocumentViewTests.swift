@@ -112,3 +112,52 @@ struct LoadMarkdownTests {
         }
     }
 }
+
+@Suite("saveMarkdown")
+struct SaveMarkdownTests {
+
+    private func makeTempFile(contents: Data, extension ext: String = "md") throws -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(ext)
+        try contents.write(to: url)
+        return url
+    }
+
+    @Test("overwrites the file and the new content reads back")
+    func roundTrip() throws {
+        let url = try makeTempFile(contents: Data("# Alt".utf8))
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let updated = "# Neu\n\nMit **fettem** Text."
+        try saveMarkdown(text: updated, to: url)
+
+        let readBack = try String(contentsOf: url, encoding: .utf8)
+        #expect(readBack == updated)
+    }
+
+    @Test("creates the file if it does not exist yet")
+    func createsFile() throws {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("md")
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        try saveMarkdown(text: "# Hallo", to: url)
+
+        #expect(FileManager.default.fileExists(atPath: url.path))
+        #expect(try String(contentsOf: url, encoding: .utf8) == "# Hallo")
+    }
+
+    @Test("throws .notWritable for an unwritable location")
+    func notWritable() {
+        let url = URL(fileURLWithPath: "/this/path/does/not/exist/file.md")
+
+        #expect {
+            try saveMarkdown(text: "x", to: url)
+        } throws: { error in
+            guard case DocumentError.notWritable = error else { return false }
+            return true
+        }
+    }
+}
