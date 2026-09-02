@@ -193,7 +193,7 @@ In `App-Store-Screenshots/` (iPhone 6,9″: 1320×2868, iPad 13″: 2064×2752 �
 Reihenfolge (identisch für iPhone und iPad, je 8) — „Öffnen mit" an Position 1 (Einstieg in die App), der neue **Bearbeiten**-Screenshot an Position 2, damit die Editier-Funktion im Store sofort sichtbar ist:
 
 - `01-oeffnen-mit.png` — „Öffnen mit → md Viewer" in der Dateien-App (Ordner „Downloads", Listenansicht). Zeigt den Einstieg in die App. Am 29.08.2026 im Simulator neu aufgenommen (iPhone **und** iPad, nativ, Light Mode, saubere Statusleiste, aktuelles App-Icon in der App-Liste) — ersetzt beim iPhone das alte hochskalierte Gerätefoto mit dem veralteten blauen Icon.
-- `02-bearbeiten.png` — **NEU (1.1)**: Editor-Modus, monospace-Rohtext, Toolbar mit Auge (Vorschau), Kreispfeil (Zurücksetzen) und **rotem Haken** (Speichern/Überschreiben). Am 02.09.2026 im Simulator aufgenommen (Startargument `-mdviewerScreenshotEdit`, `#if DEBUG`).
+- `02-bearbeiten.png` — **NEU (1.1)**: Editor-Modus mit eingeblendeter Tastatur (inkl. Vorschlagszeile), monospace-Rohtext, Toolbar mit Auge (Vorschau), Kreispfeil (Zurücksetzen) und **rotem Haken** (Speichern/Überschreiben). Am 02.09.2026 im Simulator aufgenommen (Startargument `-mdviewerScreenshotEdit` `#if DEBUG`, Software-Tastatur per Cmd+K).
 - `03-empty-state.png` — Startbildschirm mit Hinweis „Öffne über Teilen oder die Dateien-App" + Datenschutz-Link
 - `04-uebersicht.png` — Dokument mit Überschriften, Aufgabenliste, Tabelle (Status-Emoji), Zitat, Links
 - `05-tabelle.png` — breite 7-Spalten-Tabelle (horizontal scrollbar) + Kennzahlen-Tabelle

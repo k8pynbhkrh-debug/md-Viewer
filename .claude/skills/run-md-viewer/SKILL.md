@@ -114,9 +114,29 @@ active) and no keyboard. Used for `App-Store-Screenshots/*/02-bearbeiten.png`.
 
 ```bash
 xcrun simctl launch <udid> com.eribert.md-Viewer -mdviewerScreenshotEdit
-xcrun simctl openurl <udid> "file://<abs path to a .md>"
+xcrun simctl openurl <udid> "file://<abs path to a .md>"   # abs path, spaces ok
+# software keyboard: it stays hidden under simctl until you toggle it —
+open -a Simulator --args -CurrentDeviceUDID <udid>
+osascript -e 'tell application "Simulator" to activate' \
+  -e 'delay 0.7' \
+  -e 'tell application "System Events" to keystroke "k" using command down'  # I/O ▸ Keyboard ▸ Toggle Software Keyboard
 xcrun simctl io <udid> screenshot out.png
 ```
+
+For `02-bearbeiten.png` the keyboard is shown (Cmd+K above). The demo edit
+in the hook flips `- [ ] Release-Notes schreiben` → `- [x] …` in
+`demo-dokumente/Notiz.md`, which is short enough that the heading stays
+visible above the keyboard and the red Save checkmark is active.
+
+Gotchas that cost time here:
+- `@FocusState = true` alone does **not** raise the software keyboard under
+  `simctl`; the sim treats a hardware keyboard as connected. Cmd+K via
+  System Events (a keystroke, not a click — those work) toggles it.
+- A fresh sim shows a "Type Deutsch und Englisch" onboarding sheet over the
+  keyboard on first use. Force a single language first:
+  `xcrun simctl spawn <udid> defaults write "Apple Global Domain" AppleKeyboards -array "de_DE@hw=German-Standard;sw=QWERTZ-German"` then reboot.
+- iOS renames on Inbox collision (`Notiz-1.md`); `simctl uninstall` +
+  reinstall between runs to keep the title clean.
 
 Screenshot sim sizes: iPhone 6.9" = iPhone 17 Pro Max (1320×2868), iPad
 13" = iPad Pro 13-inch (2064×2752). Clean status bar via

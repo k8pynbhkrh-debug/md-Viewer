@@ -184,12 +184,7 @@ struct DocumentView: View {
             // Requesting focus only once the editor is actually in the hierarchy;
             // setting it in the "Bearbeiten" action (before this view mounts) is
             // dropped by SwiftUI and leaves the keyboard down.
-            .onAppear {
-                #if DEBUG
-                if ProcessInfo.processInfo.arguments.contains("-mdviewerScreenshotEdit") { return }
-                #endif
-                editorFocused = true
-            }
+            .onAppear { editorFocused = true }
     }
 
     private func preview(markdown: String) -> some View {
