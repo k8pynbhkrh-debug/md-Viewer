@@ -13,17 +13,15 @@ struct DocumentView: View {
     @State private var content: Result<String, DocumentError>?
     @State private var highlightr = Highlightr()
 
+    /// While `isEditing`, `editedText` is the working copy. Leaving the editor —
+    /// via the back button (discard) or a successful save — is the only way it
+    /// affects the document; the preview always renders the on-disk text.
     @State private var isEditing = false
     @State private var editedText = ""
-    /// Set once the user has entered the editor for this document and not yet
-    /// saved or discarded. While set, `editedText` — not the last saved text —
-    /// is the version shown in the preview and checked for unsaved changes.
-    @State private var hasDraft = false
     @State private var isSaving = false
     @State private var saveError: String?
-    @State private var showCloseConfirmation = false
     @State private var showSaveConfirmation = false
-    @State private var showRevertConfirmation = false
+    @State private var showDiscardConfirmation = false
     @FocusState private var editorFocused: Bool
 
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
@@ -46,28 +44,16 @@ struct DocumentView: View {
             ?? Color(uiColor: .secondarySystemBackground)
     }
 
-    /// The last text written to disk.
+    /// The text currently on disk.
     private var savedText: String {
         (try? content?.get()) ?? ""
     }
 
-    /// The version currently on screen: the working draft if one exists,
-    /// otherwise the saved file.
-    private var displayedText: String {
-        hasDraft ? editedText : savedText
-    }
-
+    /// True only while editing and the working copy differs from disk. Outside
+    /// the editor there is nothing unsaved: leaving always either saves or
+    /// discards.
     private var hasUnsavedChanges: Bool {
-        hasDraft && editedText != savedText
-    }
-
-    /// State-machine invariant for the edit/preview flow. The editor is only
-    /// ever entered through `beginEditing()`, which first establishes a draft,
-    /// so being in edit mode implies an active draft. `displayedText` and
-    /// `hasUnsavedChanges` depend on this: with no draft, the on-disk text
-    /// (`savedText`) is authoritative.
-    private var draftStateIsConsistent: Bool {
-        !isEditing || hasDraft
+        isEditing && editedText != savedText
     }
 
     var body: some View {
@@ -80,7 +66,7 @@ struct DocumentView: View {
                     if isEditing {
                         editor
                     } else {
-                        preview(markdown: displayedText)
+                        preview(markdown: savedText)
                     }
                 case .failure(let error):
                     ContentUnavailableView {
@@ -103,16 +89,6 @@ struct DocumentView: View {
                 Text(saveError ?? "")
             }
             .confirmationDialog(
-                "Ungespeicherte Änderungen",
-                isPresented: $showCloseConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("Verwerfen und schließen", role: .destructive) { dismiss() }
-                Button("Abbrechen", role: .cancel) {}
-            } message: {
-                Text("Die Änderungen wurden noch nicht gespeichert.")
-            }
-            .confirmationDialog(
                 "Änderungen speichern?",
                 isPresented: $showSaveConfirmation,
                 titleVisibility: .visible
@@ -124,13 +100,13 @@ struct DocumentView: View {
             }
             .confirmationDialog(
                 "Änderungen verwerfen?",
-                isPresented: $showRevertConfirmation,
+                isPresented: $showDiscardConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Verwerfen", role: .destructive) { revert() }
-                Button("Abbrechen", role: .cancel) {}
+                Button("Verwerfen", role: .destructive) { discardEditing() }
+                Button("Weiter bearbeiten", role: .cancel) {}
             } message: {
-                Text("Der Text wird auf die zuletzt gespeicherte Fassung zurückgesetzt.")
+                Text("Die Änderungen wurden nicht gespeichert und gehen verloren.")
             }
             .overlay {
                 if isSaving {
@@ -151,9 +127,10 @@ struct DocumentView: View {
                 UIAccessibility.post(notification: .screenChanged, argument: nil)
                 #if DEBUG
                 // App-Store-Screenshot-Lauf: mit diesem Startargument direkt in
-                // den Editor und mit einer sichtbaren Änderung, damit der rote
-                // Speichern-Haken und "Zurücksetzen" aktiv sind. Synthetische
-                // Taps im Simulator sind hier unzuverlässig. Nur DEBUG.
+                // den Editor (Tastatur per Cmd+K) und mit einer sichtbaren
+                // Änderung, damit der rote Speichern-Haken aktiv ist.
+                // Synthetische Taps im Simulator sind hier unzuverlässig.
+                // Nur DEBUG.
                 if ProcessInfo.processInfo.arguments.contains("-mdviewerScreenshotEdit"),
                    case .success(let text) = content {
                     beginEditing()
@@ -177,7 +154,7 @@ struct DocumentView: View {
             .focused($editorFocused)
             // Dismiss the keyboard by dragging down over the text, the way the
             // message list works in chat apps — no explicit "hide keyboard"
-            // button. Switching to the preview or saving also drops it.
+            // button. Leaving the editor also drops it.
             .scrollDismissesKeyboard(.interactively)
             .padding(.horizontal, 24)
             .padding(.vertical)
@@ -224,23 +201,19 @@ struct DocumentView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         if isEditing {
-            // In edit mode the leading button steps back to the preview — it
-            // does NOT close the document. The draft is kept, so the user can
-            // resume editing; the "X" (close) only exists in preview mode.
+            // Leading = leave the editor WITHOUT keeping changes (with a
+            // confirmation if any were made). Keeping changes is only ever the
+            // red checkmark. The "X" (close document) exists only in the preview.
             ToolbarItem(placement: .cancellationAction) {
                 Button("Vorschau", systemImage: "chevron.backward") {
-                    if !hasUnsavedChanges { hasDraft = false }
-                    isEditing = false
+                    if hasUnsavedChanges {
+                        showDiscardConfirmation = true
+                    } else {
+                        discardEditing()
+                    }
                 }
                 .disabled(isSaving)
-                .accessibilityHint("Zurück zur Vorschau; die Änderungen bleiben erhalten")
-            }
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
-                    showRevertConfirmation = true
-                }
-                .disabled(isSaving || !hasUnsavedChanges)
-                .accessibilityHint("Verwirft die Änderungen und stellt die gespeicherte Fassung wieder her")
+                .accessibilityHint("Zurück zur Vorschau, ohne die Änderungen zu übernehmen")
             }
             ToolbarItem(placement: .primaryAction) {
                 Button("Speichern", systemImage: "checkmark") {
@@ -252,14 +225,8 @@ struct DocumentView: View {
             }
         } else {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Schließen", systemImage: "xmark") {
-                    if hasUnsavedChanges {
-                        showCloseConfirmation = true
-                    } else {
-                        dismiss()
-                    }
-                }
-                .accessibilityHint("Schließt das Dokument")
+                Button("Schließen", systemImage: "xmark") { dismiss() }
+                    .accessibilityHint("Schließt das Dokument")
             }
             if case .success = content {
                 ToolbarItem(placement: .primaryAction) {
@@ -270,38 +237,33 @@ struct DocumentView: View {
         }
     }
 
-    /// Enters the editor.
+    /// Enters the editor with a fresh working copy of the saved text.
     ///
-    /// - Postcondition: `isEditing && hasDraft`. A fresh draft is seeded from the
-    ///   saved text on first entry; an in-progress draft is kept on re-entry so
-    ///   switching to the preview and back never discards edits.
+    /// - Precondition: the document loaded successfully.
+    /// - Postcondition: `isEditing && editedText == savedText`.
     private func beginEditing() {
-        if !hasDraft {
-            editedText = savedText
-            hasDraft = true
-        }
-        isEditing = true
-        assert(isEditing && hasDraft && draftStateIsConsistent)
-    }
-
-    /// Discards the working draft and restores the last saved text.
-    ///
-    /// - Postcondition: `!hasDraft && editedText == savedText` — the next edit
-    ///   starts a fresh draft from disk.
-    private func revert() {
         editedText = savedText
-        hasDraft = false
-        assert(!hasDraft && editedText == savedText && draftStateIsConsistent)
+        isEditing = true
+        assert(isEditing && editedText == savedText)
     }
 
-    /// Writes the current draft back to the file and returns to the preview.
+    /// Leaves the editor and drops the working copy. The next `beginEditing()`
+    /// re-seeds it from disk.
+    ///
+    /// - Postcondition: `!isEditing`.
+    private func discardEditing() {
+        isEditing = false
+        assert(!isEditing)
+    }
+
+    /// Writes the working copy back to the file and returns to the preview.
     ///
     /// - Precondition: called only with unsaved changes present (the button is
     ///   disabled otherwise).
-    /// - Postcondition (success): `savedText == <written text> && !hasDraft &&
-    ///   !isEditing` — disk, in-memory content and draft state all agree.
-    /// - Postcondition (failure): `saveError` is set and the draft is untouched,
-    ///   so the user can retry or keep editing.
+    /// - Postcondition (success): `savedText == <written text> && !isEditing` —
+    ///   disk and in-memory content agree and the editor is closed.
+    /// - Postcondition (failure): `saveError` is set and the editor stays open
+    ///   with the working copy intact, so the user can retry.
     ///
     /// The file I/O runs off the main actor because `NSFileCoordinator` can
     /// block for seconds on an iCloud / Files document that other presenters
@@ -318,9 +280,8 @@ struct DocumentView: View {
                 try saveMarkdown(text: text, to: url)
             }.value
             content = .success(text)
-            hasDraft = false
             isEditing = false
-            assert(savedText == text && !hasDraft && !isEditing && draftStateIsConsistent)
+            assert(savedText == text && !isEditing)
         } catch {
             saveError = (error as? DocumentError)?.errorDescription ?? "Speichern fehlgeschlagen."
         }
