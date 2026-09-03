@@ -327,3 +327,91 @@ struct EditorUndoHistoryTests {
         #expect(history.canUndo == false)
     }
 }
+
+@Suite("MarkdownFileDocument")
+struct MarkdownFileDocumentTests {
+
+    // Contract — data is exactly the UTF-8 bytes of text.
+    @Test("data is the UTF-8 encoding of the text")
+    func dataRoundTrip() {
+        #expect(MarkdownFileDocument(text: "# Über\n\nÄäÖöÜü — €").data
+                == Data("# Über\n\nÄäÖöÜü — €".utf8))
+    }
+
+    @Test("an empty document writes zero bytes")
+    func emptyDocument() {
+        #expect(MarkdownFileDocument(text: "").data == Data())
+    }
+
+    // Contract — init(data:) decodes UTF-8 and text equals the decoded bytes.
+    @Test("init(data:) decodes UTF-8 back to the same text")
+    func decodesUTF8() throws {
+        let text = "# Titel\n\n- eins\n- zwei"
+        let doc = try MarkdownFileDocument(data: Data(text.utf8))
+        #expect(doc.text == text)
+    }
+
+    // Contract — non-UTF-8 input throws .invalidEncoding.
+    @Test("init(data:) throws .invalidEncoding for non-UTF-8 bytes")
+    func rejectsNonUTF8() {
+        #expect {
+            _ = try MarkdownFileDocument(data: Data([0xFF, 0xFE, 0x00, 0x01]))
+        } throws: { error in
+            guard case DocumentError.invalidEncoding = error else { return false }
+            return true
+        }
+    }
+
+    @Test("text -> data -> text is the identity")
+    func fullRoundTrip() throws {
+        let original = "# Notiz\n\nText mit `code` und **fett**."
+        let reloaded = try MarkdownFileDocument(data: MarkdownFileDocument(text: original).data)
+        #expect(reloaded.text == original)
+    }
+}
+
+@Suite("suggestedFilename")
+struct SuggestedFilenameTests {
+
+    @Test("uses the first ATX heading")
+    func firstHeading() {
+        #expect(suggestedFilename(from: "# Besprechung Dienstag\n\nText") == "Besprechung Dienstag")
+    }
+
+    @Test("skips non-heading lines before the heading")
+    func headingAfterText() {
+        #expect(suggestedFilename(from: "\n\nVorwort\n\n## Kapitel eins\n") == "Kapitel eins")
+    }
+
+    // Contract — no heading yields the fallback.
+    @Test("falls back to \"Dokument\" without a heading")
+    func fallback() {
+        #expect(suggestedFilename(from: "nur Fließtext, keine Überschrift") == "Dokument")
+        #expect(suggestedFilename(from: "") == "Dokument")
+        #expect(suggestedFilename(from: "#   \n") == "Dokument")
+    }
+
+    // Contract — result contains no path separators or colons.
+    @Test("strips path separators and colons")
+    func stripsForbiddenCharacters() {
+        let name = suggestedFilename(from: "# a/b:c\\d")
+        #expect(!name.contains("/"))
+        #expect(!name.contains(":"))
+        #expect(!name.contains("\\"))
+        #expect(name == "abcd")
+    }
+
+    // Contract — result is at most 60 characters and non-empty.
+    @Test("caps very long headings at 60 characters")
+    func capsLength() {
+        let long = String(repeating: "wort ", count: 40)
+        let name = suggestedFilename(from: "# \(long)")
+        #expect(!name.isEmpty)
+        #expect(name.count <= 60)
+    }
+
+    @Test("handles headings without a space after the hash")
+    func noSpaceAfterHash() {
+        #expect(suggestedFilename(from: "#Titel") == "Titel")
+    }
+}

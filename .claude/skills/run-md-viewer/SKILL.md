@@ -11,11 +11,30 @@ driver simulates that hand-off with `simctl openurl`.
 
 Since v1.1 the app also has an **edit mode**: `DocumentView` shows a
 "Bearbeiten" (pencil) button top-right; tapping it swaps the `Markdown`
-preview for a `TextEditor`, and "Speichern" (checkmark) writes the text
-back to `fileURL` via `saveMarkdown(text:to:)`. "Vorschau" (eye) returns
-to a rendered preview of the *draft* without saving; closing with unsaved
-changes shows a confirmation dialog. The Share extension is unaffected —
-it stays read-only display (no edit button).
+preview for a `TextEditor`. In the editor toolbar: **X** discards (with a
+confirmation if anything changed), the **uturn arrow** steps back through
+typing bursts, and the **red checkmark** saves. Closing with unsaved
+changes confirms. The Share extension stays read-only (no edit button).
+
+Since v1.2 you can also start **without a file**: the empty state
+(`ContentView`) has a system `PasteButton` ("Einsetzen") and a "Leeres
+Dokument" button. Both open `DocumentView` with `source: .draft(...)` —
+`fileURL` stays `nil`, the editor opens immediately, and the red checkmark
+triggers a `.fileExporter` "save as" that writes a new `.md`
+(`MarkdownFileDocument`); after that first save `fileURL` is set and the
+checkmark writes in place. `.txt` files now open too (`public.plain-text`
+in `CFBundleDocumentTypes`); editing a non-`.md` file also offers "Als
+Markdown speichern" in the toolbar overflow. `DocumentSource`,
+`MarkdownFileDocument` and `suggestedFilename(from:)` live in
+`md Viewer/md Viewer/MarkdownDraft.swift` (app target only).
+
+The draft flow can't be driven by `simctl openurl`. Two DEBUG launch-arg
+hooks help:
+- `-mdviewerScreenshotEdit` — opens the given `.md` straight into the
+  editor with a visible edit (for the "Bearbeiten" screenshot).
+- `-mdviewerDraft "<text>"` — opens a fresh draft with that text (the
+  simulator won't reliably feed the clipboard into `PasteButton`). Launch
+  with `xcrun simctl launch <udid> com.eribert.md-Viewer -mdviewerDraft $'# Titel\n\nText'`.
 
 There is also a **Share extension** target `ShareExtension`
 (`com.eribert.md-Viewer.ShareExtension`, `com.apple.share-services`) that

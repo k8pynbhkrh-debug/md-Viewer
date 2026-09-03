@@ -16,6 +16,67 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ---
 
+## Version 1.2 — geänderte Texte (in Arbeit)
+
+> **Version 1.2 (03.09.2026, Code fertig, noch nicht eingereicht):** Neues Dokument
+> ohne Ausgangsdatei — im leeren Startbildschirm Text aus der Zwischenablage
+> einfügen („Einsetzen") oder ein leeres Dokument beginnen, dann über den
+> System-Dialog als neue `.md`-Datei sichern. Danach schreibt „Speichern" wie
+> gewohnt in dieselbe Datei. Zusätzlich öffnen jetzt auch `.txt`-Dateien in der
+> App und der Teilen-Erweiterung; beim Bearbeiten einer `.txt` gibt es „Als
+> Markdown speichern". **Reihenfolge:** erst nach Freigabe von 1.1 einreichen.
+
+### Neu in dieser Version / Release Notes (max. 4000 Zeichen) — 1.2
+
+```
+Neu in 1.2: Ohne Datei anfangen
+
+• Auf dem Startbildschirm „Einsetzen" tippen: Text aus der Zwischenablage wird sofort als Markdown angezeigt und ist bearbeitbar. Oder „Leeres Dokument" für einen leeren Start.
+• Mit dem roten Haken als neue .md-Datei sichern; du wählst Ordner und Name im Dateien-Dialog. Danach speichert der Haken wie gewohnt in diese Datei.
+• .txt-Dateien lassen sich jetzt ebenfalls öffnen — in der App und über das Teilen-Menü. Beim Bearbeiten einer .txt gibt es „Als Markdown speichern".
+```
+
+### Schlüsselwörter / Keywords (max. 100 Zeichen) — 1.2
+
+```
+markdown,editor,bearbeiten,einfügen,zwischenablage,txt,notizen,readme,reader,tabelle,code,offline
+```
+(97 Zeichen — „leser", „dokument", „vorschau" raus; „einfügen", „zwischenablage",
+„txt" rein für die neue Funktion.)
+
+### Werbetext / Promotional Text (max. 170 Zeichen) — 1.2
+
+```
+Markdown lesen, bearbeiten und überspeichern. Neu: Text aus der Zwischenablage einfügen und als .md-Datei sichern. Auch .txt. Kein Konto, keine Cloud, offline.
+```
+(157 Zeichen, ohne Gedankenstriche)
+
+### Untertitel / Beschreibung / Kategorie — 1.2
+
+Untertitel unverändert („Markdown lesen & bearbeiten"). In der Beschreibung den
+Abschnitt „BEARBEITEN UND ÜBERSPEICHERN" um zwei Sätze ergänzen: neues Dokument
+aus eingefügtem Text bzw. leer beginnen und als `.md` sichern; `.txt` wird
+mitgeöffnet. Kategorie unverändert (Produktivität / Dienstprogramme, 4+ — die
+Zwischenablage wird nur auf ausdrücklichen Tipp gelesen, kein Hintergrundzugriff).
+
+### App-Prüfungs-Anmerkungen — 1.2
+
+Ergänzen: „Version 1.2 adds a system Paste button on the empty state to start a
+new document from clipboard text, a `.fileExporter` 'save as' dialog to write it
+as a new .md file, and `.txt` support (`public.plain-text` document type). No
+background pasteboard access; the clipboard is only read on an explicit tap of
+the system PasteButton."
+
+### Screenshots — 1.2
+
+Einen Screenshot ergänzen (Position 3, nach „Bearbeiten"): Startbildschirm mit
+„Einsetzen"-/„Leeres Dokument"-Buttons, oder der frische Entwurf im Editor. Für
+den Screenshot-Lauf gibt es das DEBUG-Startargument `-mdviewerDraft "<text>"`
+(öffnet direkt einen Entwurf; die Zwischenablage lässt sich im Simulator nicht
+zuverlässig in den PasteButton bringen).
+
+---
+
 ## Version 1.1 — geänderte Texte
 
 ### Neu in dieser Version / Release Notes (max. 4000 Zeichen)
