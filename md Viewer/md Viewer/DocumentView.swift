@@ -104,7 +104,7 @@ struct DocumentView: View {
                 titleVisibility: .visible
             ) {
                 Button("Verwerfen", role: .destructive) { discardEditing() }
-                Button("Weiter bearbeiten", role: .cancel) {}
+                Button("Abbrechen", role: .cancel) {}
             } message: {
                 Text("Die Änderungen wurden nicht gespeichert und gehen verloren.")
             }
@@ -201,11 +201,11 @@ struct DocumentView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         if isEditing {
-            // Leading = leave the editor WITHOUT keeping changes (with a
-            // confirmation if any were made). Keeping changes is only ever the
-            // red checkmark. The "X" (close document) exists only in the preview.
+            // Leading X = leave the editor WITHOUT keeping changes (confirmed if
+            // any were made). Keeping changes is only ever the red checkmark.
+            // In the preview the same X position closes the document instead.
             ToolbarItem(placement: .cancellationAction) {
-                Button("Vorschau", systemImage: "chevron.backward") {
+                Button("Abbrechen", systemImage: "xmark") {
                     if hasUnsavedChanges {
                         showDiscardConfirmation = true
                     } else {
