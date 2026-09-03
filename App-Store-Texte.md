@@ -5,8 +5,14 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > **Version 1.1 (02.09.2026):** Die App hat jetzt einen optionalen Edit-Modus (Datei
 > direkt bearbeiten und überspeichern). Die betroffenen Store-Texte sind unten im
 > Abschnitt **„Version 1.1 — geänderte Texte"** revidiert; die 1.0-Fassungen bleiben
-> zum Vergleich stehen. Vor der Einreichung die 1.1-Fassungen in App Store Connect
-> übernehmen.
+> zum Vergleich stehen.
+>
+> **Status 03.09.2026:** Build 1.1 (9) mit allen 1.1-Texten, neuen Screenshots
+> (iPhone 6,9" + iPad 13", je 8 Stück in fester Reihenfolge, Bild 2 = Bearbeiten-Modus)
+> und Prüf-Video in App Store Connect eingereicht — Status „Warten auf Prüfung".
+> Editor-Bedienung final: **X** verwirft (mit Rückfrage), **Pfeil** (uturn) macht
+> einzelne Tipp-Bursts schrittweise rückgängig, **roter Haken** speichert (mit
+> Rückfrage). Kein Kreispfeil, kein separater Zurück-Button mehr.
 
 ---
 
@@ -17,10 +23,11 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 ```
 Neu in 1.1: Bearbeiten-Modus
 
-• Markdown-Dateien lassen sich jetzt direkt in der App bearbeiten. Oben rechts auf „Bearbeiten" tippen, Text ändern, mit dem roten Haken speichern — die Originaldatei wird nach einer kurzen Rückfrage überschrieben. Mit dem Kreispfeil verwirfst du die Änderungen wieder.
-• Zwischen Editor und formatierter Vorschau wechselst du jederzeit mit einem Tipp.
-• Beim Schließen mit ungespeicherten Änderungen fragt die App nach.
+• Markdown-Dateien lassen sich jetzt direkt in der App bearbeiten. Oben rechts auf „Bearbeiten" tippen, Text ändern, mit dem roten Haken speichern. Nach einer kurzen Rückfrage wird die Originaldatei überschrieben.
+• Mit dem X verwirfst du die Änderungen (nach Rückfrage), mit dem Pfeil machst du einzelne Änderungen schrittweise rückgängig.
 • Wer nur lesen will, merkt nichts davon — jede Datei öffnet zuerst in der Vorschau.
+
+(ASC-Fassung 03.09.2026; ohne Gedankenstriche.)
 ```
 
 ### Untertitel / Subtitle (max. 30 Zeichen) — 1.1
@@ -28,9 +35,8 @@ Neu in 1.1: Bearbeiten-Modus
 ```
 Markdown lesen & bearbeiten
 ```
-(27 Zeichen — nennt beide Kernfunktionen direkt neben dem Namen. **Noch nicht in
-ASC gesetzt** — dort steht aktuell weiterhin die 1.0-Fassung „Reiner
-Markdown-Betrachter".)
+(27 Zeichen — nennt beide Kernfunktionen direkt neben dem Namen. In ASC gesetzt
+(03.09.2026); ersetzt die 1.0-Fassung „Reiner Markdown-Betrachter".)
 
 ### Werbetext / Promotional Text (max. 170 Zeichen) — 1.1
 
@@ -48,7 +54,7 @@ Kein Datei-Browser. Kein Konto. Keine Cloud. Kein Tracking. Öffne eine .md-Date
 
 BEARBEITEN UND ÜBERSPEICHERN
 
-Oben rechts auf „Bearbeiten" tippen. Aus der Vorschau wird ein Texteditor. Text ändern, mit dem roten Haken speichern. Nach einer kurzen Rückfrage wird die Originaldatei überschrieben. Der Kreispfeil verwirft die Änderungen, der Zurück-Button führt ohne Speichern in die Vorschau. Zwischen Editor und Vorschau wechselst du jederzeit mit einem Tipp. Kein Zwischenspeichern, kein Export, keine zweite Kopie. Die Änderung landet in genau der Datei, die du geöffnet hast.
+Oben rechts auf „Bearbeiten" tippen. Aus der Vorschau wird ein Texteditor. Text ändern, mit dem roten Haken speichern. Nach einer kurzen Rückfrage wird die Originaldatei überschrieben. Mit dem X verwirfst du die Änderungen (nach Rückfrage), mit dem Pfeil machst du einzelne Änderungen schrittweise rückgängig. Kein Zwischenspeichern, kein Export, keine zweite Kopie. Die Änderung landet in genau der Datei, die du geöffnet hast.
 
 Wer nur lesen will, merkt davon nichts. Jede Datei öffnet zuerst in der formatierten Vorschau.
 
