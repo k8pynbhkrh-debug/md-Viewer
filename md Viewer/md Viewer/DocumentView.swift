@@ -10,6 +10,7 @@ struct DocumentView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.undoManager) private var undoManager
     @State private var content: Result<String, DocumentError>?
     @State private var highlightr = Highlightr()
 
@@ -214,6 +215,16 @@ struct DocumentView: View {
                 }
                 .disabled(isSaving)
                 .accessibilityHint("Zurück zur Vorschau, ohne die Änderungen zu übernehmen")
+            }
+            ToolbarItem(placement: .cancellationAction) {
+                // Step-by-step undo of individual edits, in addition to
+                // "Abbrechen" (discard everything). The system undo manager is
+                // the same one the TextEditor records into.
+                Button("Rückgängig", systemImage: "arrow.uturn.backward") {
+                    undoManager?.undo()
+                }
+                .disabled(isSaving)
+                .accessibilityHint("Macht die letzte Änderung rückgängig")
             }
             ToolbarItem(placement: .primaryAction) {
                 Button("Speichern", systemImage: "checkmark") {
