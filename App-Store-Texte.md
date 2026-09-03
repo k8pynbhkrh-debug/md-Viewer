@@ -28,37 +28,39 @@ Neu in 1.1: Bearbeiten-Modus
 ```
 Markdown lesen & bearbeiten
 ```
-(27 Zeichen — nennt beide Kernfunktionen direkt neben dem Namen)
+(27 Zeichen — nennt beide Kernfunktionen direkt neben dem Namen. **Noch nicht in
+ASC gesetzt** — dort steht aktuell weiterhin die 1.0-Fassung „Reiner
+Markdown-Betrachter".)
 
 ### Werbetext / Promotional Text (max. 170 Zeichen) — 1.1
 
 ```
-Markdown-Dateien schön formatiert lesen – mit Tabellen, Code und Listen – und direkt in der App bearbeiten und überspeichern. Kein Konto, keine Cloud, offline.
+Markdown-Dateien schön formatiert lesen, mit Tabellen, Code und Listen. Und bei Bedarf direkt in der App bearbeiten und überspeichern. Kein Konto, keine Cloud, offline.
 ```
-(159 Zeichen)
+(163 Zeichen — ohne Gedankenstriche)
 
 ### Beschreibung (max. 4000 Zeichen) — 1.1
 
 ```
-md Viewer öffnet Markdown-Dateien, zeigt sie sofort sauber formatiert an – und lässt dich denselben Text direkt bearbeiten und zurück in die Datei speichern.
+md Viewer öffnet Markdown-Dateien, zeigt sie sofort sauber formatiert an und lässt dich denselben Text direkt bearbeiten und zurück in die Datei speichern.
 
-Kein Datei-Browser. Kein Konto. Keine Cloud. Kein Tracking. Öffne eine .md-Datei über die Dateien-App oder das Teilen-Menü: md Viewer rendert Überschriften, Listen, Tabellen, fett/kursiv, Codeblöcke mit Syntax-Hervorhebung und Zitate. Kein Rohtext, keine Zeichen zum Entziffern.
+Kein Datei-Browser. Kein Konto. Keine Cloud. Kein Tracking. Öffne eine .md-Datei über die Dateien-App oder das Teilen-Menü. md Viewer rendert Überschriften, Listen, Tabellen, fett/kursiv, Codeblöcke mit Syntax-Hervorhebung und Zitate. Kein Rohtext, keine Zeichen zum Entziffern.
 
-BEARBEITEN & ÜBERSPEICHERN
+BEARBEITEN UND ÜBERSPEICHERN
 
-Oben rechts auf „Bearbeiten" tippen – aus der Vorschau wird ein Texteditor. Text ändern, mit dem roten Haken speichern (nach einer kurzen Rückfrage wird die Originaldatei überschrieben), mit dem Kreispfeil verwerfen. Zwischen Editor und Vorschau wechselst du jederzeit mit einem Tipp. Kein Zwischenspeichern, kein Export, keine zweite Kopie – die Änderung landet in genau der Datei, die du geöffnet hast.
+Oben rechts auf „Bearbeiten" tippen. Aus der Vorschau wird ein Texteditor. Text ändern, mit dem roten Haken speichern. Nach einer kurzen Rückfrage wird die Originaldatei überschrieben. Der Kreispfeil verwirft die Änderungen, der Zurück-Button führt ohne Speichern in die Vorschau. Zwischen Editor und Vorschau wechselst du jederzeit mit einem Tipp. Kein Zwischenspeichern, kein Export, keine zweite Kopie. Die Änderung landet in genau der Datei, die du geöffnet hast.
 
-Wer nur lesen will, merkt davon nichts: Jede Datei öffnet zuerst in der formatierten Vorschau.
+Wer nur lesen will, merkt davon nichts. Jede Datei öffnet zuerst in der formatierten Vorschau.
 
 WARUM SO REDUZIERT?
 
-Weil die meisten Markdown-Apps heute vollwertige Editoren mit Dateiverwaltung, Cloud-Sync und Menüs sind – praktisch, aber überladen, wenn man eine Datei nur schnell lesen und gelegentlich korrigieren will, die einem gerade geschickt wurde. md Viewer macht bewusst nur das: Datei antippen, lesen, bei Bedarf ändern, fertig.
+Die meisten Markdown-Apps sind heute vollwertige Editoren mit Dateiverwaltung, Cloud-Sync und Menüs. Praktisch, aber überladen, wenn man eine Datei nur schnell lesen und gelegentlich korrigieren will. md Viewer macht bewusst nur das: Datei antippen, lesen, bei Bedarf ändern, fertig.
 
 FUNKTIONEN
 
-• Öffnen über „Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. Mail-Anhänge, AirDrop) – die Teilen-Erweiterung zeigt das Dokument sofort formatiert an, ohne die App zu wechseln
+• Öffnen über „Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. Mail-Anhänge, AirDrop). Die Teilen-Erweiterung zeigt das Dokument sofort formatiert an, ohne die App zu wechseln
 • Sauberes Markdown-Rendering: Überschriften, Listen, Aufgabenlisten, Tabellen (horizontal scrollbar), Codeblöcke mit Syntax-Hervorhebung, Zitate, Links, Bilder
-• Bearbeiten und Überspeichern direkt in der geöffneten Datei – mit Rückfrage vor dem Überschreiben und beim Schließen mit ungespeicherten Änderungen
+• Bearbeiten und Überspeichern direkt in der geöffneten Datei, mit Rückfrage vor dem Überschreiben und beim Schließen mit ungespeicherten Änderungen
 • Volle Unicode-Unterstützung: Emoji, arabische und hebräische Schrift (rechts-nach-links), chinesische, japanische und koreanische Zeichen
 • Unterstützt Dynamic Type und VoiceOver
 • Automatisches Dark Mode / Light Mode
@@ -68,8 +70,9 @@ DATENSCHUTZ
 
 md Viewer erhebt keinerlei Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete und bearbeitete Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet.
 
-Für wen ist die App? Für alle, die regelmäßig .md-Dateien bekommen oder verwalten – Notizen, READMEs, technische Doku, Protokolle – und sie schnell und sauber lesen und ab und zu bearbeiten wollen, ohne einen vollen Editor zu öffnen.
+Für wen ist die App? Für alle, die regelmäßig .md-Dateien bekommen oder verwalten (Notizen, READMEs, technische Doku, Protokolle) und sie schnell und sauber lesen und ab und zu bearbeiten wollen, ohne einen vollen Editor zu öffnen.
 ```
+(ohne Gedankenstriche; nur Bindestriche in zusammengesetzten Wörtern)
 
 ### Schlüsselwörter / Keywords (max. 100 Zeichen) — 1.1
 
