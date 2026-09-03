@@ -243,3 +243,87 @@ struct SaveMarkdownTests {
         #expect(reloaded == updated)
     }
 }
+
+@Suite("EditorUndoHistory")
+struct EditorUndoHistoryTests {
+
+    /// A clock that advances only when the test says so, so coalescing is
+    /// deterministic.
+    private func time(_ seconds: TimeInterval) -> Date {
+        Date(timeIntervalSinceReferenceDate: seconds)
+    }
+
+    @Test("empty history has nothing to undo")
+    func emptyHistory() {
+        var history = EditorUndoHistory()
+        #expect(history.canUndo == false)
+        #expect(history.undo() == nil)
+    }
+
+    // Contract — record then undo restores the recorded snapshot.
+    @Test("undo restores the text from before the change")
+    func recordThenUndo() {
+        var history = EditorUndoHistory()
+        history.record(before: "Hallo", at: time(0))
+        #expect(history.canUndo)
+        #expect(history.undo() == "Hallo")
+        #expect(history.canUndo == false)
+    }
+
+    // Contract — changes within coalesceInterval collapse into one step.
+    @Test("keystrokes within the coalesce interval are one undo step")
+    func coalescesRapidTyping() {
+        var history = EditorUndoHistory()
+        history.record(before: "a", at: time(0))
+        history.record(before: "ab", at: time(0.1))
+        history.record(before: "abc", at: time(0.2))
+        #expect(history.stack == ["a"])
+        #expect(history.undo() == "a")
+        #expect(history.canUndo == false)
+    }
+
+    // Contract — a pause longer than coalesceInterval starts a new step.
+    @Test("a pause starts a new undo step")
+    func pauseSplitsSteps() {
+        var history = EditorUndoHistory()
+        history.record(before: "start", at: time(0))
+        history.record(before: "start typing burst one", at: time(1.0))
+        #expect(history.stack == ["start", "start typing burst one"])
+        #expect(history.undo() == "start typing burst one")
+        #expect(history.undo() == "start")
+        #expect(history.undo() == nil)
+    }
+
+    // Contract — the single change caused by undo() itself is not recorded.
+    @Test("the change from undo is not itself recorded")
+    func undoDoesNotRecordItself() {
+        var history = EditorUndoHistory()
+        history.record(before: "v1", at: time(0))
+        history.record(before: "v2", at: time(1.0))
+        #expect(history.undo() == "v2")           // caller now sets editedText = "v2"
+        history.record(before: "v3", at: time(2.0)) // the resulting onChange — must be skipped
+        #expect(history.stack == ["v1"])
+        #expect(history.undo() == "v1")
+        #expect(history.undo() == nil)
+    }
+
+    // Contract — invariant stack.count <= maxSteps.
+    @Test("history is capped at maxSteps, dropping the oldest")
+    func capsAtMaxSteps() {
+        var history = EditorUndoHistory()
+        history.maxSteps = 3
+        for i in 0..<10 {
+            history.record(before: "step\(i)", at: time(Double(i) * 2))
+        }
+        #expect(history.stack.count == 3)
+        #expect(history.stack == ["step7", "step8", "step9"])
+    }
+
+    @Test("reset clears the history")
+    func resetClears() {
+        var history = EditorUndoHistory()
+        history.record(before: "x", at: time(0))
+        history.reset()
+        #expect(history.canUndo == false)
+    }
+}

@@ -10,7 +10,6 @@ struct DocumentView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.undoManager) private var undoManager
     @State private var content: Result<String, DocumentError>?
     @State private var highlightr = Highlightr()
 
@@ -24,6 +23,9 @@ struct DocumentView: View {
     @State private var showSaveConfirmation = false
     @State private var showDiscardConfirmation = false
     @FocusState private var editorFocused: Bool
+
+    /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
+    @State private var undoHistory = EditorUndoHistory()
 
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
     private func syntaxTheme(for scheme: ColorScheme) -> String {
@@ -163,6 +165,7 @@ struct DocumentView: View {
             // setting it in the "Bearbeiten" action (before this view mounts) is
             // dropped by SwiftUI and leaves the keyboard down.
             .onAppear { editorFocused = true }
+            .onChange(of: editedText) { oldValue, _ in undoHistory.record(before: oldValue) }
     }
 
     private func preview(markdown: String) -> some View {
@@ -217,13 +220,12 @@ struct DocumentView: View {
                 .accessibilityHint("Zurück zur Vorschau, ohne die Änderungen zu übernehmen")
             }
             ToolbarItem(placement: .cancellationAction) {
-                // Step-by-step undo of individual edits, in addition to
-                // "Abbrechen" (discard everything). The system undo manager is
-                // the same one the TextEditor records into.
+                // Step-by-step undo of individual typing bursts, in addition to
+                // "Abbrechen" (discard everything).
                 Button("Rückgängig", systemImage: "arrow.uturn.backward") {
-                    undoManager?.undo()
+                    if let restored = undoHistory.undo() { editedText = restored }
                 }
-                .disabled(isSaving)
+                .disabled(isSaving || !undoHistory.canUndo)
                 .accessibilityHint("Macht die letzte Änderung rückgängig")
             }
             ToolbarItem(placement: .primaryAction) {
@@ -251,11 +253,13 @@ struct DocumentView: View {
     /// Enters the editor with a fresh working copy of the saved text.
     ///
     /// - Precondition: the document loaded successfully.
-    /// - Postcondition: `isEditing && editedText == savedText`.
+    /// - Postcondition: `isEditing && editedText == savedText` and the undo
+    ///   history is empty.
     private func beginEditing() {
+        undoHistory.reset()
         editedText = savedText
         isEditing = true
-        assert(isEditing && editedText == savedText)
+        assert(isEditing && editedText == savedText && !undoHistory.canUndo)
     }
 
     /// Leaves the editor and drops the working copy. The next `beginEditing()`
@@ -264,6 +268,7 @@ struct DocumentView: View {
     /// - Postcondition: `!isEditing`.
     private func discardEditing() {
         isEditing = false
+        undoHistory.reset()
         assert(!isEditing)
     }
 
@@ -292,6 +297,7 @@ struct DocumentView: View {
             }.value
             content = .success(text)
             isEditing = false
+            undoHistory.reset()
             assert(savedText == text && !isEditing)
         } catch {
             saveError = (error as? DocumentError)?.errorDescription ?? "Speichern fehlgeschlagen."
