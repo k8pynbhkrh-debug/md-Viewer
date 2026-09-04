@@ -10,11 +10,20 @@
 	<string>2Y8RS9U52W</string>
 	<key>signingStyle</key>
 	<string>manual</string>
+	<!-- Zertifikate per SHA-1-Fingerabdruck statt Name pinnen. Mit den Namen
+	     ("Apple Distribution" / "3rd Party Mac Developer Installer") bricht
+	     `xcodebuild -exportArchive` mit dem Fehler ab, das Provisioning-Profil
+	     enthalte das Installer-Zertifikat nicht (bekannter Xcode-Bug: das
+	     Installer-Zert wird faelschlich gegen das App-Profil geprueft). Mit
+	     gepinnten Fingerabdruecken laeuft der Export sauber durch.
+	     signingCertificate          = "Apple Distribution: Eric Pierre Bertrand (2Y8RS9U52W)"
+	     installerSigningCertificate = "3rd Party Mac Developer Installer: Eric Pierre Bertrand (2Y8RS9U52W)"
+	     Beide gueltig bis 2027-09; bei Zert-Wechsel neuen Fingerabdruck aus
+	     `security find-identity -v` eintragen. -->
 	<key>signingCertificate</key>
-	<string>Apple Distribution</string>
-	<!-- Mac-Catalyst-Build für den Mac App Store. Die Profile müssen als
-	     "Mac App Store"-Profile für dieselben Bundle-IDs unter developer.apple.com
-	     angelegt sein (Plattform "macOS" / "Mac Catalyst App"). -->
+	<string>F591D167ADE9B5DA8F710BB1CC99ADF45ACAFE86</string>
+	<key>installerSigningCertificate</key>
+	<string>82A8207080F02F8D9B0D443365D3F9F10E60DBA6</string>
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.eribert.md-Viewer</key>

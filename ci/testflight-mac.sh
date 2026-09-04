@@ -5,13 +5,17 @@
 # ci/testflight.sh (iOS) — die Mac-Version wird separat geprüft, kann aber
 # parallel zur iOS-Einreichung laufen (Universal Purchase, gleiches Listing).
 #
-# Zusätzliche Voraussetzungen gegenüber ci/testflight.sh:
-#  1. In App Store Connect ist für die App die Plattform **macOS** aktiviert.
-#  2. "Mac App Store"-Provisioning-Profile für com.eribert.md-Viewer und
-#     com.eribert.md-Viewer.ShareExtension (Plattform macOS / "Mac Catalyst App"),
-#     in md Viewer/ExportOptions-mac.plist referenziert.
+# Zusätzliche Voraussetzungen gegenüber ci/testflight.sh (einmalig, alle per
+# App-Store-Connect-API am 2026-09-04 eingerichtet):
+#  1. "Mac Installer Distribution"-Zertifikat im Login-Schlüsselbund
+#     (`security find-identity -v` zeigt "3rd Party Mac Developer Installer …").
+#  2. "Mac Catalyst App Store"-Provisioning-Profile "md Viewer Mac App Store" und
+#     "md Viewer ShareExtension Mac App Store" in
+#     ~/Library/MobileDevice/Provisioning Profiles/ (siehe ExportOptions-mac.plist).
 #  3. Die App ist sandboxed (md Viewer.entitlements / ShareExtension.entitlements)
 #     — Pflicht für den Mac App Store.
+#  4. ExportOptions-mac.plist pinnt beide Zertifikate per SHA-1 (Xcode-Bug-Umgehung,
+#     siehe Kommentar dort).
 #
 # Aufruf identisch zu ci/testflight.sh:
 #
