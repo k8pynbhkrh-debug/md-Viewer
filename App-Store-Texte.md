@@ -20,6 +20,46 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ---
 
+## Version 1.3 — Mac-Version (Mac Catalyst) + .md-Standard-App
+
+> **Version 1.3 (in Arbeit, 04.09.2026):** md Viewer läuft jetzt auch auf dem Mac
+> (Mac Catalyst, „Optimize interface for Mac"). Gleiches App-Store-Listing /
+> Universal Purchase — ein Kauf gilt für iPhone, iPad und Mac. Auf dem Mac lässt
+> sich md Viewer per Klick im Startbildschirm zur **Standard-App für `.md`**
+> machen (`LSSetDefaultRoleHandlerForContentType`); danach öffnet ein Doppelklick
+> im Finder die Datei in md Viewer. Menü „Ablage → Neues Dokument / Öffnen …",
+> Fenster frei skalierbar. App ist jetzt sandboxed (Pflicht Mac App Store).
+> Version 1.3 / Build 11, `MARKETING_VERSION = 1.3`, `CURRENT_PROJECT_VERSION = 11`.
+>
+> **Offen für den Mac-Release** (Code steht, Build für Catalyst grün, iOS-Tests
+> grün): in App Store Connect die Plattform **macOS** aktivieren; „Mac App Store"-
+> Provisioning-Profile für `com.eribert.md-Viewer` und `…​.ShareExtension`
+> anlegen; eigener **Mac-Screenshot-Satz** (z. B. 1440×900); Upload über
+> `ci/testflight-mac.sh` (+ `md Viewer/ExportOptions-mac.plist`); Mac-Build wird
+> **separat** geprüft (parallel zur iOS-Prüfung möglich). Vollständiger
+> Umsetzungsstand: `mac-catalyst-feature-plan.md`.
+
+### Neu in dieser Version / Release Notes (max. 4000 Zeichen) — 1.3
+
+```
+Neu in 1.3: md Viewer für den Mac
+
+• md Viewer gibt es jetzt auch auf dem Mac – im selben Kauf wie iPhone und iPad (Universal Purchase).
+• Auf dem Mac: im Startbildschirm „md Viewer als Standard für .md festlegen" – danach öffnet ein Doppelklick im Finder deine Markdown-Datei direkt in md Viewer.
+• Menü „Ablage": Neues Dokument (⌘N) und Öffnen … (⌘O). Fenster frei in der Größe verstellbar.
+```
+
+### Untertitel / Subtitle (max. 30 Zeichen) — 1.3
+
+```
+Markdown lesen & bearbeiten
+```
+
+(unverändert zu 1.2, falls 1.2 „lesen, bearbeiten, erstellen" bereits live ist,
+kann der Untertitel so bleiben — 1.3 ändert keine Kernfunktion, nur die Plattform.)
+
+---
+
 ## Version 1.2 — geänderte Texte (final, 04.09.2026)
 
 > **Version 1.2:** Neues Dokument ohne Ausgangsdatei — im leeren Startbildschirm

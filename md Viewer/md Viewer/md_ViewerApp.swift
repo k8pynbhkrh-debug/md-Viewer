@@ -6,12 +6,19 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 @main
 struct md_ViewerApp: App {
     /// The document currently presented over the empty state — either a file
     /// handed to us by the OS, or a new draft started from the empty state.
     @State private var document: DocumentSource?
+
+    #if targetEnvironment(macCatalyst)
+    /// Drives the "Öffnen …" menu command's file dialog (Mac only — on iOS the
+    /// system opens files via the Files app / "Teilen" instead).
+    @State private var showOpenDialog = false
+    #endif
 
     var body: some Scene {
         WindowGroup {
@@ -21,6 +28,16 @@ struct md_ViewerApp: App {
             .onOpenURL { url in
                 document = .existing(url)
             }
+            #if targetEnvironment(macCatalyst)
+            .fileImporter(
+                isPresented: $showOpenDialog,
+                allowedContentTypes: [markdownUTType, .plainText]
+            ) { result in
+                if case .success(let url) = result {
+                    document = .existing(url)
+                }
+            }
+            #endif
             .fullScreenCover(item: $document) { source in
                 DocumentView(source: source)
                     .id(source.id)
@@ -38,5 +55,24 @@ struct md_ViewerApp: App {
             }
             #endif
         }
+        #if targetEnvironment(macCatalyst)
+        .defaultSize(width: 800, height: 900)
+        .windowResizability(.contentSize)
+        .commands {
+            // Ersetzt das Standard-„Ablage → Neu": md Viewer hat genau ein
+            // Fenster, „Neu" startet einen Entwurf, „Öffnen …" einen Dateidialog.
+            CommandGroup(replacing: .newItem) {
+                Button("Neues Dokument") {
+                    document = .draft(initialText: "")
+                }
+                .keyboardShortcut("n", modifiers: .command)
+
+                Button("Öffnen …") {
+                    showOpenDialog = true
+                }
+                .keyboardShortcut("o", modifiers: .command)
+            }
+        }
+        #endif
     }
 }

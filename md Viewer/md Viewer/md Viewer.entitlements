@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Pflicht für den Mac App Store (Mac-Catalyst-Build). Auf iOS ohne Wirkung. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- Lese-/Schreibzugriff auf vom Nutzer gewählte Dateien: nötig für den
+	     `.fileExporter` (DocumentView.swift) und für „Öffnen …“ aus dem Menü.
+	     Per Doppelklick / „Öffnen mit“ übergebene Dateien erhalten ihren
+	     Sandbox-Zugriff automatisch über LaunchServices. -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+</dict>
+</plist>

@@ -12,6 +12,7 @@
 		2534BC7F7EEED63706B31A57 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 36A2044F1DB64847957E5C91 /* MarkdownUI */; };
 		329C8A6D2BC6C496B400B039 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 021F58C35C561F70ADBC2BAC /* PrivacyInfo.xcprivacy */; };
 		6277079D31413FB1588D3E66 /* MarkdownDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */; };
+		DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */; };
 		6577216D633AD899B25D261C /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 02A4013D95F2D7E0A55AEF14 /* Highlightr */; };
 		7A93A0912E8E5C037FE69918 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2CBBCA03C04D370582E232 /* Foundation.framework */; };
 		C07F649CBFF9AF5A4AE6D525 /* ShareMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11733AF827EF488B2827C882 /* ShareMarkdownView.swift */; };
@@ -59,9 +60,11 @@
 		28D91C7732C42B6A9E591E63 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "md ViewerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5767D86ACF34E68B083D5984 /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		AA01BB02CC03DD04EE05FF06 /* ShareExtension.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		65AC828D8063669DA40516C6 /* DocumentViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DocumentViewTests.swift; sourceTree = "<group>"; };
 		696367B301E53954641FB059 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownDocument.swift; sourceTree = "<group>"; };
+		DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultMarkdownAppRegistration.swift; sourceTree = "<group>"; };
 		CC2CBBCA03C04D370582E232 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -167,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */,
+				DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -178,6 +182,7 @@
 				5767D86ACF34E68B083D5984 /* ShareViewController.swift */,
 				11733AF827EF488B2827C882 /* ShareMarkdownView.swift */,
 				021F58C35C561F70ADBC2BAC /* PrivacyInfo.xcprivacy */,
+				AA01BB02CC03DD04EE05FF06 /* ShareExtension.entitlements */,
 				696367B301E53954641FB059 /* Info.plist */,
 			);
 			name = ShareExtension;
@@ -327,6 +332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6277079D31413FB1588D3E66 /* MarkdownDocument.swift in Sources */,
+				DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,9 +495,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_LANGUAGE = de;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
 				ENABLE_PREVIEWS = YES;
@@ -506,7 +517,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -523,9 +534,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_LANGUAGE = de;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
 				ENABLE_PREVIEWS = YES;
@@ -540,7 +556,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -557,10 +573,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = "ShareExtension/ShareExtension.entitlements";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_LANGUAGE = de;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -573,7 +593,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -590,10 +610,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = "ShareExtension/ShareExtension.entitlements";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_LANGUAGE = de;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -606,7 +630,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

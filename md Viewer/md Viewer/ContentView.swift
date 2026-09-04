@@ -19,6 +19,14 @@ struct ContentView: View {
         self.onNewDocument = onNewDocument
     }
 
+    #if targetEnvironment(macCatalyst)
+    /// Ob md Viewer beim Erscheinen die Standard-App für `.md` ist. Wird nach
+    /// einem erfolgreichen „Als Standard festlegen" auf `true` gesetzt.
+    @State private var isDefaultMarkdownApp = DefaultMarkdownAppRegistration.isDefault
+    /// Fehlertext des letzten „Als Standard festlegen"-Versuchs, treibt den Alert.
+    @State private var defaultAppError: String?
+    #endif
+
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
@@ -55,6 +63,11 @@ struct ContentView: View {
                     }
                     .padding(.top, 4)
 
+                    #if targetEnvironment(macCatalyst)
+                    defaultAppRow
+                        .padding(.top, 4)
+                    #endif
+
                     Link("Datenschutz & Impressum", destination: privacyPolicyURL)
                         .font(.footnote)
                         .padding(.top, 8)
@@ -63,7 +76,48 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, minHeight: geometry.size.height)
             }
         }
+        #if targetEnvironment(macCatalyst)
+        .alert("Standard-App für .md", isPresented: defaultAppErrorBinding) {
+            Button("OK", role: .cancel) { defaultAppError = nil }
+        } message: {
+            Text("""
+            \(defaultAppError ?? "")
+
+            Alternativ im Finder: eine .md-Datei auswählen, „Informationen“ (⌘I) \
+            öffnen, unter „Öffnen mit“ md Viewer wählen und „Alle ändern …“.
+            """)
+        }
+        #endif
     }
+
+    #if targetEnvironment(macCatalyst)
+    @ViewBuilder
+    private var defaultAppRow: some View {
+        if isDefaultMarkdownApp {
+            Label("md Viewer ist Standard für .md-Dateien", systemImage: "checkmark.circle.fill")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        } else {
+            Button {
+                do {
+                    try DefaultMarkdownAppRegistration.makeDefault()
+                    isDefaultMarkdownApp = true
+                } catch {
+                    defaultAppError = (error as? LocalizedError)?.errorDescription
+                        ?? "Die Zuordnung konnte nicht geändert werden."
+                }
+            } label: {
+                Label("md Viewer als Standard für .md festlegen", systemImage: "doc.badge.gearshape")
+            }
+            .font(.subheadline)
+            .accessibilityHint("Öffnet .md-Dateien künftig per Doppelklick in md Viewer")
+        }
+    }
+
+    private var defaultAppErrorBinding: Binding<Bool> {
+        Binding(get: { defaultAppError != nil }, set: { if !$0 { defaultAppError = nil } })
+    }
+    #endif
 }
 
 #Preview {

@@ -1,9 +1,42 @@
 # md Viewer 1.3 — Mac-Version (Mac Catalyst) + .md-Standard-App
 
-> **Stand 2026-09-04:** Plan genehmigt, **noch kein Code geändert** (nur diese Plandatei).
-> Sauberer Übergabepunkt. Nächster Schritt = Abschnitt „Approach / 1. Mac-Catalyst-Target".
-> Fortsetzung ggf. mit anderem Claude-Account: einfach dieses Repo öffnen, diese Datei +
-> `memory/mac-catalyst-1-3.md` lesen, dann weiterarbeiten.
+> **Stand 2026-09-04 (Umsetzung):** Schritte 1–5 des Approach **umgesetzt und verifiziert** —
+> Mac-Catalyst-Build grün (`xcodebuild … -destination 'platform=macOS,variant=Mac Catalyst'`,
+> inkl. eingebetteter ShareExtension), iOS-Regression grün (33 Tests, iPhone-17-Simulator).
+> Commit auf `main`.
+>
+> **Umgesetzt:**
+> - `project.pbxproj`: `SUPPORTS_MACCATALYST = YES` + `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO`
+>   + `DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO` für Target **md Viewer** und
+>   **ShareExtension** (Debug+Release); `MARKETING_VERSION` 1.2 → **1.3**,
+>   `CURRENT_PROJECT_VERSION` 10 → **11** (alle 4 Configs); `CODE_SIGN_ENTITLEMENTS` gesetzt;
+>   `INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.productivity`; neue Dateien
+>   in Projekt/Sources aufgenommen.
+> - **NEU** `md Viewer/md Viewer/md Viewer.entitlements` — App Sandbox + user-selected files.
+> - **NEU** `md Viewer/ShareExtension/ShareExtension.entitlements` — App Sandbox.
+> - `Info.plist`: Markdown-`CFBundleDocumentTypes` `LSHandlerRank` `Alternate` → **`Owner`**,
+>   Rolle `Viewer` → **`Editor`**; Endungen `mdown`, `mkd` ergänzt. Plain-Text bleibt `Alternate`.
+> - **NEU** `md Viewer/Shared/DefaultMarkdownAppRegistration.swift` — LaunchServices-Wrapper
+>   mit vollem Vertrag (`#if targetEnvironment(macCatalyst)`).
+> - `ContentView.swift`: Catalyst-only Zeile/Button „md Viewer als Standard für .md festlegen"
+>   im Empty State + Fehler-Alert mit Finder-Fallbacktext.
+> - `md_ViewerApp.swift`: Catalyst-only `.commands` (Neues Dokument ⌘N / Öffnen … ⌘O via
+>   `.fileImporter`), `.defaultSize(800×900)`, `.windowResizability(.contentSize)`.
+>
+> **Noch offen (Schritt 6 — Mac-Release, alles manuell / ASC):**
+> - App Store Connect: Plattform **macOS** für die App aktivieren.
+> - „Mac App Store"-Provisioning-Profile für `com.eribert.md-Viewer` und
+>   `com.eribert.md-Viewer.ShareExtension` unter developer.apple.com anlegen
+>   (in `md Viewer/ExportOptions-mac.plist` als „md Viewer Mac App Store" /
+>   „md Viewer ShareExtension Mac App Store" referenziert).
+> - Eigener **Mac-Screenshot-Satz** (z. B. 1440×900) → `App-Store-Screenshots/` um Mac-Ordner
+>   erweitern; `run-md-viewer`-Skill ggf. um Catalyst-Lauf ergänzen.
+> - Upload: **NEU** `ci/testflight-mac.sh` (Catalyst-Archive + Export über
+>   `ExportOptions-mac.plist`) — Aufruf wie `ci/testflight.sh`.
+> - Mac-Build braucht **eigene Review** (parallel zur iOS-Review möglich).
+> - Manuelle Verifikation auf einem echten Mac: Schritte 3–6 unter „Verifikation".
+> - `App-Store-Texte.md`: 1.3-Abschnitt ergänzt (Release Notes „Neu in 1.3: md Viewer für den Mac").
+> - `zeiterfassung.csv` nachgeführt.
 
 ## Context
 

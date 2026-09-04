@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# Baut ein Release-Archive der Mac-Catalyst-Variante von "md Viewer" und lädt es
+# zu App Store Connect / TestFlight (macOS) hoch. Schwesterskript zu
+# ci/testflight.sh (iOS) — die Mac-Version wird separat geprüft, kann aber
+# parallel zur iOS-Einreichung laufen (Universal Purchase, gleiches Listing).
+#
+# Zusätzliche Voraussetzungen gegenüber ci/testflight.sh:
+#  1. In App Store Connect ist für die App die Plattform **macOS** aktiviert.
+#  2. "Mac App Store"-Provisioning-Profile für com.eribert.md-Viewer und
+#     com.eribert.md-Viewer.ShareExtension (Plattform macOS / "Mac Catalyst App"),
+#     in md Viewer/ExportOptions-mac.plist referenziert.
+#  3. Die App ist sandboxed (md Viewer.entitlements / ShareExtension.entitlements)
+#     — Pflicht für den Mac App Store.
+#
+# Aufruf identisch zu ci/testflight.sh:
+#
+#   ci/testflight-mac.sh \
+#     --key   /Pfad/zu/AuthKey_XXXXXXXXXX.p8 \
+#     --key-id XXXXXXXXXX \
+#     --issuer 12345678-1234-1234-1234-1234567890ab
+
+set -euo pipefail
+
+KEY_PATH="" ; KEY_ID="" ; ISSUER_ID=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --key)    KEY_PATH="$2" ; shift 2 ;;
+    --key-id) KEY_ID="$2"   ; shift 2 ;;
+    --issuer) ISSUER_ID="$2"; shift 2 ;;
+    *) echo "Unbekanntes Argument: $1" ; exit 2 ;;
+  esac
+done
+
+if [ -z "$KEY_PATH" ] || [ -z "$KEY_ID" ] || [ -z "$ISSUER_ID" ]; then
+  echo "Fehlt: --key / --key-id / --issuer" ; exit 2
+fi
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+XCODE_DIR="$REPO_ROOT/md Viewer"
+BUILD_DIR="$REPO_ROOT/build"
+ARCHIVE_PATH="$BUILD_DIR/md Viewer (Mac).xcarchive"
+EXPORT_DIR="$BUILD_DIR/testflight-export-mac"
+KEY_DEST_DIR="$HOME/.appstoreconnect/private_keys"
+
+mkdir -p "$KEY_DEST_DIR"
+KEY_DEST="$KEY_DEST_DIR/AuthKey_${KEY_ID}.p8"
+if [ ! "$KEY_PATH" -ef "$KEY_DEST" ]; then
+  cp "$KEY_PATH" "$KEY_DEST"
+fi
+
+echo "▸ Archive (Mac Catalyst) …"
+rm -rf "$ARCHIVE_PATH"
+xcodebuild \
+  -project "$XCODE_DIR/md Viewer.xcodeproj" \
+  -scheme "md Viewer" \
+  -configuration Release \
+  -destination "generic/platform=macOS,variant=Mac Catalyst" \
+  -archivePath "$ARCHIVE_PATH" \
+  -allowProvisioningUpdates \
+  -authenticationKeyPath "$KEY_DEST_DIR/AuthKey_${KEY_ID}.p8" \
+  -authenticationKeyID "$KEY_ID" \
+  -authenticationKeyIssuerID "$ISSUER_ID" \
+  archive
+
+echo "▸ Export + Upload zu App Store Connect …"
+rm -rf "$EXPORT_DIR"
+xcodebuild -exportArchive \
+  -archivePath "$ARCHIVE_PATH" \
+  -exportOptionsPlist "$XCODE_DIR/ExportOptions-mac.plist" \
+  -exportPath "$EXPORT_DIR" \
+  -authenticationKeyPath "$KEY_DEST_DIR/AuthKey_${KEY_ID}.p8" \
+  -authenticationKeyID "$KEY_ID" \
+  -authenticationKeyIssuerID "$ISSUER_ID"
+
+echo "✓ Upload angestoßen. Verarbeitung in App Store Connect → TestFlight (macOS) dauert ein paar Minuten."
