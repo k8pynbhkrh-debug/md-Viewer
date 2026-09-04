@@ -8,16 +8,15 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > einzelne Tipp-Bursts schrittweise rückgängig, **roter Haken** speichert (mit
 > Rückfrage).
 >
-> **Status 04.09.2026 — Version 1.2:** In App Store Connect **fast fertig zur
-> Einreichung**. Erledigt: Version 1.2 angelegt; Beschreibung, Werbetext,
+> **Status 04.09.2026 — Version 1.2: zur Prüfung eingereicht (08:12), Status
+> „Warten auf Prüfung".** In ASC: Version 1.2 mit Beschreibung, Werbetext,
 > Keywords, „Neues in dieser Version", Untertitel („lesen, bearbeiten,
-> erstellen") gesetzt; 9er-Screenshot-Satz iPhone 6,9" + iPad 13" hochgeladen
-> (in Reihenfolge); Build 10 verknüpft; Prüf-Notizen um den 1.2-Absatz ergänzt;
-> `sample-markdown-files.zip` angehängt; Release „automatisch nach Prüfung".
-> Prüf-Video 1.2 aufgenommen und komprimiert
-> (`docs/videos/2026-09-04_v1.2_pruefung_neues-dokument-und-txt.mp4`, ~2 MB);
-> alle Prüf-Videos jetzt unter `docs/videos/` (Übersicht: `docs/videos/README.md`).
-> **Letzter Schritt:** Video in ASC anhängen und **„Zur Prüfung hinzufügen"**.
+> erstellen"); 9er-Screenshot-Satz iPhone 6,9" + iPad 13" (in Reihenfolge,
+> #3 mit Tastatur); Build 10; Prüf-Notizen mit 1.2-Absatz; Anhang
+> `pruefung-1.2.zip` (Prüf-Video + Demo-Dateien); Release „automatisch nach
+> Prüfung". Video-Original + Übersicht: `docs/videos/` (`README.md`).
+> Nächster Schritt: Apples Entscheidung abwarten (~24–48 h, Mail an
+> eric.bertrand90@outlook.de bzw. ASC → Vertrieb → App-Prüfung).
 
 ---
 
