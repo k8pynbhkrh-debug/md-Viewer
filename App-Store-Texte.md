@@ -103,6 +103,34 @@ Mac erzeugt (`scratchpad/macshots.py`: App starten, Fenster mittig auf
 5. `05-sprachen` — Sprachen & Emoji.md (RTL, CJK, Emoji, Symbole)
 6. `06-bearbeiten` — Editor mit Rohtext, Toolbar (X / Rückgängig / roter Haken)
 
+### App-Prüfungs-Anmerkungen — macOS 1.0 (in ASC eingetragen)
+
+Steht im **Notes-Feld** der macOS-1.0-Version: App Store Connect → md Viewer →
+**Vertrieb** → **macOS 1.0** → Abschnitt **„App-Prüfungsinformationen"** → Feld
+**„Anmerkungen"**. Direktlink-Muster:
+`https://appstoreconnect.apple.com/apps/6806814038/distribution/macos/version/inflight`
+
+Wortlaut (englisch, für Apples Prüfer):
+
+```
+ABOUT THE APP
+md Viewer displays Markdown (.md / .markdown) and .txt files and lets the user edit and re-save them in place, or create a new document from pasted/typed text and save it as a .md file. No file manager, no account, no cloud, no backend, no analytics, no tracking, no in-app purchases, no ads, no user-generated content shared with anyone. Bundled open-source rendering libraries only (swift-markdown-ui, swift-cmark, Highlightr, NetworkImage), MIT-licensed, running on device. The only network request is if an opened Markdown file references a remote image URL. No AI services. No ATT prompt. No location/contacts/camera prompts.
+
+This is the FIRST macOS release (version 1.0). The same app already ships on iOS/iPadOS (currently 1.2); this is a Mac Catalyst build distributed via Universal Purchase (one App Store listing).
+
+MAC-SPECIFIC IN 1.0
+On the empty-state screen the Mac build has one button not present on iOS: "md Viewer als Standard fuer .md festlegen". It calls LaunchServices (LSSetDefaultRoleHandlerForContentType) to register md Viewer as the default handler for the Markdown UTI net.daringfireball.markdown. macOS shows its own confirmation the first time; on failure the app shows an alert pointing to Finder > Get Info > Open With. The File menu has "Neues Dokument" (Cmd-N) and "Oeffnen ..." (Cmd-O); the window is resizable. The bundled Share extension also runs under Mac Catalyst. The app is sandboxed (com.apple.security.app-sandbox) with com.apple.security.files.user-selected.read-write for the save dialog; files opened by double-click get sandbox access via LaunchServices.
+
+HOW TO TEST (Mac)
+1. Launch the app. On the empty state, click "md Viewer als Standard fuer .md festlegen" (macOS may ask to confirm). 2. Double-click any .md file in Finder - it opens in md Viewer, rendered. 3. Click "Bearbeiten" (top right), change the text, click the red checkmark, confirm - the original file is overwritten. 4. File > Neues Dokument, type text, red checkmark, choose a location - a new .md file is written.
+
+REGIONAL DIFFERENCES / REGULATED CONTENT
+None. Identical behavior in all regions. The app only displays and edits files supplied by the user; no protected third-party content.
+
+DEVICES TESTED
+Mac (Apple silicon, macOS 26, Mac Catalyst); iPhone (physical device) and iPhone 17 Pro Max / iPad Pro 13-inch simulators, iOS/iPadOS 26.
+```
+
 ---
 
 ## Version 1.2 — geänderte Texte (final, 04.09.2026)
