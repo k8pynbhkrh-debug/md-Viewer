@@ -11,11 +11,11 @@
 # Strang und startet mit Marketing-Version 1.0. Dieses Skript überschreibt daher
 # beim Archivieren MAC_MARKETING_VERSION / MAC_BUILD — nicht die pbxproj ändern.
 #
-# ACHTUNG Build-Nummer: App Store Connect verlangt, dass CURRENT_PROJECT_VERSION
-# pro Plattform monoton wächst, UNABHÄNGIG von der Marketing-Version. Für den Mac
-# wurden vorab Test-Builds 11/12/13 hochgeladen, daher startet MAC_BUILD bei 14
-# (ein „1.0 (1)" wurde von ASC still verworfen, weil 1 < 13). Ein niedriger Build
-# erscheint einfach nie in ASC — kein Fehler beim Upload.
+# Build-Nummer: muss innerhalb desselben Marketing-Version-Strangs eindeutig sein
+# und wachsen. Der Mac-1.0-Strang hat schon Build 14 (davor gab es die
+# Wegwerf-Test-Uploads 11/12/13 im Strang „1.3"). Ein brandneuer Strang wird von
+# ASC erst nach 20–40 min verarbeitet — nicht wundern, wenn der Build zunächst
+# nicht auftaucht.
 # Nächstes Mac-Update: MAC_MARKETING_VERSION=1.1 MAC_BUILD=15 ci/testflight-mac.sh …
 #
 # Zusätzliche Voraussetzungen gegenüber ci/testflight.sh (einmalig, alle per
