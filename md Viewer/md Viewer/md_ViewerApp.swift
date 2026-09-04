@@ -42,6 +42,17 @@ struct md_ViewerApp: App {
                 DocumentView(source: source)
                     .id(source.id)
             }
+            #if targetEnvironment(macCatalyst)
+            // Fenster frei skalierbar machen. Ohne das `.frame` leitet SwiftUI
+            // die Maximalgröße aus der „idealen" Größe des Inhalts ab (der
+            // GeometryReader im Empty State meldet eine kleine feste Größe) —
+            // das Fenster ließ sich dann nur verkleinern und nie über ~924×662
+            // hinaus vergrößern. `.windowResizability` und `.defaultSize` dürfen
+            // NICHT gesetzt sein: beide reaktivieren unter Mac Catalyst genau
+            // diese Deckelung. Die Startgröße bestimmt macOS und merkt sie sich.
+            .frame(minWidth: 480, idealWidth: 1080, maxWidth: .infinity,
+                   minHeight: 400, idealHeight: 760, maxHeight: .infinity)
+            #endif
             #if DEBUG
             // Screenshot-/Smoke-Test-Hook: „-mdviewerDraft <text>" öffnet beim
             // Start direkt einen Entwurf (die Zwischenablage lässt sich im
@@ -56,8 +67,6 @@ struct md_ViewerApp: App {
             #endif
         }
         #if targetEnvironment(macCatalyst)
-        .defaultSize(width: 1200, height: 820)
-        .windowResizability(.contentMinSize)
         .commands {
             // Ersetzt das Standard-„Ablage → Neu": md Viewer hat genau ein
             // Fenster, „Neu" startet einen Entwurf, „Öffnen …" einen Dateidialog.
