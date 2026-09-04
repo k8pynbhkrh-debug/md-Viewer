@@ -1,37 +1,45 @@
-# md Viewer 1.3 — Mac-Version (Mac Catalyst) + .md-Standard-App
+# md Viewer — Mac-Version (Mac Catalyst) + .md-Standard-App
 
-> **Stand 2026-09-04 (Schritt 6 fast fertig):** Code (Schritte 1–5) umgesetzt,
-> Mac-Catalyst-Build zu App Store Connect hochgeladen (aktuell **Build 13**),
-> macOS-Version 1.3 in ASC angelegt und befüllt. **Es fehlt nur noch Erics
-> „Submit for Review".**
+> Interner Arbeitstitel war „1.3". **Ergebnis:** Der Mac App Store bekommt einen
+> **eigenen Versions-Strang und startet mit `1.0`** (erste Mac-Version). iOS/iPadOS
+> bleibt unberührt bei **1.2** (in Prüfung). Die Xcode-Projekteinstellungen stehen
+> wieder auf 1.2 / Build 10 (iOS-Strang); `ci/testflight-mac.sh` überschreibt beim
+> Archivieren auf `MAC_MARKETING_VERSION` / `MAC_BUILD` (Default 1.0 / 1).
 >
-> **Schritt 6 — erledigt (überwiegend per App-Store-Connect-REST-API automatisiert,
-> Skript-Reste unter `scratchpad/asc.py`):**
+> **Stand 2026-09-04 (Schritt 6 fast fertig):** Mac-Catalyst-Build **1.0 (1)** zu
+> App Store Connect hochgeladen, macOS-Version 1.0 in ASC angelegt und befüllt.
+> **Es fehlt nur noch Erics „Zur Prüfung einreichen".**
+>
+> **Schritt 6 — erledigt (überwiegend per App-Store-Connect-REST-API, Skript-Reste
+> unter `scratchpad/asc.py` + `macshots.py`):**
 > - Signing komplett per API eingerichtet (kein developer.apple.com nötig): zwei
 >   `MAC_CATALYST_APP_STORE`-Profile „md Viewer Mac App Store" /
 >   „md Viewer ShareExtension Mac App Store"; „Mac Installer Distribution"-Zertifikat
 >   (CSR → API → legacy-p12 → `security import`, von Eric bestätigt).
 > - `ExportOptions-mac.plist`: Zertifikate per SHA-1 gepinnt (Xcode-Bug-Umgehung, s. u.).
-> - Build 11/12/13 als Mac Catalyst archiviert, signiert, hochgeladen
->   (`xcodebuild -exportArchive`, „EXPORT SUCCEEDED"). Build 13 = aktueller Stand,
->   an die Version geheftet.
-> - ASC: macOS-Plattform (durch Upload automatisch), `appStoreVersion` 1.3 (MAC_OS)
->   angelegt; de-DE-Localization gefüllt (Beschreibung mit „AUF DEM MAC"-Abschnitt,
+> - Mac Catalyst archiviert (`MARKETING_VERSION=1.0 CURRENT_PROJECT_VERSION=1`),
+>   signiert, hochgeladen (`xcodebuild -exportArchive`, „EXPORT SUCCEEDED").
+>   (Frühere Test-Uploads 11/12/13 als „1.3" existieren noch in ASC, sind aber
+>   abgelöst.)
+> - ASC: macOS-Plattform (durch Upload automatisch), `appStoreVersion` **1.0**
+>   (MAC_OS); de-DE-Localization gefüllt (Beschreibung mit „AUF DEM MAC"-Abschnitt,
 >   Keywords, Werbetext, URLs; „Neues in dieser Version" bei der ersten Mac-Version
 >   von ASC gesperrt = normal); **6 Mac-Screenshots** (2560×1600, APP_DESKTOP)
->   hochgeladen und sortiert; Prüf-Notizen um „VERSION 1.3" + „HOW TO TEST (Mac)" +
->   „DEVICES TESTED" ergänzt.
+>   hochgeladen und sortiert; Prüf-Notizen mit „FIRST macOS release (1.0)" +
+>   „HOW TO TEST (Mac)".
 >
 > **Noch offen:**
-> - **Eric: in ASC „Zur Prüfung einreichen"** (macOS-Version 1.3) — bewusst nicht
->   automatisch ausgelöst. Danach separate Mac-Review (parallel zur iOS-Prüfung).
+> - **Eric: in ASC „Zur Prüfung einreichen"** (macOS 1.0) — bewusst nicht
+>   automatisch ausgelöst. Danach separate Mac-Review (parallel zur iOS-1.2-Prüfung;
+>   die beiden Plattformen blockieren sich nicht).
 > - Alterseinstufung: bei Universal Purchase app-weit; ASC meldet beim Submit, falls
 >   für macOS noch etwas fehlt.
 > - Manuelle Funktionsprüfung auf einem echten Mac (Standard setzen → Doppelklick aus
->   Finder → Bearbeiten/Speichern) — empfohlen vor dem Submit.
+>   Finder → Bearbeiten/Speichern) — empfohlen vor dem Submit. Testversion liegt als
+>   `~/Desktop/md Viewer (Testversion).app` (dev-signiert; oder via TestFlight-Mac,
+>   Gruppe „Intern").
 > - Optionaler Polish (kein Blocker): `PasteButton`/„Einsetzen" fehlt im Mac-Empty-State
->   (Catalyst rendert `PasteButton` dort nicht); Fenster-Startgröße/`.contentMinSize`
->   auf großen Displays feinjustieren.
+>   (Catalyst rendert `PasteButton` dort nicht).
 >
 > **Xcode-Bug bei `-exportArchive` (Mac App Store):** „Provisioning profile … doesn't
 > include signing certificate '3rd Party Mac Developer Installer'" — trotz korrektem
@@ -39,11 +47,11 @@
 > pinnen (`signingCertificate` = Apple Distribution, `installerSigningCertificate` =
 > Installer). Dann läuft Export + Upload durch.
 >
-> **Umgesetzt (Code, Schritte 1–5):**
+> **Umgesetzt (Code):**
 > - `project.pbxproj`: `SUPPORTS_MACCATALYST = YES` + `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO`
 >   + `DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO` für Target **md Viewer** und
->   **ShareExtension** (Debug+Release); `MARKETING_VERSION` 1.2 → **1.3**,
->   `CURRENT_PROJECT_VERSION` 10 → **11** (alle 4 Configs); `CODE_SIGN_ENTITLEMENTS` gesetzt;
+>   **ShareExtension** (Debug+Release); `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`
+>   bleiben beim iOS-Strang (1.2 / 10); `CODE_SIGN_ENTITLEMENTS` gesetzt;
 >   `INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.productivity`; neue Dateien
 >   in Projekt/Sources aufgenommen.
 > - **NEU** `md Viewer/md Viewer/md Viewer.entitlements` — App Sandbox + user-selected files.
@@ -98,8 +106,10 @@ Build-Configs `07113519…` / `0711351A…`).
 - `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO`
 - `DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO` (Mac nutzt denselben Bundle-Id
   `com.eribert.md-Viewer` → Universal Purchase)
-- `MARKETING_VERSION` 1.2 → **1.3**, `CURRENT_PROJECT_VERSION` 10 → **11** (auch in den
-  ShareExtension-Configs `27B6B451…` / `A800C207…` gleichziehen)
+- **Versionsnummern:** ~~1.2 → 1.3~~ — verworfen. Der Mac App Store bekommt einen
+  eigenen Strang ab `1.0`; die pbxproj bleibt beim iOS-Strang (1.2 / 10),
+  `ci/testflight-mac.sh` überschreibt `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`
+  beim Mac-Archiv (siehe Header oben).
 - `CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements"`
 - `INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity"` (Mac App Store)
 - Catalyst-Mindestversion = macOS 14 (aus `IPHONEOS_DEPLOYMENT_TARGET = 17.0` abgeleitet, ok).
