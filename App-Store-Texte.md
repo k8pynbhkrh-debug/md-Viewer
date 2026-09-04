@@ -22,41 +22,80 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ## Version 1.3 — Mac-Version (Mac Catalyst) + .md-Standard-App
 
-> **Version 1.3 (in Arbeit, 04.09.2026):** md Viewer läuft jetzt auch auf dem Mac
-> (Mac Catalyst, „Optimize interface for Mac"). Gleiches App-Store-Listing /
-> Universal Purchase — ein Kauf gilt für iPhone, iPad und Mac. Auf dem Mac lässt
-> sich md Viewer per Klick im Startbildschirm zur **Standard-App für `.md`**
-> machen (`LSSetDefaultRoleHandlerForContentType`); danach öffnet ein Doppelklick
-> im Finder die Datei in md Viewer. Menü „Ablage → Neues Dokument / Öffnen …",
+> **Version 1.3 (04.09.2026): in App Store Connect fertig vorbereitet, wartet auf
+> Erics „Zur Prüfung einreichen".** md Viewer läuft jetzt auch auf dem Mac
+> (Mac Catalyst). Gleiches App-Store-Listing / Universal Purchase — ein Kauf gilt
+> für iPhone, iPad und Mac. Auf dem Mac lässt sich md Viewer per Klick im
+> Startfenster zur **Standard-App für `.md`** machen
+> (`LSSetDefaultRoleHandlerForContentType`); danach öffnet ein Doppelklick im
+> Finder die Datei in md Viewer. Menü „Ablage → Neues Dokument (⌘N) / Öffnen … (⌘O)",
 > Fenster frei skalierbar. App ist jetzt sandboxed (Pflicht Mac App Store).
-> Version 1.3 / Build 11, `MARKETING_VERSION = 1.3`, `CURRENT_PROJECT_VERSION = 11`.
+> `MARKETING_VERSION = 1.3`, aktueller Upload **Build 13**.
 >
-> **Offen für den Mac-Release** (Code steht, Build für Catalyst grün, iOS-Tests
-> grün): in App Store Connect die Plattform **macOS** aktivieren; „Mac App Store"-
-> Provisioning-Profile für `com.eribert.md-Viewer` und `…​.ShareExtension`
-> anlegen; eigener **Mac-Screenshot-Satz** (z. B. 1440×900); Upload über
-> `ci/testflight-mac.sh` (+ `md Viewer/ExportOptions-mac.plist`); Mac-Build wird
-> **separat** geprüft (parallel zur iOS-Prüfung möglich). Vollständiger
-> Umsetzungsstand: `mac-catalyst-feature-plan.md`.
+> **In ASC bereits eingetragen** (weitgehend per App-Store-Connect-REST-API,
+> Skript `scratchpad/asc.py`): macOS-Plattform (durch Build-Upload automatisch);
+> `appStoreVersion` 1.3 (MAC_OS); de-DE-Beschreibung (mit „AUF DEM MAC"-Abschnitt,
+> unten), Keywords, Werbetext, URLs; 6 Mac-Screenshots (2560×1600); Prüf-Notizen
+> mit 1.3-Absatz + „HOW TO TEST (Mac)". „Neues in dieser Version" ist bei der
+> ersten Mac-Version von ASC gesperrt (normal).
+>
+> **Signing** (einmalig, per API): zwei `MAC_CATALYST_APP_STORE`-Profile +
+> „Mac Installer Distribution"-Zertifikat. `ExportOptions-mac.plist` pinnt beide
+> Zertifikate per SHA-1 (Xcode-`-exportArchive`-Bug). Details:
+> `mac-catalyst-feature-plan.md`.
+>
+> **Noch offen:** Eric klickt in ASC „Zur Prüfung einreichen" (macOS 1.3) →
+> separate Mac-Review. Vorher empfohlen: kurze Funktionsprüfung auf einem echten
+> Mac. Optionaler Polish (kein Blocker): „Einsetzen"-Button fehlt im
+> Mac-Empty-State (Catalyst rendert `PasteButton` dort nicht).
 
-### Neu in dieser Version / Release Notes (max. 4000 Zeichen) — 1.3
+### Neu in dieser Version / Release Notes — 1.3
+
+Bei der **ersten Mac-Version** ist „Neues in dieser Version" in ASC gesperrt
+(kein Vorgänger auf der Plattform). Der folgende Text wird daher **nicht**
+verwendet, ist aber für ein späteres Mac-Update aufgehoben:
 
 ```
 Neu in 1.3: md Viewer für den Mac
 
 • md Viewer gibt es jetzt auch auf dem Mac – im selben Kauf wie iPhone und iPad (Universal Purchase).
-• Auf dem Mac: im Startbildschirm „md Viewer als Standard für .md festlegen" – danach öffnet ein Doppelklick im Finder deine Markdown-Datei direkt in md Viewer.
+• Auf dem Mac: im Startfenster „md Viewer als Standard für .md festlegen" – danach öffnet ein Doppelklick im Finder deine Markdown-Datei direkt in md Viewer.
 • Menü „Ablage": Neues Dokument (⌘N) und Öffnen … (⌘O). Fenster frei in der Größe verstellbar.
+```
+
+### Werbetext / Promotional Text (max. 170) — 1.3 (macOS), in ASC eingetragen
+
+```
+md Viewer jetzt auch für den Mac – ein Kauf für iPhone, iPad und Mac. Auf dem Mac Standard-App für .md. Lesen, bearbeiten, neu anlegen. Offline, kein Konto.
 ```
 
 ### Untertitel / Subtitle (max. 30 Zeichen) — 1.3
 
+Unverändert zur iOS-Fassung. 1.3 ändert keine Kernfunktion, nur die Plattform.
+
+### Beschreibung — 1.3 (macOS), „AUF DEM MAC"-Abschnitt (in ASC eingetragen)
+
+Die Mac-Beschreibung ist die iOS-1.2-Beschreibung plus dieser Abschnitt (nach dem
+Intro, vor „ERSTELLEN, BEARBEITEN, SPEICHERN") und „Finder" in der Aufzählung:
+
 ```
-Markdown lesen & bearbeiten
+AUF DEM MAC
+
+md Viewer läuft auf iPhone, iPad und Mac – ein Kauf für alle drei. Auf dem Mac kannst du md Viewer im Startfenster mit einem Klick zur Standard-App für .md-Dateien machen. Danach öffnet ein Doppelklick im Finder deine Markdown-Datei direkt in md Viewer, statt in Vorschau oder TextEdit. Über das Menü „Ablage" legst du mit „Neues Dokument" (⌘N) einen Entwurf an oder öffnest eine Datei mit „Öffnen …" (⌘O). Das Fenster ist frei skalierbar.
 ```
 
-(unverändert zu 1.2, falls 1.2 „lesen, bearbeiten, erstellen" bereits live ist,
-kann der Untertitel so bleiben — 1.3 ändert keine Kernfunktion, nur die Plattform.)
+### Mac-Screenshots — 1.3 (in ASC hochgeladen)
+
+6 Stück, **2560×1600** (APP_DESKTOP), im Simulator-losen Catalyst-Lauf auf dem
+Mac erzeugt (`scratchpad/macshots.py`: App starten, Fenster mittig auf
+2560×1600-Leinwand komponiert). Reihenfolge:
+
+1. `02-uebersicht` — Team-Notiz.md gerendert (Überschriften, Aufgabenliste, Tabelle mit Emoji)
+2. `01-mac-standard-app` — Startfenster mit Button „md Viewer als Standard für .md festlegen"
+3. `03-tabelle` — Release-Matrix.md (breite Tabelle)
+4. `04-code` — Code-Beispiele.md (Syntax-Hervorhebung Swift/Python/Shell/JSON)
+5. `05-sprachen` — Sprachen & Emoji.md (RTL, CJK, Emoji, Symbole)
+6. `06-bearbeiten` — Editor mit Rohtext, Toolbar (X / Rückgängig / roter Haken)
 
 ---
 

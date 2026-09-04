@@ -1,11 +1,45 @@
 # md Viewer 1.3 — Mac-Version (Mac Catalyst) + .md-Standard-App
 
-> **Stand 2026-09-04 (Umsetzung):** Schritte 1–5 des Approach **umgesetzt und verifiziert** —
-> Mac-Catalyst-Build grün (`xcodebuild … -destination 'platform=macOS,variant=Mac Catalyst'`,
-> inkl. eingebetteter ShareExtension), iOS-Regression grün (33 Tests, iPhone-17-Simulator).
-> Commit auf `main`.
+> **Stand 2026-09-04 (Schritt 6 fast fertig):** Code (Schritte 1–5) umgesetzt,
+> Mac-Catalyst-Build zu App Store Connect hochgeladen (aktuell **Build 13**),
+> macOS-Version 1.3 in ASC angelegt und befüllt. **Es fehlt nur noch Erics
+> „Submit for Review".**
 >
-> **Umgesetzt:**
+> **Schritt 6 — erledigt (überwiegend per App-Store-Connect-REST-API automatisiert,
+> Skript-Reste unter `scratchpad/asc.py`):**
+> - Signing komplett per API eingerichtet (kein developer.apple.com nötig): zwei
+>   `MAC_CATALYST_APP_STORE`-Profile „md Viewer Mac App Store" /
+>   „md Viewer ShareExtension Mac App Store"; „Mac Installer Distribution"-Zertifikat
+>   (CSR → API → legacy-p12 → `security import`, von Eric bestätigt).
+> - `ExportOptions-mac.plist`: Zertifikate per SHA-1 gepinnt (Xcode-Bug-Umgehung, s. u.).
+> - Build 11/12/13 als Mac Catalyst archiviert, signiert, hochgeladen
+>   (`xcodebuild -exportArchive`, „EXPORT SUCCEEDED"). Build 13 = aktueller Stand,
+>   an die Version geheftet.
+> - ASC: macOS-Plattform (durch Upload automatisch), `appStoreVersion` 1.3 (MAC_OS)
+>   angelegt; de-DE-Localization gefüllt (Beschreibung mit „AUF DEM MAC"-Abschnitt,
+>   Keywords, Werbetext, URLs; „Neues in dieser Version" bei der ersten Mac-Version
+>   von ASC gesperrt = normal); **6 Mac-Screenshots** (2560×1600, APP_DESKTOP)
+>   hochgeladen und sortiert; Prüf-Notizen um „VERSION 1.3" + „HOW TO TEST (Mac)" +
+>   „DEVICES TESTED" ergänzt.
+>
+> **Noch offen:**
+> - **Eric: in ASC „Zur Prüfung einreichen"** (macOS-Version 1.3) — bewusst nicht
+>   automatisch ausgelöst. Danach separate Mac-Review (parallel zur iOS-Prüfung).
+> - Alterseinstufung: bei Universal Purchase app-weit; ASC meldet beim Submit, falls
+>   für macOS noch etwas fehlt.
+> - Manuelle Funktionsprüfung auf einem echten Mac (Standard setzen → Doppelklick aus
+>   Finder → Bearbeiten/Speichern) — empfohlen vor dem Submit.
+> - Optionaler Polish (kein Blocker): `PasteButton`/„Einsetzen" fehlt im Mac-Empty-State
+>   (Catalyst rendert `PasteButton` dort nicht); Fenster-Startgröße/`.contentMinSize`
+>   auf großen Displays feinjustieren.
+>
+> **Xcode-Bug bei `-exportArchive` (Mac App Store):** „Provisioning profile … doesn't
+> include signing certificate '3rd Party Mac Developer Installer'" — trotz korrektem
+> Profil. Lösung: in `ExportOptions-mac.plist` **beide** Zertifikate per SHA-1-Hash
+> pinnen (`signingCertificate` = Apple Distribution, `installerSigningCertificate` =
+> Installer). Dann läuft Export + Upload durch.
+>
+> **Umgesetzt (Code, Schritte 1–5):**
 > - `project.pbxproj`: `SUPPORTS_MACCATALYST = YES` + `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO`
 >   + `DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO` für Target **md Viewer** und
 >   **ShareExtension** (Debug+Release); `MARKETING_VERSION` 1.2 → **1.3**,
@@ -21,22 +55,8 @@
 > - `ContentView.swift`: Catalyst-only Zeile/Button „md Viewer als Standard für .md festlegen"
 >   im Empty State + Fehler-Alert mit Finder-Fallbacktext.
 > - `md_ViewerApp.swift`: Catalyst-only `.commands` (Neues Dokument ⌘N / Öffnen … ⌘O via
->   `.fileImporter`), `.defaultSize(800×900)`, `.windowResizability(.contentSize)`.
->
-> **Noch offen (Schritt 6 — Mac-Release, alles manuell / ASC):**
-> - App Store Connect: Plattform **macOS** für die App aktivieren.
-> - „Mac App Store"-Provisioning-Profile für `com.eribert.md-Viewer` und
->   `com.eribert.md-Viewer.ShareExtension` unter developer.apple.com anlegen
->   (in `md Viewer/ExportOptions-mac.plist` als „md Viewer Mac App Store" /
->   „md Viewer ShareExtension Mac App Store" referenziert).
-> - Eigener **Mac-Screenshot-Satz** (z. B. 1440×900) → `App-Store-Screenshots/` um Mac-Ordner
->   erweitern; `run-md-viewer`-Skill ggf. um Catalyst-Lauf ergänzen.
-> - Upload: **NEU** `ci/testflight-mac.sh` (Catalyst-Archive + Export über
->   `ExportOptions-mac.plist`) — Aufruf wie `ci/testflight.sh`.
-> - Mac-Build braucht **eigene Review** (parallel zur iOS-Review möglich).
-> - Manuelle Verifikation auf einem echten Mac: Schritte 3–6 unter „Verifikation".
-> - `App-Store-Texte.md`: 1.3-Abschnitt ergänzt (Release Notes „Neu in 1.3: md Viewer für den Mac").
-> - `zeiterfassung.csv` nachgeführt.
+>   `.fileImporter`), `.defaultSize(1200×820)`, `.windowResizability(.contentMinSize)`.
+> - `ci/testflight-mac.sh` + `md Viewer/ExportOptions-mac.plist` (Catalyst-Archive + Upload).
 
 ## Context
 

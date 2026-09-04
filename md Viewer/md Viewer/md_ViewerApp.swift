@@ -56,8 +56,8 @@ struct md_ViewerApp: App {
             #endif
         }
         #if targetEnvironment(macCatalyst)
-        .defaultSize(width: 800, height: 900)
-        .windowResizability(.contentSize)
+        .defaultSize(width: 1200, height: 820)
+        .windowResizability(.contentMinSize)
         .commands {
             // Ersetzt das Standard-„Ablage → Neu": md Viewer hat genau ein
             // Fenster, „Neu" startet einen Entwurf, „Öffnen …" einen Dateidialog.
