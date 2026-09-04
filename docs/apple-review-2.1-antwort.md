@@ -7,9 +7,9 @@ Submission ID: 6a374ee4-56f5-4868-a026-ba0e2d84d054 · Version 1.0 (1) · abgele
 - [x] Notes-Feld ("Anmerkungen") in App Store Connect ausgefüllt und gesichert (31.08.2026)
 - [x] TestFlight: interne Gruppe "Intern" angelegt, Eric als Tester eingetragen, Build 1.0 (1) "Bereit zum Testen" (31.08.2026)
 - [x] TestFlight-App aufs iPhone geladen, md Viewer installiert
-- [x] Bildschirmaufnahme erstellt: `Bildschirmaufnahme md Viewer.MP4` (53 s, iPhone 16 Pro)
-- [x] Video komprimiert fuer den Upload: `docs/apple-review-video.mp4` (3,5 MB, gut lesbar) <- DIESE Datei anhaengen
-- [x] Antworttext + Anhaenge (`apple-review-video.mp4`, `sample-markdown-files.zip`) im Resolution Center GESENDET (31.08.2026, 13:12)
+- [x] Bildschirmaufnahme erstellt: `docs/videos/roh/2026-08-31_v1.0_roh.MP4` (53 s, iPhone 16 Pro)
+- [x] Video komprimiert fuer den Upload: `docs/videos/2026-08-31_v1.0_pruefung_oeffnen-und-teilen-extension.mp4` <- diese Datei wurde angehaengt
+- [x] Antworttext + Anhaenge (`2026-08-31_v1.0_pruefung_oeffnen-und-teilen-extension.mp4`, `sample-markdown-files.zip`) im Resolution Center GESENDET (31.08.2026, 13:12)
 - [x] Version "Pruefung aktualisieren" + Uebermittlung "Erneut zur App-Pruefung uebermitteln" -> Status "Warten auf Pruefung"
 - [ ] Auf Apples neue Entscheidung warten (~24-48h). Ergebnis in ASC -> Vertrieb -> App-Pruefung, bzw. Mail an eric.bertrand90@outlook.de
 

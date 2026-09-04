@@ -38,8 +38,10 @@ ohne Rückfrage (Guideline 2.1) nachvollziehbar sind.
 
 ## Nachbearbeitung
 
-- Auf < 50 MB komprimieren (wie 1.1: `ffmpeg -i in.mov -vcodec h264 -crf 30 -vf scale=-2:1280 out.mp4`).
-- Ablegen als `docs/apple-review-video-1.2.mp4`.
+- Roh-Aufnahme nach `docs/videos/roh/` (gitignored).
+- Komprimieren (ohne Ton, ~1280 px hoch):
+  `ffmpeg -y -i roh/<datei>.MP4 -vcodec h264 -crf 30 -vf "scale=-2:1280" -an docs/videos/<JJJJ-MM-TT>_v<version>_pruefung_<kurz>.mp4`
 - In ASC an das App-Prüfungs-Anmerkungen-Feld hängen; zusätzlich
   `docs/sample-markdown-files.zip` (die `.md`-Demos + `Notiz-Entwurf.txt`)
   anhängen — einzelne `.md`/`.txt` sind kein zulässiger Anhangstyp, `.zip` schon.
+- Übersicht aller Prüf-Videos: `docs/videos/README.md`.

@@ -14,9 +14,10 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > erstellen") gesetzt; 9er-Screenshot-Satz iPhone 6,9" + iPad 13" hochgeladen
 > (in Reihenfolge); Build 10 verknüpft; Prüf-Notizen um den 1.2-Absatz ergänzt;
 > `sample-markdown-files.zip` angehängt; Release „automatisch nach Prüfung".
-> **Offen:** Prüf-Video 1.2 aufnehmen (Anleitung `docs/apple-review-video-1.2-anleitung.md`)
-> und optional anhängen; dann **„Zur Prüfung hinzufügen"** klicken (bewusst
-> offen gelassen für Erics finale Freigabe).
+> Prüf-Video 1.2 aufgenommen und komprimiert
+> (`docs/videos/2026-09-04_v1.2_pruefung_neues-dokument-und-txt.mp4`, ~2 MB);
+> alle Prüf-Videos jetzt unter `docs/videos/` (Übersicht: `docs/videos/README.md`).
+> **Letzter Schritt:** Video in ASC anhängen und **„Zur Prüfung hinzufügen"**.
 
 ---
 

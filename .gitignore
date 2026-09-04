@@ -37,6 +37,9 @@ Pods/
 md Viewer_mutated/
 muter_logs/
 
-# Rohe Bildschirmaufnahmen (gross) — die komprimierte Fassung liegt in docs/
+# Rohe Bildschirmaufnahmen (gross) — die komprimierten Fassungen liegen in docs/videos/
+docs/videos/roh/
 /Bildschirmaufnahme*.MP4
 /Bildschirmaufnahme*.mov
+/apple-review-video-*.MP4
+/apple-review-video-*.mov
