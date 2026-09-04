@@ -2,29 +2,28 @@
 
 Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Connect. Zeichenlimits sind Apples aktuelle Vorgaben (Stand August 2026).
 
-> **Version 1.1 (02.09.2026):** Die App hat jetzt einen optionalen Edit-Modus (Datei
-> direkt bearbeiten und überspeichern). Die betroffenen Store-Texte sind unten im
-> Abschnitt **„Version 1.1 — geänderte Texte"** revidiert; die 1.0-Fassungen bleiben
-> zum Vergleich stehen.
->
-> **Status 03.09.2026:** Build 1.1 (9) mit allen 1.1-Texten, neuen Screenshots
-> (iPhone 6,9" + iPad 13", je 8 Stück in fester Reihenfolge, Bild 2 = Bearbeiten-Modus)
-> und Prüf-Video in App Store Connect eingereicht — Status „Warten auf Prüfung".
+> **Version 1.1 (02.09.2026):** Optionaler Edit-Modus (Datei direkt bearbeiten und
+> überspeichern). **Am 04.09.2026 von Apple genehmigt und im Store** (Auto-Release).
 > Editor-Bedienung final: **X** verwirft (mit Rückfrage), **Pfeil** (uturn) macht
 > einzelne Tipp-Bursts schrittweise rückgängig, **roter Haken** speichert (mit
-> Rückfrage). Kein Kreispfeil, kein separater Zurück-Button mehr.
+> Rückfrage).
+>
+> **Status 04.09.2026 — Version 1.2:** Build **1.2 (10)** liegt in TestFlight
+> (Gruppe „Intern", Binärdatei „Überprüft"). Neuer 9er-Screenshot-Satz für
+> iPhone 6,9" + iPad 13" erzeugt (Reihenfolge unten). Store-Texte unten im
+> Abschnitt **„Version 1.2"** final. Noch **nicht** eingereicht — als Nächstes
+> in ASC eintragen und zur Prüfung übermitteln.
 
 ---
 
-## Version 1.2 — geänderte Texte (in Arbeit)
+## Version 1.2 — geänderte Texte (final, 04.09.2026)
 
-> **Version 1.2 (03.09.2026, Code fertig, noch nicht eingereicht):** Neues Dokument
-> ohne Ausgangsdatei — im leeren Startbildschirm Text aus der Zwischenablage
-> einfügen („Einsetzen") oder ein leeres Dokument beginnen, dann über den
-> System-Dialog als neue `.md`-Datei sichern. Danach schreibt „Speichern" wie
-> gewohnt in dieselbe Datei. Zusätzlich öffnen jetzt auch `.txt`-Dateien in der
-> App und der Teilen-Erweiterung; beim Bearbeiten einer `.txt` gibt es „Als
-> Markdown speichern". **Reihenfolge:** erst nach Freigabe von 1.1 einreichen.
+> **Version 1.2:** Neues Dokument ohne Ausgangsdatei — im leeren Startbildschirm
+> Text aus der Zwischenablage einfügen („Einsetzen") oder ein leeres Dokument
+> beginnen, dann über den System-Dialog als neue `.md`-Datei sichern. Danach
+> schreibt der rote Haken wie gewohnt in dieselbe Datei. Zusätzlich öffnen jetzt
+> auch `.txt`-Dateien in der App und der Teilen-Erweiterung; beim Bearbeiten einer
+> `.txt` gibt es „Als Markdown speichern".
 
 ### Neu in dieser Version / Release Notes (max. 4000 Zeichen) — 1.2
 
@@ -51,29 +50,93 @@ Markdown lesen, bearbeiten und überspeichern. Neu: Text aus der Zwischenablage 
 ```
 (157 Zeichen, ohne Gedankenstriche)
 
-### Untertitel / Beschreibung / Kategorie — 1.2
+### Untertitel / Subtitle (max. 30 Zeichen) — 1.2
 
-Untertitel unverändert („Markdown lesen & bearbeiten"). In der Beschreibung den
-Abschnitt „BEARBEITEN UND ÜBERSPEICHERN" um zwei Sätze ergänzen: neues Dokument
-aus eingefügtem Text bzw. leer beginnen und als `.md` sichern; `.txt` wird
-mitgeöffnet. Kategorie unverändert (Produktivität / Dienstprogramme, 4+ — die
-Zwischenablage wird nur auf ausdrücklichen Tipp gelesen, kein Hintergrundzugriff).
+```
+lesen, bearbeiten, erstellen
+```
+(28 Zeichen — nennt alle drei Kernfunktionen. Ersetzt die 1.1-Fassung
+„Markdown lesen & bearbeiten". Kleinschreibung ist Absicht.)
+
+### Beschreibung (max. 4000 Zeichen) — 1.2
+
+```
+md Viewer öffnet Markdown-Dateien, zeigt sie sofort sauber formatiert an und lässt dich denselben Text direkt bearbeiten, neu anlegen und zurück in die Datei speichern.
+
+Kein Datei-Browser. Kein Konto. Keine Cloud. Kein Tracking. Öffne eine .md- oder .txt-Datei über die Dateien-App oder das Teilen-Menü. md Viewer rendert Überschriften, Listen, Tabellen, fett/kursiv, Codeblöcke mit Syntax-Hervorhebung und Zitate. Kein Rohtext, keine Zeichen zum Entziffern.
+
+ERSTELLEN, BEARBEITEN, SPEICHERN
+
+Ohne Datei anfangen: auf dem Startbildschirm „Einsetzen" tippen und Text aus der Zwischenablage übernehmen, oder „Leeres Dokument" wählen. Der Entwurf öffnet direkt im Editor. Mit dem roten Haken sicherst du ihn als neue .md-Datei; Ordner und Name wählst du im Dateien-Dialog. Danach schreibt der Haken wie gewohnt in genau diese Datei.
+
+Bestehende Dateien: oben rechts auf „Bearbeiten" tippen. Aus der Vorschau wird ein Texteditor. Mit dem roten Haken speichern, nach einer kurzen Rückfrage wird die Originaldatei überschrieben. Mit dem X verwirfst du die Änderungen (nach Rückfrage), mit dem Pfeil machst du einzelne Änderungen schrittweise rückgängig. Kein Zwischenspeichern, kein Export, keine zweite Kopie.
+
+Auch .txt-Dateien öffnen jetzt in der App und in der Teilen-Erweiterung. Beim Bearbeiten einer .txt gibt es „Als Markdown speichern".
+
+Wer nur lesen will, merkt davon nichts. Jede Datei öffnet zuerst in der formatierten Vorschau.
+
+WARUM SO REDUZIERT?
+
+Die meisten Markdown-Apps sind heute vollwertige Editoren mit Dateiverwaltung, Cloud-Sync und Menüs. Praktisch, aber überladen, wenn man eine Datei nur schnell lesen, kurz notieren oder gelegentlich korrigieren will. md Viewer macht bewusst nur das: Datei antippen, lesen, bei Bedarf ändern oder neu anlegen, fertig.
+
+FUNKTIONEN
+
+• Öffnen über „Öffnen mit" in der Dateien-App oder direkt aus dem Teilen-Menü (z. B. Mail-Anhänge, AirDrop). Die Teilen-Erweiterung zeigt das Dokument sofort formatiert an, ohne die App zu wechseln
+• Neues Dokument aus eingefügtem oder eingetipptem Text erstellen und als .md-Datei sichern
+• Öffnet .md und .txt
+• Sauberes Markdown-Rendering: Überschriften, Listen, Aufgabenlisten, Tabellen (horizontal scrollbar), Codeblöcke mit Syntax-Hervorhebung, Zitate, Links, Bilder
+• Bearbeiten und Überspeichern direkt in der geöffneten Datei, mit Rückfrage vor dem Überschreiben und beim Schließen mit ungespeicherten Änderungen
+• Volle Unicode-Unterstützung: Emoji, arabische und hebräische Schrift (rechts-nach-links), chinesische, japanische und koreanische Zeichen
+• Unterstützt Dynamic Type und VoiceOver
+• Automatisches Dark Mode / Light Mode
+• Läuft komplett offline, keine Netzwerkzugriffe im Code
+
+DATENSCHUTZ
+
+md Viewer erhebt keinerlei Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete, bearbeitete und neu erstellte Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet. Die Zwischenablage wird nur gelesen, wenn du ausdrücklich auf „Einsetzen" tippst.
+
+Für wen ist die App? Für alle, die regelmäßig .md- oder .txt-Dateien bekommen oder verwalten (Notizen, READMEs, technische Doku, Protokolle) und sie schnell und sauber lesen, ab und zu bearbeiten oder kurz neu anlegen wollen, ohne einen vollen Editor zu öffnen.
+```
+(ohne Gedankenstriche; nur Bindestriche in zusammengesetzten Wörtern)
+
+### Kategorie / Altersfreigabe — 1.2
+
+Unverändert: Primär Produktivität, sekundär Dienstprogramme, Altersfreigabe **4+**.
+Die Zwischenablage wird nur auf ausdrücklichen Tipp des System-PasteButtons
+gelesen, kein Hintergrundzugriff, kein UGC im Sinne geteilter/öffentlicher Inhalte.
 
 ### App-Prüfungs-Anmerkungen — 1.2
 
-Ergänzen: „Version 1.2 adds a system Paste button on the empty state to start a
-new document from clipboard text, a `.fileExporter` 'save as' dialog to write it
-as a new .md file, and `.txt` support (`public.plain-text` document type). No
-background pasteboard access; the clipboard is only read on an explicit tap of
-the system PasteButton."
+Ergänzen (englisch, ans bestehende Notes-Feld anhängen): „Version 1.2 adds a
+system PasteButton on the empty state to start a new document from clipboard
+text, a 'save as' dialog (`.fileExporter`) to write it as a new .md file, and
+`.txt` support (`public.plain-text` document type). No background pasteboard
+access; the clipboard is only read on an explicit tap of the system PasteButton.
+A short screen recording of the new-document / save / .txt flow is attached, plus
+`sample-markdown-files.zip` with test documents (incl. a .txt)."
 
 ### Screenshots — 1.2
 
-Einen Screenshot ergänzen (Position 3, nach „Bearbeiten"): Startbildschirm mit
-„Einsetzen"-/„Leeres Dokument"-Buttons, oder der frische Entwurf im Editor. Für
-den Screenshot-Lauf gibt es das DEBUG-Startargument `-mdviewerDraft "<text>"`
-(öffnet direkt einen Entwurf; die Zwischenablage lässt sich im Simulator nicht
-zuverlässig in den PasteButton bringen).
+Neuer Satz, **9 Bilder** je iPhone 6,9" (1320×2868) und iPad 13" (2064×2752),
+feste Reihenfolge. Am 04.09.2026 im Simulator erzeugt (iPhone 17 Pro Max /
+iPad Pro 13", Light Mode, Statusleiste 09:41). Grund für den kompletten Neu-Satz:
+die alten Bilder 3–7 stammten vom 29.08. — **vor** dem Edit-Modus, zeigten also
+`DocumentView` ohne den „Bearbeiten"-Stift oben rechts; der Leerzustand hatte
+noch keine „Einsetzen"/„Leeres Dokument"-Buttons.
+
+1. `01-leerzustand.png` — Startbildschirm v1.2: „Einsetzen" (System-PasteButton, aktiv) + „Leeres Dokument" + Datenschutz-Link. **Neu an Position 1**, weil hier sichtbar ist, dass man ohne Datei anfangen kann.
+2. `02-neu-aus-text.png` — frischer Entwurf im Editor („Neues Dokument", Monospace, Toolbar X / Rückgängig / roter Haken = „als .md sichern"). Über DEBUG-Arg `-mdviewerDraft "<text>"`.
+3. `03-bearbeiten.png` — bestehende `.md` im Editor (`Notiz.md`), Bearbeiten-Modus mit sichtbarer Änderung, roter Haken aktiv. Über DEBUG-Arg `-mdviewerScreenshotEdit` + `openurl`. (iPhone-Fassung mit eingeblendeter Tastatur.)
+4. `04-uebersicht.png` — gerendertes Dokument: Überschriften, Aufgabenliste, Tabelle, Zitat, Link — **mit Stift oben rechts**.
+5. `05-tabelle.png` — breite Tabelle (auf iPhone horizontal scrollbar) + Kennzahlen-Tabelle.
+6. `06-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON).
+7. `07-sprachen.png` — Emoji, Arabisch/Hebräisch (RTL), CJK, Devanagari, Thai, Mathe-Symbole.
+8. `08-oeffnen-mit.png` — „Öffnen mit → md Viewer" in der Dateien-App. **Aus 1.1 übernommen** (zeigt die Dateien-App, keine veraltete App-UI).
+9. `09-teilen-extension.png` — Teilen-Erweiterung rendert ein geteiltes Dokument („Fertig"-Blatt). **Aus 1.1 übernommen** (Extension unverändert, read-only).
+
+iPad-Hinweis: der M5-iPad-Simulator zeichnet einen kleinen grauen Bogen in der
+unteren rechten Ecke (Bezel-Artefakt, kein UI-Element); er wird beim Erzeugen
+per Skript mit weißem Rand übermalt.
 
 ---
 

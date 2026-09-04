@@ -161,6 +161,27 @@ Screenshot sim sizes: iPhone 6.9" = iPhone 17 Pro Max (1320×2868), iPad
 13" = iPad Pro 13-inch (2064×2752). Clean status bar via
 `xcrun simctl status_bar <udid> override --time 09:41 --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode notSupported`.
 
+### App-Store-Satz v1.2 (04.09.2026) — 9 Bilder je Größe
+
+Reihenfolge + Aufnahme siehe `App-Store-Texte.md` → „Screenshots — 1.2".
+`01-leerzustand` (Kaltstart, vorher `simctl pbcopy` damit „Einsetzen" aktiv
+blau ist), `02-neu-aus-text` (`-mdviewerDraft`), `03-bearbeiten`
+(`-mdviewerScreenshotEdit` + `openurl Notiz.md`), `04-07` gerenderte Demos,
+`08/09` aus 1.1 übernommen (Files-App / Share-Extension, nicht per CLI machbar).
+`uninstall`+`install` vor jedem Shot (saubere Titel + Fensterstatus).
+
+**Software-Tastatur an/aus** (für `03` an, für `02` aus): Simulator.app öffnen,
+dann `osascript` → `click menu item "Toggle Software Keyboard" of menu 1 of menu
+item "Keyboard" of menu 1 of menu bar item "I/O"`. `-mdviewerDraft` startet unter
+`simctl` headless **ohne** Tastatur.
+
+**M5-iPad-Simulator-Bezelartefakt:** `iPad Pro 13-inch (M5)` + iOS 26.4 zeichnet
+einen kleinen grauen Bogen (~46 px) in der unteren rechten Ecke, den `simctl io
+screenshot` mitnimmt — nicht der Pointer (bleibt auch headless nach `erase`).
+Die Ecke ist in allen 7 iPad-Motiven weiß; mit PIL weiß übermalen
+(`ImageDraw.rectangle((1980,2668,w,h), fill=(255,255,255))`). iPhone-Sim ist
+sauber.
+
 ## Mutation testing
 
 `muter` (`brew install muter-mutation-testing/formulae/muter`) is set up
