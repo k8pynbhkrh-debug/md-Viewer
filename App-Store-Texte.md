@@ -130,7 +130,7 @@ noch keine „Einsetzen"/„Leeres Dokument"-Buttons.
 
 1. `01-leerzustand.png` — Startbildschirm v1.2: „Einsetzen" (System-PasteButton, aktiv) + „Leeres Dokument" + Datenschutz-Link. **Neu an Position 1**, weil hier sichtbar ist, dass man ohne Datei anfangen kann.
 2. `02-neu-aus-text.png` — frischer Entwurf im Editor („Neues Dokument", Monospace, Toolbar X / Rückgängig / roter Haken = „als .md sichern"). Über DEBUG-Arg `-mdviewerDraft "<text>"`.
-3. `03-bearbeiten.png` — bestehende `.md` im Editor (`Notiz.md`), Bearbeiten-Modus mit sichtbarer Änderung, roter Haken aktiv. Über DEBUG-Arg `-mdviewerScreenshotEdit` + `openurl`. (iPhone-Fassung mit eingeblendeter Tastatur.)
+3. `03-bearbeiten.png` — bestehende `.md` im Editor (`Notiz.md`), Bearbeiten-Modus mit sichtbarer Änderung, roter Haken aktiv, **eingeblendete Tastatur** (iPhone + iPad). Über DEBUG-Arg `-mdviewerScreenshotEdit` + `openurl` + Software-Tastatur-Toggle.
 4. `04-uebersicht.png` — gerendertes Dokument: Überschriften, Aufgabenliste, Tabelle, Zitat, Link — **mit Stift oben rechts**.
 5. `05-tabelle.png` — breite Tabelle (auf iPhone horizontal scrollbar) + Kennzahlen-Tabelle.
 6. `06-code.png` — Codeblöcke mit Syntax-Hervorhebung (Swift, Python, Shell, JSON).
