@@ -7,10 +7,14 @@
 > Archivieren auf `MAC_MARKETING_VERSION` / `MAC_BUILD` (Default 1.0 / **14**;
 > die Mac-Build-Nummer muss die Vorab-Test-Uploads 11–13 übersteigen).
 >
-> **Stand 2026-09-04 (Schritt 6 fast fertig):** Mac-Catalyst-Build **1.0 (15)** zu
-> App Store Connect hochgeladen (Build 15 = mit Fenster-Skalier-Fix), macOS-Version
-> 1.0 in ASC angelegt und befüllt. **Es fehlt nur noch Erics „Zur Prüfung
-> einreichen"** (nach Test auf echtem Mac).
+> **Stand 2026-09-04 — ABGESCHLOSSEN (Code + Einreichung):** Mac-Catalyst-Build
+> **1.0 (15)** (mit Fenster-Skalier-Fix) **zur Prüfung eingereicht** (Status
+> „Warten auf Prüfung"), parallel zu iOS 1.2 (ebenfalls „Warten auf Prüfung",
+> unabhängige Warteschlangen, blockieren sich nicht — beide „automatisch
+> veröffentlichen nach Genehmigung"). Eric hatte die App vorher auf einem echten
+> Mac getestet und bestätigt. Nächster Schritt: auf Apples Entscheidung warten
+> (bis zu 48 h für macOS, E-Mail-Benachrichtigung); bei „Information Needed"
+> (Guideline 2.1) siehe `app-store-release`-Skill (bereits zweimal so gelöst).
 >
 > **Schritt 6 — erledigt (überwiegend per App-Store-Connect-REST-API, Skript-Reste
 > unter `scratchpad/asc.py` + `macshots.py`):**
@@ -30,18 +34,14 @@
 >   hochgeladen und sortiert; Prüf-Notizen mit „FIRST macOS release (1.0)" +
 >   „HOW TO TEST (Mac)".
 >
-> **Noch offen:**
-> - **Eric: in ASC „Zur Prüfung einreichen"** (macOS 1.0) — bewusst nicht
->   automatisch ausgelöst. Danach separate Mac-Review (parallel zur iOS-1.2-Prüfung;
->   die beiden Plattformen blockieren sich nicht).
-> - Alterseinstufung: bei Universal Purchase app-weit; ASC meldet beim Submit, falls
->   für macOS noch etwas fehlt.
-> - Manuelle Funktionsprüfung auf einem echten Mac (Standard setzen → Doppelklick aus
->   Finder → Bearbeiten/Speichern) — empfohlen vor dem Submit. Testversion liegt als
->   `~/Desktop/md Viewer (Testversion).app` (dev-signiert; oder via TestFlight-Mac,
->   Gruppe „Intern").
-> - Optionaler Polish (kein Blocker): `PasteButton`/„Einsetzen" fehlt im Mac-Empty-State
->   (Catalyst rendert `PasteButton` dort nicht).
+> **Eingereicht 2026-09-04 15:19** (über die ASC-Weboberfläche per Chrome-Automatisierung,
+> auf Erics ausdrückliche Anweisung „mach du alles fertig in ASC mit chrome"):
+> „Zur Prüfung hinzufügen" → Bestätigungsdialog → „Zur Prüfung übermitteln" →
+> „1 Element übermittelt". Alterseinstufung war kein Blocker (app-weit von iOS
+> übernommen).
+>
+> **Optionaler Polish für ein späteres Update (kein Blocker):** `PasteButton`/
+> „Einsetzen" fehlt im Mac-Empty-State (Catalyst rendert `PasteButton` dort nicht).
 >
 > **Xcode-Bug bei `-exportArchive` (Mac App Store):** „Provisioning profile … doesn't
 > include signing certificate '3rd Party Mac Developer Installer'" — trotz korrektem

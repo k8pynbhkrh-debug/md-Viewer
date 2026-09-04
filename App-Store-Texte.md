@@ -22,17 +22,18 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ## macOS 1.0 — Mac-Version (Mac Catalyst) + .md-Standard-App
 
-> **macOS-Version 1.0 (04.09.2026): in App Store Connect fertig vorbereitet, wartet
-> auf Erics „Zur Prüfung einreichen".** Der Mac App Store bekommt einen **eigenen
+> **macOS-Version 1.0 (04.09.2026): zur Prüfung eingereicht (15:19), Status
+> „Warten auf Prüfung".** Der Mac App Store bekommt einen **eigenen
 > Versions-Strang ab 1.0** (erste Mac-Version); iOS/iPadOS bleibt bei 1.2. md Viewer
 > läuft jetzt auch auf dem Mac (Mac Catalyst) — gleiches Listing / Universal Purchase,
 > ein Kauf für iPhone, iPad und Mac. Auf dem Mac lässt sich md Viewer per Klick im
 > Startfenster zur **Standard-App für `.md`** machen
 > (`LSSetDefaultRoleHandlerForContentType`); danach öffnet ein Doppelklick im Finder
 > die Datei in md Viewer. Menü „Ablage → Neues Dokument (⌘N) / Öffnen … (⌘O)", Fenster
-> frei skalierbar. App sandboxed (Pflicht Mac App Store). Mac-Build **1.0 (1)** —
-> im Xcode-Projekt bleibt `MARKETING_VERSION` beim iOS-Strang (1.2), der Mac-Build
-> überschreibt per `ci/testflight-mac.sh`.
+> frei skalierbar. App sandboxed (Pflicht Mac App Store). Eingereichter Mac-Build
+> **1.0 (15)** (inkl. Fenster-Skalier-Fix) — im Xcode-Projekt bleibt `MARKETING_VERSION`
+> beim iOS-Strang (1.2), der Mac-Build überschreibt per `ci/testflight-mac.sh`.
+> Vor der Einreichung auf echtem Mac getestet und von Eric bestätigt.
 >
 > **In ASC bereits eingetragen** (weitgehend per App-Store-Connect-REST-API,
 > `scratchpad/asc.py`): macOS-Plattform (durch Build-Upload automatisch);
@@ -49,10 +50,10 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > **iOS 1.2 ≠ macOS 1.0:** getrennte Review-Warteschlangen, blockieren sich nicht.
 > macOS 1.0 kann eingereicht werden, während iOS 1.2 noch „Warten auf Prüfung" ist.
 >
-> **Noch offen:** Eric klickt in ASC „Zur Prüfung einreichen" (macOS 1.0) → separate
-> Mac-Review. Vorher empfohlen: kurze Funktionsprüfung auf einem echten Mac
-> (`~/Desktop/md Viewer (Testversion).app` oder TestFlight-Mac, Gruppe „Intern").
-> Optionaler Polish (kein Blocker): „Einsetzen"-Button fehlt im Mac-Empty-State
+> **Eingereicht 2026-09-04 15:19** über die ASC-Weboberfläche (Chrome-Automatisierung,
+> auf Erics Anweisung) — „Zur Prüfung hinzufügen" → Bestätigungsdialog → „Zur Prüfung
+> übermitteln" → „1 Element übermittelt". Apple rechnet mit bis zu 48 h.
+> Optionaler Polish für ein späteres Update (kein Blocker): „Einsetzen"-Button fehlt im Mac-Empty-State
 > (Catalyst rendert `PasteButton` dort nicht).
 
 ### Neu in dieser Version / Release Notes — macOS 1.0
