@@ -4,11 +4,13 @@
 > **eigenen Versions-Strang und startet mit `1.0`** (erste Mac-Version). iOS/iPadOS
 > bleibt unberührt bei **1.2** (in Prüfung). Die Xcode-Projekteinstellungen stehen
 > wieder auf 1.2 / Build 10 (iOS-Strang); `ci/testflight-mac.sh` überschreibt beim
-> Archivieren auf `MAC_MARKETING_VERSION` / `MAC_BUILD` (Default 1.0 / 1).
+> Archivieren auf `MAC_MARKETING_VERSION` / `MAC_BUILD` (Default 1.0 / **14**;
+> die Mac-Build-Nummer muss die Vorab-Test-Uploads 11–13 übersteigen).
 >
-> **Stand 2026-09-04 (Schritt 6 fast fertig):** Mac-Catalyst-Build **1.0 (1)** zu
-> App Store Connect hochgeladen, macOS-Version 1.0 in ASC angelegt und befüllt.
-> **Es fehlt nur noch Erics „Zur Prüfung einreichen".**
+> **Stand 2026-09-04 (Schritt 6 fast fertig):** Mac-Catalyst-Build **1.0 (15)** zu
+> App Store Connect hochgeladen (Build 15 = mit Fenster-Skalier-Fix), macOS-Version
+> 1.0 in ASC angelegt und befüllt. **Es fehlt nur noch Erics „Zur Prüfung
+> einreichen"** (nach Test auf echtem Mac).
 >
 > **Schritt 6 — erledigt (überwiegend per App-Store-Connect-REST-API, Skript-Reste
 > unter `scratchpad/asc.py` + `macshots.py`):**
@@ -63,7 +65,10 @@
 > - `ContentView.swift`: Catalyst-only Zeile/Button „md Viewer als Standard für .md festlegen"
 >   im Empty State + Fehler-Alert mit Finder-Fallbacktext.
 > - `md_ViewerApp.swift`: Catalyst-only `.commands` (Neues Dokument ⌘N / Öffnen … ⌘O via
->   `.fileImporter`), `.defaultSize(1200×820)`, `.windowResizability(.contentMinSize)`.
+>   `.fileImporter`); Fenster frei skalierbar via `.frame(maxWidth/maxHeight: .infinity)`
+>   auf dem WindowGroup-Inhalt — **ohne** `.windowResizability` / `.defaultSize`
+>   (beide deckeln das Catalyst-Fenster auf die Inhalts-Idealgröße). Aktueller
+>   Mac-Build: **1.0 (15)**.
 > - `ci/testflight-mac.sh` + `md Viewer/ExportOptions-mac.plist` (Catalyst-Archive + Upload).
 
 ## Context
