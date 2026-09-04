@@ -8,11 +8,15 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > einzelne Tipp-Bursts schrittweise rückgängig, **roter Haken** speichert (mit
 > Rückfrage).
 >
-> **Status 04.09.2026 — Version 1.2:** Build **1.2 (10)** liegt in TestFlight
-> (Gruppe „Intern", Binärdatei „Überprüft"). Neuer 9er-Screenshot-Satz für
-> iPhone 6,9" + iPad 13" erzeugt (Reihenfolge unten). Store-Texte unten im
-> Abschnitt **„Version 1.2"** final. Noch **nicht** eingereicht — als Nächstes
-> in ASC eintragen und zur Prüfung übermitteln.
+> **Status 04.09.2026 — Version 1.2:** In App Store Connect **fast fertig zur
+> Einreichung**. Erledigt: Version 1.2 angelegt; Beschreibung, Werbetext,
+> Keywords, „Neues in dieser Version", Untertitel („lesen, bearbeiten,
+> erstellen") gesetzt; 9er-Screenshot-Satz iPhone 6,9" + iPad 13" hochgeladen
+> (in Reihenfolge); Build 10 verknüpft; Prüf-Notizen um den 1.2-Absatz ergänzt;
+> `sample-markdown-files.zip` angehängt; Release „automatisch nach Prüfung".
+> **Offen:** Prüf-Video 1.2 aufnehmen (Anleitung `docs/apple-review-video-1.2-anleitung.md`)
+> und optional anhängen; dann **„Zur Prüfung hinzufügen"** klicken (bewusst
+> offen gelassen für Erics finale Freigabe).
 
 ---
 
@@ -32,7 +36,7 @@ Neu in 1.2: Ohne Datei anfangen
 
 • Auf dem Startbildschirm „Einsetzen" tippen: Text aus der Zwischenablage wird sofort als Markdown angezeigt und ist bearbeitbar. Oder „Leeres Dokument" für einen leeren Start.
 • Mit dem roten Haken als neue .md-Datei sichern; du wählst Ordner und Name im Dateien-Dialog. Danach speichert der Haken wie gewohnt in diese Datei.
-• .txt-Dateien lassen sich jetzt ebenfalls öffnen — in der App und über das Teilen-Menü. Beim Bearbeiten einer .txt gibt es „Als Markdown speichern".
+• .txt-Dateien lassen sich jetzt ebenfalls öffnen, in der App und über das Teilen-Menü. Beim Bearbeiten einer .txt gibt es „Als Markdown speichern".
 ```
 
 ### Schlüsselwörter / Keywords (max. 100 Zeichen) — 1.2
