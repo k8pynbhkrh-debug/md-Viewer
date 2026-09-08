@@ -5,12 +5,13 @@
 
 ## Design by Contract
 
-Der aktuelle Viewer ist zu klein/read-only, als dass Contracts viel bringen würden — eine
-Ausnahme ist `md Viewer/Shared/MarkdownDocument.swift` (`loadMarkdown` / `maxFileSize` /
+Für den reinen Anzeige-Teil bringen Contracts wenig — eine Ausnahme ist
+`md Viewer/Shared/MarkdownDocument.swift` (`loadMarkdown` / `maxFileSize` /
 `DocumentError`): dort Vor-/Nachbedingungen als `precondition`/`guard` sauber halten.
 
-Für die **Editier-Funktion** (`edit-feature-plan.md`, bereits im Bau) gilt Design by
-Contract voll: Schreibpfad, Speichern/Zurücksetzen, Undo/Redo und Datei-Ersetzung sind
-zustands- und datenkritisch. Pro Operation Vor-/Nachbedingungen + Invarianten zuerst
-benennen, mit `precondition`/`guard` absichern und Tests daraus ableiten. Details:
-`~/.claude/CLAUDE.md` (globaler Abschnitt „Design by Contract").
+Für den **Schreibpfad** (Editier-Funktion, ausgeliefert in iOS 1.1; „Neues Dokument aus
+Text" / „Als .md speichern" in 1.2) gilt Design by Contract voll: Speichern/Zurücksetzen,
+Undo/Redo und Datei-Ersetzung sind zustands- und datenkritisch. Pro Operation
+Vor-/Nachbedingungen + Invarianten zuerst benennen, mit `precondition`/`guard` absichern
+und Tests daraus ableiten. Details: `~/.claude/CLAUDE.md` (globaler Abschnitt „Design by
+Contract"). Historische Feature-Pläne: `docs/archiv/`.

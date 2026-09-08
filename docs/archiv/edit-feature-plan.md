@@ -1,5 +1,8 @@
 # Plan: Edit-Funktion für md Viewer (Version 1.1)
 
+> **ARCHIV / ERLEDIGT:** Ausgeliefert in iOS 1.1 (von Apple genehmigt 04.09.2026).
+> Historie unter `docs/archiv/`.
+
 ## Ziel
 Die App bekommt einen Edit-Modus: Nutzer können Markdown-Dateien direkt in der App bearbeiten und mit einem "Speichern"-Button oben rechts überspeichern.
 

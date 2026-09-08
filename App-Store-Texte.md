@@ -1,6 +1,6 @@
 # App Store Connect — Texte für "md Viewer"
 
-Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Connect. Zeichenlimits sind Apples aktuelle Vorgaben (Stand August 2026).
+Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Connect. Zeichenlimits sind Apples aktuelle Vorgaben (Stand August 2026).
 
 > **Version 1.1 (02.09.2026):** Optionaler Edit-Modus (Datei direkt bearbeiten und
 > überspeichern). **Am 04.09.2026 von Apple genehmigt und im Store** (Auto-Release).
@@ -8,22 +8,29 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > einzelne Tipp-Bursts schrittweise rückgängig, **roter Haken** speichert (mit
 > Rückfrage).
 >
-> **Status 04.09.2026 — Version 1.2: zur Prüfung eingereicht (08:12), Status
-> „Warten auf Prüfung".** In ASC: Version 1.2 mit Beschreibung, Werbetext,
-> Keywords, „Neues in dieser Version", Untertitel („lesen, bearbeiten,
-> erstellen"); 9er-Screenshot-Satz iPhone 6,9" + iPad 13" (in Reihenfolge,
-> #3 mit Tastatur); Build 10; Prüf-Notizen mit 1.2-Absatz; Anhang
-> `pruefung-1.2.zip` (Prüf-Video + Demo-Dateien); Release „automatisch nach
-> Prüfung". Video-Original + Übersicht: `docs/videos/` (`README.md`).
-> Nächster Schritt: Apples Entscheidung abwarten (~24–48 h, Mail an
-> eric.bertrand90@outlook.de bzw. ASC → Vertrieb → App-Prüfung).
+> **Version 1.2: am 04.09.2026 von Apple genehmigt und im Store** (Auto-Release,
+> `currentVersionReleaseDate` 2026-09-04). Neues Dokument aus eingefügtem Text +
+> „Als .md speichern", `.txt`-Support. In ASC: Beschreibung, Werbetext, Keywords,
+> „Neues in dieser Version", Untertitel („lesen, bearbeiten, erstellen"); 9er-
+> Screenshot-Satz iPhone 6,9" + iPad 13"; Build 10. Prüf-Video + Übersicht:
+> `docs/videos/` (`README.md`).
+>
+> **Offen für das nächste Update — US-Untertitel fehlt:** Der Untertitel ist nur
+> für die de-Lokalisierung gesetzt. Der US-Store hat keine „English (U.S.)"-
+> Lokalisierung, deshalb zeigt Apple dort im Untertitel-Slot die Kategorie
+> („Productivity") statt eines Untertitels — 30 von Apple indexierte Zeichen
+> ungenutzt (am 08.09.2026 im Live-Store bestätigt). Fix: in ASC eine „English
+> (U.S.)"-Lokalisierung mit eigenem Untertitel (+ Keywords/Texten) anlegen;
+> Untertitel-Änderung geht nur mit einer neuen Version, also beim nächsten
+> iOS-Update mitnehmen.
 
 ---
 
 ## macOS 1.0 — Mac-Version (Mac Catalyst) + .md-Standard-App
 
-> **macOS-Version 1.0 (04.09.2026): zur Prüfung eingereicht (15:19), Status
-> „Warten auf Prüfung".** Der Mac App Store bekommt einen **eigenen
+> **macOS-Version 1.0: von Apple genehmigt und im Mac App Store** (eingereicht
+> 04.09.2026 15:19, danach freigegeben; auf der iOS-Store-Seite erscheint der
+> Button „Anzeigen in: Mac App Store"). Der Mac App Store bekommt einen **eigenen
 > Versions-Strang ab 1.0** (erste Mac-Version); iOS/iPadOS bleibt bei 1.2. md Viewer
 > läuft jetzt auch auf dem Mac (Mac Catalyst) — gleiches Listing / Universal Purchase,
 > ein Kauf für iPhone, iPad und Mac. Auf dem Mac lässt sich md Viewer per Klick im
@@ -45,14 +52,11 @@ Stand: 25.08.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > **Signing** (einmalig, per API): zwei `MAC_CATALYST_APP_STORE`-Profile +
 > „Mac Installer Distribution"-Zertifikat. `ExportOptions-mac.plist` pinnt beide
 > Zertifikate per SHA-1 (Xcode-`-exportArchive`-Bug). Details:
-> `mac-catalyst-feature-plan.md`.
+> `docs/archiv/mac-catalyst-feature-plan.md`.
 >
-> **iOS 1.2 ≠ macOS 1.0:** getrennte Review-Warteschlangen, blockieren sich nicht.
-> macOS 1.0 kann eingereicht werden, während iOS 1.2 noch „Warten auf Prüfung" ist.
+> **iOS 1.2 ≠ macOS 1.0:** getrennte Review-Warteschlangen, blockierten sich nicht —
+> beide Versionen sind inzwischen genehmigt und im Store.
 >
-> **Eingereicht 2026-09-04 15:19** über die ASC-Weboberfläche (Chrome-Automatisierung,
-> auf Erics Anweisung) — „Zur Prüfung hinzufügen" → Bestätigungsdialog → „Zur Prüfung
-> übermitteln" → „1 Element übermittelt". Apple rechnet mit bis zu 48 h.
 > Optionaler Polish für ein späteres Update (kein Blocker): „Einsetzen"-Button fehlt im Mac-Empty-State
 > (Catalyst rendert `PasteButton` dort nicht).
 

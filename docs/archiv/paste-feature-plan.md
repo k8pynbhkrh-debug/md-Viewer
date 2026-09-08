@@ -1,5 +1,8 @@
 # Plan: „Neues Dokument aus Text" für md Viewer (Version 1.2)
 
+> **ARCHIV / ERLEDIGT:** Ausgeliefert in iOS 1.2 (von Apple genehmigt 04.09.2026),
+> inkl. `.txt`-Support. Historie unter `docs/archiv/`.
+
 ## Ziel
 
 Bisher braucht md Viewer immer eine bestehende `.md`-Datei (via „Öffnen mit" oder

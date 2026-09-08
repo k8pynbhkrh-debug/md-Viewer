@@ -1,5 +1,9 @@
 # md Viewer — Mac-Version (Mac Catalyst) + .md-Standard-App
 
+> **ARCHIV / ERLEDIGT (Stand 08.09.2026):** macOS 1.0 ist von Apple genehmigt und im
+> Mac App Store; iOS 1.2 ebenfalls genehmigt und im Store. Dieser Plan liegt nur noch
+> als Historie unter `docs/archiv/`.
+
 > Interner Arbeitstitel war „1.3". **Ergebnis:** Der Mac App Store bekommt einen
 > **eigenen Versions-Strang und startet mit `1.0`** (erste Mac-Version). iOS/iPadOS
 > bleibt unberührt bei **1.2** (in Prüfung). Die Xcode-Projekteinstellungen stehen
