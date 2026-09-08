@@ -25,11 +25,11 @@ enum DefaultMarkdownAppError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .missingBundleIdentifier:
-            "Die App-Kennung konnte nicht ermittelt werden."
+            String(localized: "The app identifier could not be determined.")
         case .launchServicesFailure(let status):
-            "macOS hat die Änderung abgelehnt (Fehler \(status))."
+            String(localized: "macOS rejected the change (error \(status)).")
         case .notAppliedAfterCall:
-            "Die Zuordnung wurde nicht übernommen."
+            String(localized: "The file association was not applied.")
         }
     }
 }

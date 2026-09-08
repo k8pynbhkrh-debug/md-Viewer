@@ -71,12 +71,12 @@ struct md_ViewerApp: App {
             // Ersetzt das Standard-„Ablage → Neu": md Viewer hat genau ein
             // Fenster, „Neu" startet einen Entwurf, „Öffnen …" einen Dateidialog.
             CommandGroup(replacing: .newItem) {
-                Button("Neues Dokument") {
+                Button("New Document") {
                     document = .draft(initialText: "")
                 }
                 .keyboardShortcut("n", modifiers: .command)
 
-                Button("Öffnen …") {
+                Button("Open…") {
                     showOpenDialog = true
                 }
                 .keyboardShortcut("o", modifiers: .command)

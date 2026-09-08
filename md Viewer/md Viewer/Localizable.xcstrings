@@ -1,0 +1,482 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Alternatively, in the Finder: select a .md file, open Get Info (⌘I), choose md Viewer under Open with, and click Change All." : {
+      "comment" : "Fallback hint shown when setting md Viewer as the default .md app fails (Mac).",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternativ im Finder: eine .md-Datei auswählen, „Informationen“ (⌘I) öffnen, unter „Öffnen mit“ md Viewer wählen und „Alle ändern …“."
+          }
+        }
+      }
+    },
+    "Blank Document" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leeres Dokument"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        }
+      }
+    },
+    "Closes the document" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließt das Dokument"
+          }
+        }
+      }
+    },
+    "Creates a new document from the text on the clipboard" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legt aus dem Text in der Zwischenablage ein neues Dokument an"
+          }
+        }
+      }
+    },
+    "Default App for .md Files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard-App für .md"
+          }
+        }
+      }
+    },
+    "Discard" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwerfen"
+          }
+        }
+      }
+    },
+    "Discard Changes?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen verwerfen?"
+          }
+        }
+      }
+    },
+    "Discard Document?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokument verwerfen?"
+          }
+        }
+      }
+    },
+    "Discards the new document" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwirft das neue Dokument"
+          }
+        }
+      }
+    },
+    "Document" : {
+      "comment" : "Default file name when saving a new document without a heading.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokument"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bearbeiten"
+          }
+        }
+      }
+    },
+    "Edits the Markdown text" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bearbeitet den Markdown-Text"
+          }
+        }
+      }
+    },
+    "Error" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehler"
+          }
+        }
+      }
+    },
+    "Loading…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laden …"
+          }
+        }
+      }
+    },
+    "macOS rejected the change (error %d)." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS hat die Änderung abgelehnt (Fehler %d)."
+          }
+        }
+      }
+    },
+    "md Viewer is the default for .md files" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "md Viewer ist Standard für .md-Dateien"
+          }
+        }
+      }
+    },
+    "New Document" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Dokument"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "shouldTranslate" : false
+    },
+    "Open a Markdown file via Share or the Files app to view it here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne eine Markdown-Datei über „Teilen“ oder die Dateien-App, um sie hier anzuzeigen."
+          }
+        }
+      }
+    },
+    "Open…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnen …"
+          }
+        }
+      }
+    },
+    "Opens .md files in md Viewer on double-click from now on" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet .md-Dateien künftig per Doppelklick in md Viewer"
+          }
+        }
+      }
+    },
+    "Overwrites the file with the edited text" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überschreibt die Datei mit dem bearbeiteten Text"
+          }
+        }
+      }
+    },
+    "Paste" : {
+      "comment" : "Mac Catalyst replacement for the empty-state PasteButton.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einsetzen"
+          }
+        }
+      }
+    },
+    "Privacy & Legal Notice" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutz & Impressum"
+          }
+        }
+      }
+    },
+    "Returns to the preview without keeping the changes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zur Vorschau, ohne die Änderungen zu übernehmen"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern"
+          }
+        }
+      }
+    },
+    "Save as Markdown" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Markdown speichern"
+          }
+        }
+      }
+    },
+    "Save Changes?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen speichern?"
+          }
+        }
+      }
+    },
+    "Save to File" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Datei speichern"
+          }
+        }
+      }
+    },
+    "Saves the text as a new file" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichert den Text als neue Datei"
+          }
+        }
+      }
+    },
+    "Saving failed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern fehlgeschlagen."
+          }
+        }
+      }
+    },
+    "Saving…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern …"
+          }
+        }
+      }
+    },
+    "Set md Viewer as the default for .md" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "md Viewer als Standard für .md festlegen"
+          }
+        }
+      }
+    },
+    "The app identifier could not be determined." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App-Kennung konnte nicht ermittelt werden."
+          }
+        }
+      }
+    },
+    "The changes have not been saved and will be lost." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Änderungen wurden nicht gespeichert und gehen verloren."
+          }
+        }
+      }
+    },
+    "The file association could not be changed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zuordnung konnte nicht geändert werden."
+          }
+        }
+      }
+    },
+    "The file association was not applied." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zuordnung wurde nicht übernommen."
+          }
+        }
+      }
+    },
+    "The file could not be read as text. Only UTF-8 encoded files are supported." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei konnte nicht als Text gelesen werden. Nur UTF-8-kodierte Dateien werden unterstützt."
+          }
+        }
+      }
+    },
+    "The file could not be read." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei konnte nicht gelesen werden."
+          }
+        }
+      }
+    },
+    "The file could not be saved." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei konnte nicht gespeichert werden."
+          }
+        }
+      }
+    },
+    "The file is empty." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei ist leer."
+          }
+        }
+      }
+    },
+    "The file is too large (%@). The maximum supported size is 5 MB." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Datei ist zu groß (%@). Maximal 5 MB werden unterstützt."
+          }
+        }
+      }
+    },
+    "The original file %@ will be overwritten with the edited text." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Originaldatei „%@“ wird mit dem bearbeiteten Text überschrieben."
+          }
+        }
+      }
+    },
+    "This document has not been saved yet and will be lost." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Dokument wurde noch nicht gespeichert und geht verloren."
+          }
+        }
+      }
+    },
+    "Undo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückgängig"
+          }
+        }
+      }
+    },
+    "Undoes the last change" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Macht die letzte Änderung rückgängig"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

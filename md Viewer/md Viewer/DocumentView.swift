@@ -75,7 +75,7 @@ struct DocumentView: View {
 
     /// Title shown in the navigation bar.
     private var navigationTitle: String {
-        fileURL?.lastPathComponent ?? "Neues Dokument"
+        fileURL?.lastPathComponent ?? String(localized: "New Document")
     }
 
     /// True while editing and the working copy is worth keeping. Drives the
@@ -114,32 +114,32 @@ struct DocumentView: View {
                 .toolbar { toolbarContent }
                 .overlay { savingOverlay }
         }
-        .alert("Fehler", isPresented: saveErrorBinding) {
+        .alert("Error", isPresented: saveErrorBinding) {
             Button("OK", role: .cancel) { saveError = nil }
         } message: {
             Text(saveError ?? "")
         }
         .confirmationDialog(
-            "Änderungen speichern?",
+            "Save Changes?",
             isPresented: $showSaveConfirmation,
             titleVisibility: .visible
         ) {
-            Button("In Datei speichern", role: .destructive) { confirmSaveInPlace() }
-            Button("Abbrechen", role: .cancel) {}
+            Button("Save to File", role: .destructive) { confirmSaveInPlace() }
+            Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Die Originaldatei „\(fileURL?.lastPathComponent ?? "")“ wird mit dem bearbeiteten Text überschrieben.")
+            Text("The original file \(fileURL?.lastPathComponent ?? "") will be overwritten with the edited text.")
         }
         .confirmationDialog(
-            isDraft ? "Dokument verwerfen?" : "Änderungen verwerfen?",
+            isDraft ? "Discard Document?" : "Discard Changes?",
             isPresented: $showDiscardConfirmation,
             titleVisibility: .visible
         ) {
-            Button("Verwerfen", role: .destructive) { discardEditing() }
-            Button("Abbrechen", role: .cancel) {}
+            Button("Discard", role: .destructive) { discardEditing() }
+            Button("Cancel", role: .cancel) {}
         } message: {
             Text(isDraft
-                 ? "Dieses Dokument wurde noch nicht gespeichert und geht verloren."
-                 : "Die Änderungen wurden nicht gespeichert und gehen verloren.")
+                 ? "This document has not been saved yet and will be lost."
+                 : "The changes have not been saved and will be lost.")
         }
         .fileExporter(
             isPresented: $showExporter,
@@ -156,7 +156,7 @@ struct DocumentView: View {
     private var documentContent: some View {
         switch content {
         case .none:
-            ProgressView("Laden …")
+            ProgressView("Loading…")
         case .success:
             if isEditing {
                 editor
@@ -165,7 +165,7 @@ struct DocumentView: View {
             }
         case .failure(let error):
             ContentUnavailableView {
-                Label("Fehler", systemImage: "exclamationmark.triangle")
+                Label("Error", systemImage: "exclamationmark.triangle")
             } description: {
                 Text(error.localizedDescription)
             }
@@ -175,7 +175,7 @@ struct DocumentView: View {
     @ViewBuilder
     private var savingOverlay: some View {
         if isSaving {
-            ProgressView("Speichern …")
+            ProgressView("Saving…")
                 .padding(24)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
         }
@@ -196,7 +196,7 @@ struct DocumentView: View {
             adoptSavedFile(at: url)
         case .failure(let error):
             if !isUserCancelled(error) {
-                saveError = "Speichern fehlgeschlagen."
+                saveError = String(localized: "Saving failed.")
             }
         }
     }
@@ -221,8 +221,8 @@ struct DocumentView: View {
                    case .success(let text) = content {
                     beginEditing()
                     editedText = text.replacingOccurrences(
-                        of: "- [ ] Release-Notes schreiben",
-                        with: "- [x] Release-Notes schreiben"
+                        of: "- [ ] Write release notes",
+                        with: "- [x] Write release notes"
                     )
                 }
                 #endif
@@ -297,7 +297,7 @@ struct DocumentView: View {
             // it returns to the preview. Keeping changes is only ever the red
             // checkmark.
             ToolbarItem(placement: .cancellationAction) {
-                Button("Abbrechen", systemImage: "xmark") {
+                Button("Cancel", systemImage: "xmark") {
                     if hasUnsavedChanges {
                         showDiscardConfirmation = true
                     } else {
@@ -306,28 +306,28 @@ struct DocumentView: View {
                 }
                 .disabled(isSaving)
                 .accessibilityHint(isDraft
-                                   ? "Verwirft das neue Dokument"
-                                   : "Zurück zur Vorschau, ohne die Änderungen zu übernehmen")
+                                   ? "Discards the new document"
+                                   : "Returns to the preview without keeping the changes")
             }
             ToolbarItem(placement: .cancellationAction) {
                 // Step-by-step undo of individual typing bursts, in addition to
-                // "Abbrechen" (discard everything).
-                Button("Rückgängig", systemImage: "arrow.uturn.backward") {
+                // "Cancel" (discard everything).
+                Button("Undo", systemImage: "arrow.uturn.backward") {
                     if let restored = undoHistory.undo() { editedText = restored }
                 }
                 .disabled(isSaving || !undoHistory.canUndo)
-                .accessibilityHint("Macht die letzte Änderung rückgängig")
+                .accessibilityHint("Undoes the last change")
             }
             if canSaveAsMarkdown {
                 ToolbarItem(placement: .secondaryAction) {
-                    Button("Als Markdown speichern", systemImage: "square.and.arrow.down") {
+                    Button("Save as Markdown", systemImage: "square.and.arrow.down") {
                         showExporter = true
                     }
                     .disabled(isSaving || editedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Speichern", systemImage: "checkmark") {
+                Button("Save", systemImage: "checkmark") {
                     if isDraft {
                         showExporter = true
                     } else {
@@ -337,18 +337,18 @@ struct DocumentView: View {
                 .tint(.red)
                 .disabled(!canSave)
                 .accessibilityHint(isDraft
-                                   ? "Speichert den Text als neue Datei"
-                                   : "Überschreibt die Datei mit dem bearbeiteten Text")
+                                   ? "Saves the text as a new file"
+                                   : "Overwrites the file with the edited text")
             }
         } else {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Schließen", systemImage: "xmark") { dismiss() }
-                    .accessibilityHint("Schließt das Dokument")
+                Button("Close", systemImage: "xmark") { dismiss() }
+                    .accessibilityHint("Closes the document")
             }
             if isLoaded {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Bearbeiten", systemImage: "pencil") { beginEditing() }
-                        .accessibilityHint("Bearbeitet den Markdown-Text")
+                    Button("Edit", systemImage: "pencil") { beginEditing() }
+                        .accessibilityHint("Edits the Markdown text")
                 }
             }
         }
@@ -424,7 +424,7 @@ struct DocumentView: View {
             undoHistory.reset()
             assert(savedText == text && !isEditing)
         } catch {
-            saveError = (error as? DocumentError)?.errorDescription ?? "Speichern fehlgeschlagen."
+            saveError = (error as? DocumentError)?.errorDescription ?? String(localized: "Saving failed.")
         }
     }
 

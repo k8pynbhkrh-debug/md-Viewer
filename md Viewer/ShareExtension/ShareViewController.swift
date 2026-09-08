@@ -34,12 +34,12 @@ final class ShareViewController: UIViewController {
                 provider.hasItemConformingToTypeIdentifier($0.identifier)
             })
         else {
-            show(.failure(.notReadable), title: "Dokument")
+            show(.failure(.notReadable), title: String(localized: "Document"))
             return
         }
 
         provider.loadFileRepresentation(forTypeIdentifier: type.identifier) { [weak self] url, _ in
-            let title = url?.lastPathComponent ?? "Dokument"
+            let title = url?.lastPathComponent ?? String(localized: "Document")
             let outcome: Result<String, DocumentError> = url.map(loadMarkdown(from:))
                 ?? .failure(.notReadable)
             DispatchQueue.main.async {

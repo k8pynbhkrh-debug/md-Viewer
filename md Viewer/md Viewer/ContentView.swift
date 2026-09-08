@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 /// Public URL of the privacy policy / Impressum page (hosted via GitHub Pages).
 private let privacyPolicyURL = URL(string: "https://k8pynbhkrh-debug.github.io/md-Viewer/")!
@@ -41,23 +42,39 @@ struct ContentView: View {
                         .font(.title2)
                         .bold()
 
-                    Text("Öffne eine Markdown-Datei über „Teilen“ oder die Dateien-App, um sie hier anzuzeigen.")
+                    Text("Open a Markdown file via Share or the Files app to view it here.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
 
                     VStack(spacing: 12) {
+                        #if targetEnvironment(macCatalyst)
+                        // SwiftUI's `PasteButton` does not render under Mac
+                        // Catalyst, so the empty state would otherwise have no
+                        // way to start from clipboard text. This plain button
+                        // reads the pasteboard only on an explicit tap, matching
+                        // `PasteButton`'s privacy semantics.
+                        Button {
+                            onNewDocument(UIPasteboard.general.string ?? "")
+                        } label: {
+                            Label("Paste", systemImage: "doc.on.clipboard")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .accessibilityHint("Creates a new document from the text on the clipboard")
+                        #else
                         PasteButton(payloadType: String.self) { strings in
                             onNewDocument(strings.first ?? "")
                         }
                         .buttonBorderShape(.capsule)
-                        .accessibilityHint("Legt aus dem Text in der Zwischenablage ein neues Dokument an")
+                        .accessibilityHint("Creates a new document from the text on the clipboard")
+                        #endif
 
                         Button {
                             onNewDocument("")
                         } label: {
-                            Label("Leeres Dokument", systemImage: "square.and.pencil")
+                            Label("Blank Document", systemImage: "square.and.pencil")
                         }
                         .font(.subheadline)
                     }
@@ -68,7 +85,7 @@ struct ContentView: View {
                         .padding(.top, 4)
                     #endif
 
-                    Link("Datenschutz & Impressum", destination: privacyPolicyURL)
+                    Link("Privacy & Legal Notice", destination: privacyPolicyURL)
                         .font(.footnote)
                         .padding(.top, 8)
                 }
@@ -77,15 +94,10 @@ struct ContentView: View {
             }
         }
         #if targetEnvironment(macCatalyst)
-        .alert("Standard-App für .md", isPresented: defaultAppErrorBinding) {
+        .alert("Default App for .md Files", isPresented: defaultAppErrorBinding) {
             Button("OK", role: .cancel) { defaultAppError = nil }
         } message: {
-            Text("""
-            \(defaultAppError ?? "")
-
-            Alternativ im Finder: eine .md-Datei auswählen, „Informationen“ (⌘I) \
-            öffnen, unter „Öffnen mit“ md Viewer wählen und „Alle ändern …“.
-            """)
+            Text("\(defaultAppError ?? "")\n\n\(String(localized: "Alternatively, in the Finder: select a .md file, open Get Info (⌘I), choose md Viewer under Open with, and click Change All."))")
         }
         #endif
     }
@@ -94,7 +106,7 @@ struct ContentView: View {
     @ViewBuilder
     private var defaultAppRow: some View {
         if isDefaultMarkdownApp {
-            Label("md Viewer ist Standard für .md-Dateien", systemImage: "checkmark.circle.fill")
+            Label("md Viewer is the default for .md files", systemImage: "checkmark.circle.fill")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         } else {
@@ -104,13 +116,13 @@ struct ContentView: View {
                     isDefaultMarkdownApp = true
                 } catch {
                     defaultAppError = (error as? LocalizedError)?.errorDescription
-                        ?? "Die Zuordnung konnte nicht geändert werden."
+                        ?? String(localized: "The file association could not be changed.")
                 }
             } label: {
-                Label("md Viewer als Standard für .md festlegen", systemImage: "doc.badge.gearshape")
+                Label("Set md Viewer as the default for .md", systemImage: "doc.badge.gearshape")
             }
             .font(.subheadline)
-            .accessibilityHint("Öffnet .md-Dateien künftig per Doppelklick in md Viewer")
+            .accessibilityHint("Opens .md files in md Viewer on double-click from now on")
         }
     }
 

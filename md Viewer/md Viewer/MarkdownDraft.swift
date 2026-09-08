@@ -72,12 +72,13 @@ nonisolated struct MarkdownFileDocument: FileDocument {
 /// A filesystem-safe default name for saving `text` as a new file.
 ///
 /// Uses the first Markdown ATX heading (`# …`) if it yields a usable name,
-/// otherwise `"Dokument"`. The exporter appends the `.md` extension.
+/// otherwise the localized word for "Document". The exporter appends the `.md`
+/// extension.
 ///
 /// - Postcondition: the result is non-empty, trimmed, at most 60 characters,
 ///   and contains no path separators, colons or control characters.
 nonisolated func suggestedFilename(from text: String) -> String {
-    let fallback = "Dokument"
+    let fallback = String(localized: "Document")
 
     let heading = text
         .split(separator: "\n", omittingEmptySubsequences: false)

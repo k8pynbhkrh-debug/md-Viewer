@@ -383,12 +383,13 @@ struct SuggestedFilenameTests {
         #expect(suggestedFilename(from: "\n\nVorwort\n\n## Kapitel eins\n") == "Kapitel eins")
     }
 
-    // Contract — no heading yields the fallback.
-    @Test("falls back to \"Dokument\" without a heading")
+    // Contract — no heading yields the localized fallback.
+    @Test("falls back to the localized \"Document\" without a heading")
     func fallback() {
-        #expect(suggestedFilename(from: "nur Fließtext, keine Überschrift") == "Dokument")
-        #expect(suggestedFilename(from: "") == "Dokument")
-        #expect(suggestedFilename(from: "#   \n") == "Dokument")
+        let fallback = String(localized: "Document")
+        #expect(suggestedFilename(from: "plain text, no heading") == fallback)
+        #expect(suggestedFilename(from: "") == fallback)
+        #expect(suggestedFilename(from: "#   \n") == fallback)
     }
 
     // Contract — result contains no path separators or colons.

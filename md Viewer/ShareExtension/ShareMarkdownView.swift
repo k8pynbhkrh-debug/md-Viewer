@@ -10,7 +10,7 @@ struct ShareMarkdownView: View {
     let title: String
     let result: Result<String, DocumentError>
 
-    /// Called when the user taps "Fertig"; the controller completes the
+    /// Called when the user taps "Done"; the controller completes the
     /// extension request.
     let onDone: () -> Void
 
@@ -34,7 +34,7 @@ struct ShareMarkdownView: View {
                     }
                 case .failure(let error):
                     ContentUnavailableView {
-                        Label("Fehler", systemImage: "exclamationmark.triangle")
+                        Label("Error", systemImage: "exclamationmark.triangle")
                     } description: {
                         Text(error.localizedDescription)
                     }
@@ -44,7 +44,7 @@ struct ShareMarkdownView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Fertig", action: onDone)
+                    Button("Done", action: onDone)
                 }
             }
         }

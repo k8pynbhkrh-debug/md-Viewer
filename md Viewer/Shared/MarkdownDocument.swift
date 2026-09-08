@@ -19,15 +19,15 @@ enum DocumentError: LocalizedError, Sendable {
     nonisolated var errorDescription: String? {
         switch self {
         case .notReadable:
-            "Die Datei konnte nicht gelesen werden."
+            String(localized: "The file could not be read.")
         case .notWritable:
-            "Die Datei konnte nicht gespeichert werden."
+            String(localized: "The file could not be saved.")
         case .tooLarge(let size):
-            "Die Datei ist zu groß (\(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))). Maximal 5 MB werden unterstützt."
+            String(localized: "The file is too large (\(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))). The maximum supported size is 5 MB.")
         case .invalidEncoding:
-            "Die Datei konnte nicht als Text gelesen werden. Nur UTF-8-kodierte Dateien werden unterstützt."
+            String(localized: "The file could not be read as text. Only UTF-8 encoded files are supported.")
         case .empty:
-            "Die Datei ist leer."
+            String(localized: "The file is empty.")
         }
     }
 }
