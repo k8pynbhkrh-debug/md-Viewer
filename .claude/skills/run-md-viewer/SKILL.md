@@ -144,7 +144,7 @@ xcrun simctl io <udid> screenshot out.png
 
 For `02-bearbeiten.png` the keyboard is shown (Cmd+K above). The demo edit
 in the hook flips `- [ ] Release-Notes schreiben` → `- [x] …` in
-`demo-dokumente/Notiz.md`, which is short enough that the heading stays
+`demo-dokumente/<lang>/Notiz.md`, which is short enough that the heading stays
 visible above the keyboard and the red Save checkmark is active.
 
 Gotchas that cost time here:
@@ -161,7 +161,26 @@ Screenshot sim sizes: iPhone 6.9" = iPhone 17 Pro Max (1320×2868), iPad
 13" = iPad Pro 13-inch (2064×2752). Clean status bar via
 `xcrun simctl status_bar <udid> override --time 09:41 --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode notSupported`.
 
-### App-Store-Satz v1.2 (04.09.2026) — 9 Bilder je Größe
+### Zweisprachige Screenshots ab 1.3 (08.09.2026)
+
+Die App ist seit 1.3 zweisprachig (de + en). Screenshots liegen nach Sprache
+getrennt: `App-Store-Screenshots/de/{iPhone-6.9,iPad-13,Mac}/` (unverändert aus
+1.2) und `App-Store-Screenshots/en/…` (neu für die English-(U.S.)-Lokalisierung).
+Demo-Dokumente ebenso: `demo-dokumente/de/` und `demo-dokumente/en/`.
+
+Der englische Satz wird erzeugt mit (App vorher mit `driver.sh build` bzw. dem
+Catalyst-`xcodebuild` bauen):
+- **iPhone/iPad:** `screenshots-ios.sh <sim-udid> <out-dir> [iphone|ipad]`
+  (Sim = iPhone 17 Pro Max / iPad Pro 13" M4). Startet die App mit
+  `-AppleLanguages "(en)" -AppleLocale en_US`, öffnet die `demo-dokumente/en/`-
+  Dateien, macht Shots `01`–`07`. `08/09` (Files-App „Öffnen mit" /
+  Share-Extension) sind nicht CLI-scriptbar und im en-Satz weggelassen (7 Bilder,
+  Apple erlaubt 1–10). Für den de-Satz weiter `08/09` aus 1.1.
+- **Mac:** `screenshots-mac.sh` (nutzt `wincap.py` = CGWindowList-Capture per
+  PID, `mac_compose.py` = auf 2560×1600 zentrieren). Braucht Screen-Recording-
+  + Accessibility-Rechte fürs Terminal. 6 Shots analog zum de-Mac-Satz.
+
+### App-Store-Satz v1.2 (04.09.2026) — 9 Bilder je Größe (deutscher Satz)
 
 Reihenfolge + Aufnahme siehe `App-Store-Texte.md` → „Screenshots — 1.2".
 `01-leerzustand` (Kaltstart, vorher `simctl pbcopy` damit „Einsetzen" aktiv

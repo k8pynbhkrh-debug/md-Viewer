@@ -12,7 +12,7 @@ ohne Rückfrage (Guideline 2.1) nachvollziehbar sind.
 - **Länge:** 45–60 s. Ruhig, jede Aktion 1 s halten.
 - **Vorbereitung:**
   - `Notiz-Entwurf.txt` und eine `.md`-Demo (z. B. `Team-Notiz.md`) aus
-    `App-Store-Screenshots/demo-dokumente/` per AirDrop auf das iPhone, in
+    `App-Store-Screenshots/demo-dokumente/de/` (oder `/en/`) per AirDrop auf das iPhone, in
     „Dateien" → „Auf meinem iPhone" ablegen.
   - In einer Notiz-App einen kurzen Text kopieren (z. B. „# Einkauf\n\n- Kaffee\n- Brot").
   - md Viewer 1.2 (Build 10) aus TestFlight installiert.

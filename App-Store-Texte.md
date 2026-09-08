@@ -140,6 +140,22 @@ Version 1.3 (iOS) / 1.1 (macOS) adds a full English (en) localization of the app
 On Mac Catalyst only: the empty-state "Paste" button is now a standard button instead of SwiftUI's PasteButton (which does not render under Mac Catalyst). It reads UIPasteboard only on an explicit tap, same as before.
 ```
 
+### Screenshots — English (U.S.), 1.3
+
+Eigener englischer Satz unter `App-Store-Screenshots/en/`, erzeugt mit
+`.claude/skills/run-md-viewer/screenshots-ios.sh` (Sim auf `en`, Demo-Dokumente aus `demo-dokumente/en/`).
+Der deutsche Satz (`App-Store-Screenshots/de/`, 9 Bilder aus 1.2) bleibt für die
+de-Lokalisierung.
+
+- **iPhone 6,9"** (1320×2868) und **iPad 13"** (2064×2752): je 7 Bilder
+  `01-empty-state` (Leerzustand, „Paste" aktiv), `02-new-from-text` (Entwurf im
+  Editor), `03-editing` (`Note.md` im Editor, Tastatur), `04-overview`
+  (`Team-Note.md` gerendert), `05-table` (`Release-Matrix.md`), `06-code`
+  (`Code-Examples.md`), `07-languages` (`Languages & Emoji.md`).
+- Die Files-App-/Share-Extension-Bilder (`08/09` im de-Satz) sind nicht
+  CLI-scriptbar und im en-Satz weggelassen (Apple erlaubt 1–10).
+- **Mac** (2560×1600): 6 Bilder analog zum de-Mac-Satz, englische Demos.
+
 ---
 
 ## macOS 1.0 — Mac-Version (Mac Catalyst) + .md-Standard-App

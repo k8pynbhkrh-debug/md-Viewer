@@ -22,7 +22,7 @@ Submission ID: 6a374ee4-56f5-4868-a026-ba0e2d84d054 · Version 1.0 (1) · abgele
 
 Aufnahme: Einstellungen → Kontrollzentrum → "Bildschirmaufnahme" hinzufügen; im Kontrollzentrum starten. Datei per AirDrop auf den Mac, dann im Resolution Center anhängen.
 
-Beispieldateien zum Anhängen: `App-Store-Screenshots/demo-dokumente/Release-Matrix.md` und `Sprachen & Emoji.md` (oder `Code-Beispiele.md`).
+Beispieldateien zum Anhängen: `App-Store-Screenshots/demo-dokumente/de/Release-Matrix.md` und `Sprachen & Emoji.md` (oder `Code-Beispiele.md`).
 
 ## Antworttext für das Resolution Center (englisch, copy-paste)
 

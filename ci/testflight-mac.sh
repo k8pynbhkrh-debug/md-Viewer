@@ -7,16 +7,16 @@
 #
 # WICHTIG — eigener Versions-Strang für den Mac:
 # Die Xcode-Projekteinstellungen (MARKETING_VERSION / CURRENT_PROJECT_VERSION)
-# gehören dem iOS-Strang (aktuell 1.2 / 10). Der Mac App Store hat seinen eigenen
+# gehören dem iOS-Strang (aktuell 1.3 / 11). Der Mac App Store hat seinen eigenen
 # Strang und startet mit Marketing-Version 1.0. Dieses Skript überschreibt daher
 # beim Archivieren MAC_MARKETING_VERSION / MAC_BUILD — nicht die pbxproj ändern.
 #
 # Build-Nummer: muss innerhalb desselben Marketing-Version-Strangs eindeutig sein
-# und wachsen. Der Mac-1.0-Strang hat schon Build 14 (davor gab es die
-# Wegwerf-Test-Uploads 11/12/13 im Strang „1.3"). Ein brandneuer Strang wird von
-# ASC erst nach 20–40 min verarbeitet — nicht wundern, wenn der Build zunächst
-# nicht auftaucht.
-# Nächstes Mac-Update: MAC_MARKETING_VERSION=1.1 MAC_BUILD=15 ci/testflight-mac.sh …
+# und wachsen. macOS 1.0 wurde mit Build 15 veröffentlicht; macOS 1.1 startet
+# daher bei Build 16. Ein brandneuer Marketing-Version-Strang wird von ASC erst
+# nach 20–40 min verarbeitet — nicht wundern, wenn der Build zunächst nicht
+# auftaucht.
+# macOS 1.1 (englische Lokalisierung): MAC_MARKETING_VERSION=1.1 MAC_BUILD=16 (Default unten).
 #
 # Zusätzliche Voraussetzungen gegenüber ci/testflight.sh (einmalig, alle per
 # App-Store-Connect-API am 2026-09-04 eingerichtet):
@@ -53,8 +53,8 @@ if [ -z "$KEY_PATH" ] || [ -z "$KEY_ID" ] || [ -z "$ISSUER_ID" ]; then
   echo "Fehlt: --key / --key-id / --issuer" ; exit 2
 fi
 
-MAC_MARKETING_VERSION="${MAC_MARKETING_VERSION:-1.0}"
-MAC_BUILD="${MAC_BUILD:-14}"
+MAC_MARKETING_VERSION="${MAC_MARKETING_VERSION:-1.1}"
+MAC_BUILD="${MAC_BUILD:-16}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 XCODE_DIR="$REPO_ROOT/md Viewer"
