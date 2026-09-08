@@ -50,7 +50,11 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 >   „CREATE, EDIT, SAVE"-Block („click Paste in the start window", „click Edit in
 >   the top right", „click Paste" bei Datenschutz) — analog zur deutschen Mac-Fassung.
 >   Die iOS-Fassung bleibt bei „tap".
-> - **Offen:** nur noch „Zur Prüfung einreichen" für beide (Erics Freigabe).
+> - **08.09.2026 10:18 UTC — beide zur Prüfung eingereicht** (per ASC-API,
+>   `reviewSubmissions`; Erics Freigabe). iOS 1.3 Submission
+>   `c4d41931-a91c-4859-be13-584fcde40f05`, macOS 1.1 Submission
+>   `8b151a52-884e-4422-b359-5f08d37a9828`, beide Status **WAITING_FOR_REVIEW**.
+>   Auto-Release nach Genehmigung. Getrennte Review-Queues (wie schon 1.2 / 1.0).
 
 ---
 
