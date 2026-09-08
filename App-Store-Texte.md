@@ -15,14 +15,130 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > Screenshot-Satz iPhone 6,9" + iPad 13"; Build 10. Prüf-Video + Übersicht:
 > `docs/videos/` (`README.md`).
 >
-> **Offen für das nächste Update — US-Untertitel fehlt:** Der Untertitel ist nur
-> für die de-Lokalisierung gesetzt. Der US-Store hat keine „English (U.S.)"-
-> Lokalisierung, deshalb zeigt Apple dort im Untertitel-Slot die Kategorie
-> („Productivity") statt eines Untertitels — 30 von Apple indexierte Zeichen
-> ungenutzt (am 08.09.2026 im Live-Store bestätigt). Fix: in ASC eine „English
-> (U.S.)"-Lokalisierung mit eigenem Untertitel (+ Keywords/Texten) anlegen;
-> Untertitel-Änderung geht nur mit einer neuen Version, also beim nächsten
-> iOS-Update mitnehmen.
+> **Version 1.3 / macOS 1.1 (in Arbeit, 08.09.2026) — Englische Lokalisierung.**
+> Die App wird zweisprachig (Deutsch + Englisch, String Catalog, en als Basis;
+> siehe `docs/archiv/` bzw. Memory `md-viewer-localization`). Anlass: der US-Store
+> hatte keine „English (U.S.)"-Lokalisierung, zeigte im Untertitel-Slot die
+> Kategorie („Productivity") statt eines Untertitels (30 indexierte Zeichen
+> ungenutzt, am 08.09.2026 im Live-Store bestätigt). Mit 1.3 kommt eine
+> vollständige **English (U.S.)**-ASC-Lokalisierung dazu (Untertitel, Keywords,
+> Werbetext, Beschreibung). Mac-Polish in derselben Runde: Catalyst-Ersatz für den
+> `PasteButton` im Leerzustand. Deutsche Store-Texte bleiben unverändert; nur die
+> neue en-US-Lokalisierung + Build-/Versionsnummer ändern sich.
+> Englische Felder: Abschnitt **„English (U.S.) — 1.3 / macOS 1.1"** unten.
+
+---
+
+## English (U.S.) — 1.3 / macOS 1.1
+
+Neue ASC-Lokalisierung **English (U.S.)** für beide Plattformen. `en` ist die
+Basissprache der App; diese Texte sind die englischen Store-Felder. Deutsche
+Felder bleiben wie in 1.2 / macOS 1.0.
+
+### App Name (max. 30)
+
+```
+md Viewer
+```
+(sprachneutral, unverändert)
+
+### Subtitle (max. 30)
+
+```
+Read, edit & create Markdown
+```
+(28 Zeichen — nennt die drei Kernfunktionen direkt neben dem Namen; deckt
+„read", „edit", „create", „Markdown" für die Suche ab. Deutsches Gegenstück:
+„lesen, bearbeiten, erstellen".)
+
+### Promotional Text (max. 170)
+
+```
+Read, edit and re-save Markdown files. New: start a document from clipboard text and save it as .md. Opens .txt too. No account, no cloud, works fully offline.
+```
+(157 Zeichen; jederzeit ohne Review änderbar)
+
+### Keywords (max. 100, kommagetrennt, keine Leerzeichen)
+
+```
+markdown,editor,edit,paste,clipboard,txt,notes,readme,reader,table,code,offline,preview
+```
+(87 Zeichen — „viewer"/„md" weggelassen, stehen schon im App-Namen.)
+
+### What's New / Release Notes — 1.3 (iOS) und macOS 1.1
+
+```
+md Viewer is now fully available in English.
+
+This version adds a complete English localization of the app and the App Store listing. There are no functional changes.
+```
+
+Deutsche Fassung desselben Feldes (für die de-Lokalisierung von 1.3 / 1.1):
+
+```
+md Viewer gibt es jetzt vollständig auf Englisch.
+
+Diese Version ergänzt eine komplette englische Lokalisierung der App und des Store-Eintrags. Es gibt keine funktionalen Änderungen.
+```
+
+(macOS 1.1 ist das erste Mac-Update, „Neues in dieser Version" ist dort also
+nutzbar — anders als bei macOS 1.0.)
+
+### Description (max. 4000) — English (U.S.)
+
+Für **iOS 1.3**: der Text ohne den Abschnitt „ON THE MAC".
+Für **macOS 1.1**: mit dem Abschnitt „ON THE MAC" (nach dem Intro, vor
+„CREATE, EDIT, SAVE").
+
+```
+md Viewer opens Markdown files, shows them cleanly formatted right away, and lets you edit that same text in place, create new documents, and save them back to the file.
+
+No file browser. No account. No cloud. No tracking. Open a .md or .txt file from the Files app or the share menu. md Viewer renders headings, lists, tables, bold/italic, code blocks with syntax highlighting, and quotes. No raw text, no characters to decode.
+
+ON THE MAC
+
+md Viewer runs on iPhone, iPad, and Mac — one purchase for all three. On the Mac you can make md Viewer the default app for .md files with one click in the start window. After that, double-clicking a Markdown file in the Finder opens it directly in md Viewer instead of Preview or TextEdit. Use the File menu to start a draft with New Document (Cmd-N) or open a file with Open (Cmd-O). The window resizes freely.
+
+CREATE, EDIT, SAVE
+
+Start without a file: tap Paste on the start screen to take text from the clipboard, or choose Blank Document. The draft opens straight in the editor. The red checkmark saves it as a new .md file; you pick the folder and name in the Files dialog. After that, the checkmark writes to that same file as usual.
+
+Existing files: tap Edit in the top right. The preview turns into a text editor. Save with the red checkmark; after a short confirmation the original file is overwritten. The X discards your changes (after a confirmation), and the arrow steps back through individual changes. No autosave, no export, no second copy.
+
+.txt files open in the app and in the share extension too. When you edit a .txt, the app also offers Save as Markdown.
+
+If you only want to read, none of this gets in the way. Every file opens in the formatted preview first.
+
+WHY SO MINIMAL?
+
+Most Markdown apps today are full editors with file management, cloud sync, and menus. Handy, but too much when you just want to read a file quickly, jot down a quick note, or fix a typo now and then. md Viewer deliberately does only that: tap a file, read, change or create if needed, done.
+
+FEATURES
+
+- Open via Open With in the Files app or straight from the share menu (mail attachments, AirDrop). The share extension shows the document formatted right away, without switching apps
+- Create a new document from pasted or typed text and save it as a .md file
+- Opens .md and .txt
+- Clean Markdown rendering: headings, lists, task lists, tables (scroll horizontally), code blocks with syntax highlighting, quotes, links, images
+- Edit and save in place in the open file, with a confirmation before overwriting and before closing with unsaved changes
+- Full Unicode support: emoji, Arabic and Hebrew (right-to-left), Chinese, Japanese, and Korean characters
+- Supports Dynamic Type and VoiceOver
+- Automatic Dark Mode / Light Mode
+- Runs entirely offline, no network access in the code
+
+PRIVACY
+
+md Viewer collects no data at all. No analytics, no tracking, no account, no cloud sync. Files you open, edit, and create are processed only locally on your device. The clipboard is read only when you explicitly tap Paste.
+
+Who is it for? Anyone who regularly receives or manages .md or .txt files (notes, READMEs, technical docs, meeting notes) and wants to read them quickly and cleanly, edit them now and then, or jot down a new one, without opening a full editor.
+```
+
+### App Review notes — 1.3 / macOS 1.1 (englisch, ans bestehende Notes-Feld anhängen)
+
+```
+Version 1.3 (iOS) / 1.1 (macOS) adds a full English (en) localization of the app UI via a String Catalog; English is now the base development language and German is a complete translation. No functional or behavioral changes, no new permissions, no new network access.
+
+On Mac Catalyst only: the empty-state "Paste" button is now a standard button instead of SwiftUI's PasteButton (which does not render under Mac Catalyst). It reads UIPasteboard only on an explicit tap, same as before.
+```
 
 ---
 

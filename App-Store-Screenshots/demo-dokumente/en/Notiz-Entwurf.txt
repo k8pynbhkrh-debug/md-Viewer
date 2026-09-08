@@ -1,0 +1,17 @@
+# Draft: Blog Post
+
+A quick note as a plain .txt file. md Viewer opens .txt too
+and shows Markdown formatting right away.
+
+## Outline
+
+- Hook: why less is more
+- An everyday example
+- Wrap-up in two sentences
+
+## Quote
+
+> "The best thing about a note is that you can find it again."
+
+When you edit a .txt, the app also offers
+"Save as Markdown".
