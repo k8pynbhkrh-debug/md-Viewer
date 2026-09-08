@@ -46,10 +46,11 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 >   (Beschreibung **mit** „ON THE MAC"). Screenshots: de 6 (aus 1.0), en 6 Mac
 >   (2560×1600), Reihenfolge wie de-Satz (Übersicht zuerst). Prüf-Notizen für
 >   macOS 1.1 gesetzt.
+> - Die en-US-**Mac**-Beschreibung nutzt „click" statt „tap" im geteilten
+>   „CREATE, EDIT, SAVE"-Block („click Paste in the start window", „click Edit in
+>   the top right", „click Paste" bei Datenschutz) — analog zur deutschen Mac-Fassung.
+>   Die iOS-Fassung bleibt bei „tap".
 > - **Offen:** nur noch „Zur Prüfung einreichen" für beide (Erics Freigabe).
->   Kleine offene Frage: die en-US-Mac-Beschreibung übernimmt den geteilten
->   „CREATE, EDIT, SAVE"-Block wortgleich von iOS und sagt dort „tap" statt „click"
->   (die deutsche Mac-Fassung wurde angepasst). Kosmetisch, kein Blocker.
 
 ---
 
@@ -112,9 +113,12 @@ nutzbar — anders als bei macOS 1.0.)
 
 ### Description (max. 4000) — English (U.S.)
 
-Für **iOS 1.3**: der Text ohne den Abschnitt „ON THE MAC".
+Für **iOS 1.3**: der Text unten (ohne „ON THE MAC", mit „tap").
 Für **macOS 1.1**: mit dem Abschnitt „ON THE MAC" (nach dem Intro, vor
-„CREATE, EDIT, SAVE").
+„CREATE, EDIT, SAVE") **und** „tap" → „click" im „CREATE, EDIT, SAVE"-Block
+(„click Paste in the start window", „click Edit in the top right") sowie bei
+„click Paste" im Datenschutz-Absatz. Die „No file browser"-Zeile nennt auf dem
+Mac zusätzlich den Finder. So in ASC eingetragen (08.09.2026).
 
 ```
 md Viewer opens Markdown files, shows them cleanly formatted right away, and lets you edit that same text in place, create new documents, and save them back to the file.
