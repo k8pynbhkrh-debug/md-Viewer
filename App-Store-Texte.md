@@ -26,6 +26,30 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > `PasteButton` im Leerzustand. Deutsche Store-Texte bleiben unverändert; nur die
 > neue en-US-Lokalisierung + Build-/Versionsnummer ändern sich.
 > Englische Felder: Abschnitt **„English (U.S.) — 1.3 / macOS 1.1"** unten.
+>
+> **08.09.2026 — ASC eingerichtet (per ASC-REST-API, Chrome-Login war nicht möglich).**
+> Beide Builds verarbeitet: iOS **1.3 (11)** und macOS **1.1 (16)**, beide „VALID",
+> Export-Compliance automatisch (`usesNonExemptEncryption` = false).
+> - **en-US App-Name musste geändert werden:** „md Viewer" ist im englischen
+>   Store-Namespace von einer fremden Entwickler-ID belegt (Apple prüft ohne
+>   Rücksicht auf Groß/Klein + Leerzeichen: „md Viewer" = „MDViewer" = „MD Viewer").
+>   Gewählt: **„md Viewer: Markdown"** (nur en-US; deutscher Name bleibt „md Viewer").
+>   Untertitel en-US: „Read, edit & create Markdown".
+> - **iOS 1.3:** Build 11 verknüpft. de-DE „Neu in Version" gesetzt (war leer),
+>   de-DE Werbetext = 1.2-Wert wiederhergestellt (war beim Anlegen nicht mitgekommen),
+>   sonst deutsche Felder unangetastet. en-US-Lokalisierung komplett (Beschreibung
+>   ohne „ON THE MAC", Keywords, Werbetext, „Neu in Version"). Screenshots: de 9+9
+>   (aus 1.2), en 7 iPhone 6,9" + 7 iPad 13". Prüf-Notizen enthalten bereits den
+>   1.3-Abschnitt.
+> - **macOS 1.1:** Version angelegt, Build 16 verknüpft. de-DE aus 1.0 automatisch
+>   übernommen + nur „Neu in Version" ergänzt. en-US-Lokalisierung komplett
+>   (Beschreibung **mit** „ON THE MAC"). Screenshots: de 6 (aus 1.0), en 6 Mac
+>   (2560×1600), Reihenfolge wie de-Satz (Übersicht zuerst). Prüf-Notizen für
+>   macOS 1.1 gesetzt.
+> - **Offen:** nur noch „Zur Prüfung einreichen" für beide (Erics Freigabe).
+>   Kleine offene Frage: die en-US-Mac-Beschreibung übernimmt den geteilten
+>   „CREATE, EDIT, SAVE"-Block wortgleich von iOS und sagt dort „tap" statt „click"
+>   (die deutsche Mac-Fassung wurde angepasst). Kosmetisch, kein Blocker.
 
 ---
 
@@ -38,9 +62,11 @@ Felder bleiben wie in 1.2 / macOS 1.0.
 ### App Name (max. 30)
 
 ```
-md Viewer
+md Viewer: Markdown
 ```
-(sprachneutral, unverändert)
+(19 Zeichen; nur en-US. „md Viewer" allein ist im englischen Store-Namespace von
+einer fremden Entwickler-ID belegt — Apple prüft case-/whitespace-insensitiv, also
+sind auch „MDViewer"/„MD Viewer" gesperrt. Der deutsche Name bleibt „md Viewer".)
 
 ### Subtitle (max. 30)
 
