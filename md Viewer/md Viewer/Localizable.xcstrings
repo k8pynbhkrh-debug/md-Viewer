@@ -156,6 +156,17 @@
         }
       }
     },
+    "Done" : {
+      "comment" : "Leaves the text-selection view and returns to the rendered document.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        }
+      }
+    },
     "Edit" : {
       "localizations" : {
         "de" : {
@@ -300,6 +311,17 @@
         }
       }
     },
+    "Returns to the rendered document" : {
+      "comment" : "Accessibility hint for the X button while selecting text.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kehrt zur formatierten Ansicht zurück"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -370,12 +392,34 @@
         }
       }
     },
+    "Select Text" : {
+      "comment" : "Reader toolbar: switch to a plain-text view for selecting a passage.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text auswählen"
+          }
+        }
+      }
+    },
     "Set md Viewer as the default for .md" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "md Viewer als Standard für .md festlegen"
+          }
+        }
+      }
+    },
+    "Switches to a plain-text view where a passage can be selected and copied" : {
+      "comment" : "Accessibility hint for the \"Select Text\" toolbar button.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselt zu einer Nur-Text-Ansicht, in der sich ein Textabschnitt auswählen und kopieren lässt"
           }
         }
       }

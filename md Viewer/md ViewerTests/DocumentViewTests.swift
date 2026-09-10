@@ -405,6 +405,33 @@ struct PlainTextFromMarkdownTests {
     func plainPassthrough() {
         #expect(plainText(fromMarkdown: "Just a sentence.") == "Just a sentence.")
     }
+
+    // Contract — task-list items lose their checkbox, keeping a plain bullet.
+    @Test("task-list checkboxes are stripped")
+    func taskListCheckboxes() {
+        let out = plainText(fromMarkdown: "- [ ] open item\n- [x] done item")
+        #expect(!out.contains("["))
+        #expect(!out.contains("]"))
+        #expect(out.contains("open item"))
+        #expect(out.contains("done item"))
+    }
+
+    // Contract — a GFM table comes through without pipes or the |---| divider.
+    @Test("tables are flattened, divider row removed")
+    func tablesFlattened() {
+        let md = """
+        | Name | Date |
+        | --- | --- |
+        | Beta | 02.09. |
+        | GA | 16.09. |
+        """
+        let out = plainText(fromMarkdown: md)
+        #expect(!out.contains("---"))
+        #expect(!out.contains("|"))
+        #expect(out.contains("Name"))
+        #expect(out.contains("Beta"))
+        #expect(out.contains("16.09."))
+    }
 }
 
 @Suite("suggestedFilename")

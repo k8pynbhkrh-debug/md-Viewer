@@ -36,6 +36,10 @@ struct DocumentView: View {
     @State private var showExporter = false
     /// Drives the brief "Copied" toast after the "Copy All" toolbar button.
     @State private var showCopyConfirmation = false
+    /// While true the reader shows the plain-text, natively selectable view
+    /// instead of the rendered Markdown, so a passage can be selected and
+    /// copied. Never true together with `isEditing`.
+    @State private var isSelectingText = false
     @FocusState private var editorFocused: Bool
 
     /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
@@ -164,6 +168,8 @@ struct DocumentView: View {
         case .success:
             if isEditing {
                 editor
+            } else if isSelectingText {
+                SelectableTextView(text: plainText(fromMarkdown: savedText))
             } else {
                 preview(markdown: savedText)
             }
@@ -248,6 +254,11 @@ struct DocumentView: View {
                         with: "- [x] Write release notes"
                     )
                 }
+                // Startet direkt in der Text-auswählen-Ansicht (synthetische
+                // Taps im Simulator sind unzuverlässig). Nur DEBUG.
+                if ProcessInfo.processInfo.arguments.contains("-mdviewerSelectText") {
+                    isSelectingText = true
+                }
                 #endif
             case .failure(let error):
                 UIAccessibility.post(notification: .announcement, argument: error.localizedDescription)
@@ -308,9 +319,10 @@ struct DocumentView: View {
                     .frame(width: max(0, geometry.size.width - 48), alignment: .leading)
                     .padding(.horizontal, 24)
                     .padding(.vertical)
-                    // Let the reader select a passage and copy it (plain text,
-                    // no Markdown syntax) without switching to the editor. On
-                    // Mac Catalyst this also wires up ⌘C for the selection.
+                    // `.textSelection(.enabled)` here only gives a whole-block
+                    // "Copy" on iOS, not real selection — the "Select Text"
+                    // toolbar action switches to `SelectableTextView` for that.
+                    // Kept for Mac Catalyst, where inline selection does work.
                     .textSelection(.enabled)
             }
         }
@@ -367,12 +379,30 @@ struct DocumentView: View {
                                    ? "Saves the text as a new file"
                                    : "Overwrites the file with the edited text")
             }
+        } else if isSelectingText {
+            // Text-selection mode: the only way out is "Done" (or the X, which
+            // also just returns to the rendered view — it does not close the
+            // document from here).
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close", systemImage: "xmark") { isSelectingText = false }
+                    .accessibilityHint("Returns to the rendered document")
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button("Done") { isSelectingText = false }
+            }
         } else {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close", systemImage: "xmark") { dismiss() }
                     .accessibilityHint("Closes the document")
             }
             if isLoaded {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Select Text", systemImage: "character.cursor.ibeam") {
+                        isSelectingText = true
+                    }
+                    .disabled(savedText.isEmpty)
+                    .accessibilityHint("Switches to a plain-text view where a passage can be selected and copied")
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Copy All", systemImage: "doc.on.doc") { copyAll() }
                         .disabled(savedText.isEmpty)
@@ -502,11 +532,59 @@ struct DocumentView: View {
 }
 
 /// The document's text with Markdown syntax removed — headings lose their
-/// `#`, emphasis and code markers are stripped, links collapse to their text —
-/// so it reads like the rendered text a reader sees. Backs the "Copy All"
-/// button; also unit-tested.
+/// `#`, emphasis and code markers are stripped, links collapse to their text.
+/// It reads like the rendered text a reader sees and backs both "Copy All" and
+/// the "Select Text" view.
+///
+/// `cmark`'s plain-text renderer handles inline markup and headings but leaves
+/// two GFM constructs looking like source, so they are cleaned up here:
+///   - task-list items keep their `[ ]` / `[x]` box — dropped, leaving a plain
+///     `- ` bullet;
+///   - tables come through as raw `|`-delimited rows including the `|---|`
+///     divider — the divider is removed and the remaining rows are re-joined
+///     with tabs so they still read as columns and paste into a spreadsheet.
+///
+/// Unit-tested in `PlainTextFromMarkdownTests`.
 func plainText(fromMarkdown markdown: String) -> String {
-    MarkdownContent(markdown).renderPlainText()
+    var text = MarkdownContent(flattenedMarkdownTables(in: markdown)).renderPlainText()
+    text = text.replacingOccurrences(
+        of: #"(?m)^(\s*[-*]\s+)\[[ xX]\]\s+"#,
+        with: "$1",
+        options: .regularExpression
+    )
+    return text
+}
+
+/// Rewrites GFM table blocks in `markdown` to tab-separated rows so `cmark`'s
+/// plain-text renderer (which does not understand tables) does not emit them
+/// verbatim with their pipes and `|---|` divider. A row is any line outside a
+/// fenced code block that, trimmed, both starts and ends with `|`; the
+/// alignment/divider row (cells containing only `-`, `:` and spaces) is
+/// dropped. A trailing hard break keeps each row on its own line.
+private func flattenedMarkdownTables(in markdown: String) -> String {
+    var inFence = false
+    return markdown
+        .components(separatedBy: "\n")
+        .map { line -> String in
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("```") || trimmed.hasPrefix("~~~") {
+                inFence.toggle()
+                return line
+            }
+            guard !inFence, trimmed.count > 1, trimmed.hasPrefix("|"), trimmed.hasSuffix("|") else {
+                return line
+            }
+            let cells = trimmed.dropFirst().dropLast().components(separatedBy: "|")
+            let isDivider = cells.allSatisfy { cell in
+                let c = cell.trimmingCharacters(in: .whitespaces)
+                return !c.isEmpty && c.allSatisfy { $0 == "-" || $0 == ":" }
+            }
+            if isDivider { return "" }
+            return cells
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .joined(separator: "\t") + "  "
+        }
+        .joined(separator: "\n")
 }
 
 /// `.fileExporter` reports a user-cancelled dialog as a `CocoaError` on some
