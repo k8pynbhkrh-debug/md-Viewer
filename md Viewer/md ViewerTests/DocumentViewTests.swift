@@ -370,6 +370,43 @@ struct MarkdownFileDocumentTests {
     }
 }
 
+@Suite("plainText(fromMarkdown:)")
+struct PlainTextFromMarkdownTests {
+
+    // Contract — the result carries no Markdown syntax markers, only the text.
+    @Test("strips heading, emphasis and code markers")
+    func stripsSyntax() {
+        let out = plainText(fromMarkdown: "# Title\n\nSome **bold** and `code` text.")
+        #expect(!out.contains("#"))
+        #expect(!out.contains("*"))
+        #expect(!out.contains("`"))
+        #expect(out.contains("Title"))
+        #expect(out.contains("bold"))
+        #expect(out.contains("code"))
+    }
+
+    // Contract — a link collapses to its visible text, not its URL.
+    @Test("a link keeps its text and drops the URL")
+    func linkText() {
+        let out = plainText(fromMarkdown: "See [the spec](https://example.com/spec) here.")
+        #expect(out.contains("the spec"))
+        #expect(!out.contains("https://example.com"))
+        #expect(!out.contains("]("))
+    }
+
+    // Contract — empty in, empty out.
+    @Test("empty input yields an empty string")
+    func empty() {
+        #expect(plainText(fromMarkdown: "") == "")
+    }
+
+    // Contract — plain text passes through unchanged.
+    @Test("text without any Markdown is returned as-is")
+    func plainPassthrough() {
+        #expect(plainText(fromMarkdown: "Just a sentence.") == "Just a sentence.")
+    }
+}
+
 @Suite("suggestedFilename")
 struct SuggestedFilenameTests {
 

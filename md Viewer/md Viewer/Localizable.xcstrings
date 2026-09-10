@@ -52,6 +52,39 @@
         }
       }
     },
+    "Copied" : {
+      "comment" : "Brief confirmation shown after \"Copy All\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert"
+          }
+        }
+      }
+    },
+    "Copies the whole document as plain text to the clipboard" : {
+      "comment" : "Accessibility hint for the \"Copy All\" toolbar button.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert das gesamte Dokument als reinen Text in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Copy All" : {
+      "comment" : "Reader toolbar: copy the entire document text to the clipboard.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles kopieren"
+          }
+        }
+      }
+    },
     "Creates a new document from the text on the clipboard" : {
       "localizations" : {
         "de" : {

@@ -1,6 +1,7 @@
 import Highlightr
 import MarkdownUI
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 // `DocumentError`, `maxFileSize`, `loadMarkdown(from:)` and `saveMarkdown(text:to:)`
@@ -33,6 +34,8 @@ struct DocumentView: View {
     @State private var showSaveConfirmation = false
     @State private var showDiscardConfirmation = false
     @State private var showExporter = false
+    /// Drives the brief "Copied" toast after the "Copy All" toolbar button.
+    @State private var showCopyConfirmation = false
     @FocusState private var editorFocused: Bool
 
     /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
@@ -113,6 +116,7 @@ struct DocumentView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbarContent }
                 .overlay { savingOverlay }
+                .overlay(alignment: .top) { copyConfirmationToast }
         }
         .alert("Error", isPresented: saveErrorBinding) {
             Button("OK", role: .cancel) { saveError = nil }
@@ -178,6 +182,25 @@ struct DocumentView: View {
             ProgressView("Saving…")
                 .padding(24)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
+    /// Transient confirmation shown after "Copy All" — the system gives no
+    /// feedback for a programmatic pasteboard write, so we do.
+    @ViewBuilder
+    private var copyConfirmationToast: some View {
+        if showCopyConfirmation {
+            Label("Copied", systemImage: "checkmark.circle.fill")
+                .font(.subheadline.weight(.medium))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(.regularMaterial, in: Capsule())
+                .padding(.top, 8)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .task {
+                    try? await Task.sleep(for: .seconds(1.6))
+                    withAnimation { showCopyConfirmation = false }
+                }
         }
     }
 
@@ -285,6 +308,10 @@ struct DocumentView: View {
                     .frame(width: max(0, geometry.size.width - 48), alignment: .leading)
                     .padding(.horizontal, 24)
                     .padding(.vertical)
+                    // Let the reader select a passage and copy it (plain text,
+                    // no Markdown syntax) without switching to the editor. On
+                    // Mac Catalyst this also wires up ⌘C for the selection.
+                    .textSelection(.enabled)
             }
         }
     }
@@ -347,11 +374,33 @@ struct DocumentView: View {
             }
             if isLoaded {
                 ToolbarItem(placement: .primaryAction) {
+                    Button("Copy All", systemImage: "doc.on.doc") { copyAll() }
+                        .disabled(savedText.isEmpty)
+                        .accessibilityHint("Copies the whole document as plain text to the clipboard")
+                }
+                ToolbarItem(placement: .primaryAction) {
                     Button("Edit", systemImage: "pencil") { beginEditing() }
                         .accessibilityHint("Edits the Markdown text")
                 }
             }
         }
+    }
+
+    /// Puts the entire document on the pasteboard as plain text (Markdown
+    /// syntax removed), matching what a reader would get by selecting all of
+    /// the rendered text. Shows a brief confirmation because a programmatic
+    /// pasteboard write is otherwise silent.
+    ///
+    /// - Precondition: `savedText` is non-empty (the button is disabled
+    ///   otherwise).
+    /// - Postcondition: `UIPasteboard.general.string` holds the plain-text
+    ///   rendering of `savedText`.
+    private func copyAll() {
+        assert(!savedText.isEmpty, "copyAll precondition violated: nothing to copy")
+        UIPasteboard.general.string = plainText(fromMarkdown: savedText)
+        withAnimation { showCopyConfirmation = true }
+        UIAccessibility.post(notification: .announcement,
+                             argument: String(localized: "Copied"))
     }
 
     /// Enters the editor with a fresh working copy of the saved text.
@@ -450,6 +499,14 @@ struct DocumentView: View {
                "adoptSavedFile postcondition violated: file on disk differs from editedText")
         #endif
     }
+}
+
+/// The document's text with Markdown syntax removed — headings lose their
+/// `#`, emphasis and code markers are stripped, links collapse to their text —
+/// so it reads like the rendered text a reader sees. Backs the "Copy All"
+/// button; also unit-tested.
+func plainText(fromMarkdown markdown: String) -> String {
+    MarkdownContent(markdown).renderPlainText()
 }
 
 /// `.fileExporter` reports a user-cancelled dialog as a `CocoaError` on some
