@@ -19,6 +19,7 @@
 		DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */; };
 		E25154232EEBE8031DEDF99A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2CBBCA03C04D370582E232 /* Foundation.framework */; };
 		E7FBEE15B98351D9C8E0BE3F /* DocumentViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516C6 /* DocumentViewTests.swift */; };
+		E7FBEE15B98351D9C8E0BF40 /* MarkdownAttributedTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516D7 /* MarkdownAttributedTextTests.swift */; };
 		F09FF8A887F143E21843614D /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 28D91C7732C42B6A9E591E63 /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F9377B32045948206EDCDC3C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5767D86ACF34E68B083D5984 /* ShareViewController.swift */; };
 /* End PBXBuildFile section */
@@ -63,6 +64,7 @@
 		3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "md ViewerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5767D86ACF34E68B083D5984 /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA40516C6 /* DocumentViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DocumentViewTests.swift; sourceTree = "<group>"; };
+		65AC828D8063669DA40516D7 /* MarkdownAttributedTextTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownAttributedTextTests.swift; sourceTree = "<group>"; };
 		696367B301E53954641FB059 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownDocument.swift; sourceTree = "<group>"; };
 		AA01BB02CC03DD04EE05FF06 /* ShareExtension.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				65AC828D8063669DA40516C6 /* DocumentViewTests.swift */,
+				65AC828D8063669DA40516D7 /* MarkdownAttributedTextTests.swift */,
 			);
 			name = "md ViewerTests";
 			path = "md ViewerTests";
@@ -345,6 +348,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7FBEE15B98351D9C8E0BE3F /* DocumentViewTests.swift in Sources */,
+				E7FBEE15B98351D9C8E0BF40 /* MarkdownAttributedTextTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -171,7 +171,19 @@ struct DocumentView: View {
             } else if isSelectingText {
                 SelectableTextView(text: plainText(fromMarkdown: savedText))
             } else {
+                #if targetEnvironment(macCatalyst)
+                // On the Mac the rendered preview must be selectable with the
+                // mouse (⌘A / ⌘C included) without a mode switch — MarkdownUI's
+                // output under Catalyst is not, so the Mac gets an attributed,
+                // read-only UITextView instead. iOS/iPadOS keep `preview`.
+                MarkdownAttributedText(
+                    markdown: savedText,
+                    plainTextForCopyAll: plainText(fromMarkdown: savedText),
+                    onCopyAll: { confirmCopied() }
+                )
+                #else
                 preview(markdown: savedText)
+                #endif
             }
         case .failure(let error):
             ContentUnavailableView {
@@ -396,6 +408,9 @@ struct DocumentView: View {
                     .accessibilityHint("Closes the document")
             }
             if isLoaded {
+                #if !targetEnvironment(macCatalyst)
+                // On the Mac the rendered preview is already a selectable text
+                // view — no need to switch to a plain-text one.
                 ToolbarItem(placement: .primaryAction) {
                     Button("Select Text", systemImage: "character.cursor.ibeam") {
                         isSelectingText = true
@@ -403,6 +418,7 @@ struct DocumentView: View {
                     .disabled(savedText.isEmpty)
                     .accessibilityHint("Switches to a plain-text view where a passage can be selected and copied")
                 }
+                #endif
                 ToolbarItem(placement: .primaryAction) {
                     Button("Copy All", systemImage: "doc.on.doc") { copyAll() }
                         .disabled(savedText.isEmpty)
@@ -428,6 +444,13 @@ struct DocumentView: View {
     private func copyAll() {
         assert(!savedText.isEmpty, "copyAll precondition violated: nothing to copy")
         UIPasteboard.general.string = plainText(fromMarkdown: savedText)
+        confirmCopied()
+    }
+
+    /// Shows the brief "Copied" toast and posts the VoiceOver announcement — a
+    /// programmatic pasteboard write is otherwise silent. Shared by the "Copy
+    /// All" button and, on Mac Catalyst, a ⌘C with no active selection.
+    private func confirmCopied() {
         withAnimation { showCopyConfirmation = true }
         UIAccessibility.post(notification: .announcement,
                              argument: String(localized: "Copied"))
@@ -555,13 +578,15 @@ func plainText(fromMarkdown markdown: String) -> String {
     return text
 }
 
-/// Rewrites GFM table blocks in `markdown` to tab-separated rows so `cmark`'s
-/// plain-text renderer (which does not understand tables) does not emit them
-/// verbatim with their pipes and `|---|` divider. A row is any line outside a
-/// fenced code block that, trimmed, both starts and ends with `|`; the
+/// Rewrites GFM table blocks in `markdown` to tab-separated rows so a plain-text
+/// renderer that does not understand tables (`cmark` behind `plainText`,
+/// Foundation's parser behind `attributedString(fromMarkdown:baseFont:)`) does
+/// not emit them verbatim with their pipes and `|---|` divider. A row is any
+/// line outside a fenced code block that, trimmed, both starts and ends with
+/// `|`; the
 /// alignment/divider row (cells containing only `-`, `:` and spaces) is
 /// dropped. A trailing hard break keeps each row on its own line.
-private func flattenedMarkdownTables(in markdown: String) -> String {
+func flattenedMarkdownTables(in markdown: String) -> String {
     var inFence = false
     return markdown
         .components(separatedBy: "\n")
