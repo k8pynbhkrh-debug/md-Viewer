@@ -27,6 +27,14 @@
 
 set -euo pipefail
 
+# Apples `xcodebuild -exportArchive` ruft in `IDEDistributionCreateIPAStep`
+# `/usr/bin/rsync` (openrsync) mit alten Flags wie `-E` auf und startet dabei
+# serverseitig das erste `rsync` im PATH. Liegt dort ein neueres Homebrew-rsync
+# (>= 3.5), kennt das `--extended-attributes` nicht und der Export bricht mit
+# "exportArchive Copy failed" ab. Deshalb `/usr/bin` hier nach vorne ziehen,
+# damit auf beiden Seiten dasselbe System-rsync benutzt wird.
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
 KEY_PATH="" ; KEY_ID="" ; ISSUER_ID=""
 while [ $# -gt 0 ]; do
   case "$1" in

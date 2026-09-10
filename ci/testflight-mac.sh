@@ -39,6 +39,11 @@
 
 set -euo pipefail
 
+# Siehe ci/testflight.sh: `xcodebuild -exportArchive` bricht mit
+# "exportArchive Copy failed" ab, wenn ein neueres Homebrew-rsync (>= 3.5) im
+# PATH vor `/usr/bin/rsync` liegt. `/usr/bin` nach vorne ziehen.
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
 KEY_PATH="" ; KEY_ID="" ; ISSUER_ID=""
 while [ $# -gt 0 ]; do
   case "$1" in
