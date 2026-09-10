@@ -553,6 +553,50 @@
           }
         }
       }
+    },
+    "Formatted View" : {
+      "comment" : "Reader toolbar (Mac): switch from the selectable preview to the full MarkdownUI rendering.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formatierte Ansicht"
+          }
+        }
+      }
+    },
+    "Selectable Text" : {
+      "comment" : "Reader toolbar (Mac): switch back from the rendered preview to the selectable one.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auswählbarer Text"
+          }
+        }
+      }
+    },
+    "Switches back to the selectable preview" : {
+      "comment" : "Accessibility hint for the Mac Formatted-View toggle, shown while the rendered preview is up.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselt zurück zur auswählbaren Vorschau"
+          }
+        }
+      }
+    },
+    "Switches to the fully rendered preview with tables and images, which cannot be selected" : {
+      "comment" : "Accessibility hint for the Mac Formatted-View toggle, shown while the selectable preview is up.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselt zur vollständig gerenderten Vorschau mit Tabellen und Bildern, die sich nicht auswählen lässt"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

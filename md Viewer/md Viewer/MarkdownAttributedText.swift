@@ -2,21 +2,23 @@ import SwiftUI
 import UIKit
 
 /// The document rendered as a styled, read-only, natively selectable text view
-/// — the Mac (Catalyst) preview.
+/// — the Mac (Catalyst) default preview.
 ///
 /// On the Mac the reader expects to sweep the rendered text with the mouse and
 /// copy it with ⌘C. SwiftUI's `.textSelection(.enabled)` on MarkdownUI's output
-/// does not deliver that under Catalyst (same UIKit text engine as iOS, where it
-/// only offers a whole-block "Copy"). A read-only `UITextView` in selectable
-/// mode does: mouse drag-selection, plus "Look Up" / share on the selection.
-/// `CopyAllTextView` takes first responder on its own so the Edit menu's ⌘A and
-/// ⌘C reach it, and defines what those do (highlight all / copy all).
+/// does not deliver that under Catalyst — it does nothing there (verified on a
+/// real Mac). A read-only `UITextView` in selectable mode does: mouse
+/// drag-selection, plus "Look Up" / share on the selection. `CopyAllTextView`
+/// takes first responder on its own so the Edit menu's ⌘A and ⌘C reach it, and
+/// defines what those do (highlight all / copy all).
 ///
 /// The text is an `NSAttributedString` rendered from the Markdown by
 /// `attributedString(fromMarkdown:baseFont:)` (Foundation's parser), so headings,
-/// emphasis, inline code, links and lists keep their look while staying one
-/// continuous, selectable string. iOS/iPadOS keep the richer MarkdownUI preview
-/// (`DocumentView.preview(markdown:)`) with its images and syntax highlighting.
+/// emphasis, inline code, fenced code blocks, links and lists keep their look
+/// while staying one continuous, selectable string. Tables come through as
+/// tab-separated rows (no borders) and images are dropped; the reader can toggle
+/// to the full MarkdownUI rendering (`DocumentView.preview(markdown:)`) from the
+/// toolbar for those. iOS/iPadOS always use the MarkdownUI preview.
 struct MarkdownAttributedText: UIViewRepresentable {
     /// The document's Markdown source.
     let markdown: String
@@ -273,6 +275,12 @@ private func renderBlock(_ block: MarkdownBlock,
     if headerLevel != nil {
         paragraph.paragraphSpacingBefore = baseFont.pointSize * 0.7
     }
+    if isCodeBlock {
+        // The whole block is rendered as one paragraph (interior line breaks are
+        // U+2028, not U+000A — see below), so this spacing lands once, after the
+        // block, and the tinted background reads as one continuous panel.
+        paragraph.lineSpacing = 2
+    }
 
     let quoteIndent = CGFloat(blockQuoteDepth) * 16
     var prefix = ""
@@ -286,6 +294,7 @@ private func renderBlock(_ block: MarkdownBlock,
     } else {
         paragraph.firstLineHeadIndent = quoteIndent + (isCodeBlock ? 12 : 0)
         paragraph.headIndent = quoteIndent + (isCodeBlock ? 12 : 0)
+        if isCodeBlock { paragraph.tailIndent = -12 }
     }
 
     let styled = NSMutableAttributedString()
@@ -311,6 +320,16 @@ private func renderBlock(_ block: MarkdownBlock,
 
     trimNewlines(styled)
     guard styled.length > 0 else { return NSAttributedString() }
+
+    if isCodeBlock {
+        // Collapse the interior newlines to U+2028 so the block is a single
+        // paragraph: one paragraph style, one uninterrupted background panel,
+        // no per-line gaps. (Copy still works; `plainText(fromMarkdown:)` backs
+        // "Copy All" with real newlines.)
+        let body = styled.mutableString
+        body.replaceOccurrences(of: "\n", with: "\u{2028}",
+                                options: [], range: NSRange(location: 0, length: body.length))
+    }
 
     styled.addAttribute(.paragraphStyle, value: paragraph,
                         range: NSRange(location: 0, length: styled.length))
