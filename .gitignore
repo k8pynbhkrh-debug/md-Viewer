@@ -1,5 +1,6 @@
 # Xcode
 build/
+build-mac/
 DerivedData/
 *.pbxuser
 *.mode1v3

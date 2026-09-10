@@ -8,8 +8,9 @@ import UIKit
 /// copy it with ⌘C. SwiftUI's `.textSelection(.enabled)` on MarkdownUI's output
 /// does not deliver that under Catalyst (same UIKit text engine as iOS, where it
 /// only offers a whole-block "Copy"). A read-only `UITextView` in selectable
-/// mode does: mouse drag-selection, ⌘A and ⌘C come for free from the responder
-/// chain, plus "Look Up" / share on the selection.
+/// mode does: mouse drag-selection, plus "Look Up" / share on the selection.
+/// `CopyAllTextView` takes first responder on its own so the Edit menu's ⌘A and
+/// ⌘C reach it, and defines what those do (highlight all / copy all).
 ///
 /// The text is an `NSAttributedString` rendered from the Markdown by
 /// `attributedString(fromMarkdown:baseFont:)` (Foundation's parser), so headings,
@@ -45,9 +46,6 @@ struct MarkdownAttributedText: UIViewRepresentable {
         view.attributedText = attributedString(fromMarkdown: markdown, baseFont: Self.baseFont)
         view.copyAllProvider = { plainTextForCopyAll }
         view.onCopyAll = onCopyAll
-        // First responder on appear so ⌘A / ⌘C reach this view without the
-        // reader having to click into it first.
-        DispatchQueue.main.async { view.becomeFirstResponder() }
         return view
     }
 
@@ -65,9 +63,15 @@ struct MarkdownAttributedText: UIViewRepresentable {
     private static var baseFont: UIFont { UIFont.preferredFont(forTextStyle: .body) }
 }
 
-/// A read-only, selectable text view whose ⌘C copies the entire document as
-/// plain text when nothing is selected (matching the "Copy All" button), and the
-/// selection as usual when there is one.
+/// A read-only, selectable text view for the Mac preview.
+///
+/// - Becomes first responder as soon as it is in a window, so the Edit menu's
+///   Select All (⌘A) and Copy (⌘C) reach it without the reader clicking in
+///   first — a non-editable `UITextView` does not take first responder on its
+///   own under Catalyst, which is why ⌘A otherwise did nothing.
+/// - `selectAll(_:)` selects the whole document and shows the selection.
+/// - `copy(_:)` with no selection copies the entire document as plain text
+///   (matching the "Copy All" button); with a selection it copies that.
 ///
 /// - Precondition (`copy(_:)` copy-all branch): `copyAllProvider` returns the
 ///   document's plain text.
@@ -79,13 +83,29 @@ final class CopyAllTextView: UITextView {
     /// Run after a successful no-selection "copy all".
     var onCopyAll: () -> Void = {}
 
+    override var canBecomeFirstResponder: Bool { true }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil, !isFirstResponder {
+            becomeFirstResponder()
+        }
+    }
+
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        // Keep "Copy" available with no selection so ⌘C can copy the whole
-        // document; everything else keeps UITextView's own rules.
-        if action == #selector(copy(_:)) {
+        // Keep Select All and Copy available with no selection, so ⌘A can
+        // highlight the whole document and ⌘C can copy it; everything else
+        // keeps UITextView's own rules.
+        if action == #selector(selectAll(_:)) || action == #selector(copy(_:)) {
             return !text.isEmpty
         }
         return super.canPerformAction(action, withSender: sender)
+    }
+
+    override func selectAll(_ sender: Any?) {
+        guard !text.isEmpty else { return }
+        if !isFirstResponder { becomeFirstResponder() }
+        selectedTextRange = textRange(from: beginningOfDocument, to: endOfDocument)
     }
 
     override func copy(_ sender: Any?) {
