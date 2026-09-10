@@ -201,6 +201,31 @@ Die Ecke ist in allen 7 iPad-Motiven weiß; mit PIL weiß übermalen
 (`ImageDraw.rectangle((1980,2668,w,h), fill=(255,255,255))`). iPhone-Sim ist
 sauber.
 
+### App-Store-Satz v1.4 (10.09.2026) — nur `04–07` neu (Reader-Textauswahl)
+
+1.4 (iOS) fügt in der Leseansicht die Toolbar-Buttons „Text auswählen" +
+„Alles kopieren" hinzu — die alten `04–07` zeigen die Toolbar ohne diese Buttons
+und wurden für **de + en, iPhone + iPad** neu aufgenommen. `01–03` und `08/09`
+bleiben. Helfer im Skill-Ordner:
+
+- `render-shots.sh <udid> <out> <de|en>` — nimmt `04–07` gerendert auf, forciert
+  die App-Sprache per Launch-Arg, deutsche System-Statusleiste („09:41", 24 h).
+- `ipad-manual.sh <udid> <out> <de|en>` — dasselbe für den **iPad**, weil dort
+  `simctl openurl` reproduzierbar hängt: startet die openurl im Hintergrund und
+  killt sie nach 12 s (das Dokument öffnet trotzdem), Screenshot danach.
+- `fix-bezel.py <png…>` — übermalt den grauen Bezel-Bogen unten rechts weiß
+  (`w-110 … w`, `h-110 … h`); auf alle iPad-`04–07` anwenden.
+- DEBUG-Startargument **`-mdviewerSelectText`** öffnet ein per `openurl`
+  übergebenes Dokument direkt in der „Text auswählen"-Ansicht.
+
+Gelernt dabei: (1) **nur einen** Simulator gleichzeitig booten — mit mehreren
+booted hängt `simctl launch`/`openurl` regelmäßig. (2) Deutsche Statusleiste
+braucht `simctl spawn <udid> defaults write "Apple Global Domain" AppleLanguages
+-array de-DE en` + `AppleLocale -string de_DE`, dann `shutdown`+`boot`; die
+Launch-Args `-AppleLanguages` setzen nur die App, nicht die Systemleiste.
+(3) `status_bar override --time` will `HH:MM` oder einen ISO-String **mit**
+Zeitzone — „2026-09-08T09:41:00" ohne `Z` wird als „non-ISO" abgelehnt.
+
 ## Mutation testing
 
 `muter` (`brew install muter-mutation-testing/formulae/muter`) is set up

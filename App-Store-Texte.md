@@ -55,6 +55,75 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 >   `c4d41931-a91c-4859-be13-584fcde40f05`, macOS 1.1 Submission
 >   `8b151a52-884e-4422-b359-5f08d37a9828`, beide Status **WAITING_FOR_REVIEW**.
 >   Auto-Release nach Genehmigung. Getrennte Review-Queues (wie schon 1.2 / 1.0).
+>
+> **Version 1.4 (in Arbeit, 10.09.2026, iOS-Strang) — Textauswahl im Reader.**
+> 1.3 ist seit ~09.09. genehmigt und live (`READY_FOR_SALE`). Ticket T-2026-003:
+> in der Leseansicht ist Text jetzt auswählbar und kopierbar, ohne in den
+> Bearbeiten-Modus zu wechseln — Toolbar-Button **„Text auswählen"** öffnet den
+> Dokumenttext als reinen Text (`SelectableTextView`, read-only `UITextView`,
+> volle System-Auswahl), plus **„Alles kopieren"** für das ganze Dokument.
+> Build **1.4 (12)** und **1.4 (13)** in TestFlight (13 = Fix, nachdem
+> `.textSelection(.enabled)` auf MarkdownUI sich auf iOS als untauglich
+> herausstellte). Deutsche + englische Store-Texte: Abschnitt **„Version 1.4"**
+> unten. Screenshots 04–07 (Reader-Toolbar geändert) neu für de + en, iPhone +
+> iPad. **macOS bleibt bei 1.1** — die Maus-Auswahl-in-der-Vorschau + ⌘A/⌘C für
+> den Mac ist Ticket **T-2026-005** und kommt danach als macOS 1.2.
+
+---
+
+## Version 1.4 — geänderte Texte (iOS, 10.09.2026)
+
+Nur der iOS-Strang. Beschreibung/Keywords/Werbetext/Untertitel bleiben wie 1.3
+(2.1-Fassung mit English-(U.S.)-Lokalisierung); geändert wird **„Neu in dieser
+Version"** (de + en) und die Screenshots. Optional: je eine Zeile in der
+Funktions-/Features-Liste der Beschreibung (unten notiert).
+
+### Neu in dieser Version / Release Notes — 1.4 (de-DE)
+
+```
+Text markieren und kopieren
+
+• Neu in der Leseansicht: „Text auswählen" oben rechts zeigt den Dokumenttext als reinen Text. Dort lässt sich jeder Abschnitt wie gewohnt markieren und über „Kopieren" übernehmen, ohne in den Bearbeiten-Modus zu wechseln.
+• „Alles kopieren" legt den gesamten Dokumenttext ohne Markdown-Zeichen in die Zwischenablage.
+```
+
+### What's New / Release Notes — 1.4 (en-US)
+
+```
+Select and copy text
+
+• New in the reading view: "Select Text" in the top right shows the document as plain text. Select any part of it and copy it with the standard menu, without switching to edit mode.
+• "Copy All" puts the whole document text on the clipboard with the Markdown syntax removed.
+```
+
+### Beschreibung — optionale Zusatzzeile (nicht zwingend)
+
+In der Funktionsliste (de) nach der Rendering-Zeile einfügen:
+
+```
+• Textabschnitte in der Leseansicht markieren und kopieren, ohne zu bearbeiten; „Alles kopieren" für das ganze Dokument
+```
+
+Englisches Gegenstück in der FEATURES-Liste:
+
+```
+• Select and copy passages from the reading view without editing; "Copy All" for the whole document
+```
+
+### App-Prüfungs-Anmerkungen — 1.4 (englisch, ans Notes-Feld anhängen)
+
+```
+Version 1.4 adds text selection to the reading view: a "Select Text" toolbar action shows the document as plain text in a read-only, selectable text view (UITextView, isEditable = false), and a "Copy All" action copies the whole document (Markdown syntax stripped) to the clipboard via UIPasteboard. No new permissions, no network access, no background pasteboard reads. A short screen recording is attached, plus sample-markdown-files.zip.
+```
+
+### Screenshots — 1.4
+
+Neu aufzunehmen: **04–07** je iPhone 6,9" (1320×2868) und iPad 13" (2064×2752),
+für **de und en**. Grund: die Reader-Toolbar hat jetzt „Text auswählen" +
+„Alles kopieren" neben dem Bearbeiten-Stift — die 1.2/1.3-Bilder 04–07 zeigen
+die alte Toolbar. 01–03 (Leerzustand, Entwurf, Editor) unverändert; 08/09 (de,
+Dateien-App / Teilen-Extension) unverändert. Erzeugen wie gehabt mit
+`.claude/skills/run-md-viewer/screenshots-ios.sh` bzw. `driver.sh`.
 
 ---
 
