@@ -68,6 +68,26 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > unten. Screenshots 04–07 (Reader-Toolbar geändert) neu für de + en, iPhone +
 > iPad. **macOS bleibt bei 1.1** — die Maus-Auswahl-in-der-Vorschau + ⌘A/⌘C für
 > den Mac ist Ticket **T-2026-005** und kommt danach als macOS 1.2.
+>
+> **macOS 1.2 (10.09.2026) — Textauswahl in der Vorschau (Mac). Ticket T-2026-005.**
+> Auf dem Mac ist SwiftUIs `.textSelection(.enabled)` auf MarkdownUIs Ausgabe
+> unter Catalyst wirkungslos (auf echtem Mac verifiziert) — die gerenderte
+> Vorschau ist dort gar nicht auswählbar. Lösung: **zwei umschaltbare Ansichten**.
+> Standard = `MarkdownAttributedText` (eine durchgehende, mit der Maus
+> selektierbare `NSAttributedString`-`UITextView`: ⌘A wählt alles, ⌘C kopiert,
+> ⌘C ohne Auswahl = ganzes Dokument als Klartext; Überschriften/fett/Code/Zitate/
+> Listen/Links bleiben, Tabellen → Tab-Zeilen, Bilder aus). Toolbar-Umschalter
+> **„Formatierte Ansicht"** (`doc.richtext`) → die volle MarkdownUI-Darstellung
+> mit Tabellen-Rahmen, Syntax-Highlighting und Bildern (zum Lesen, unter Catalyst
+> nicht auswählbar). iOS/iPad unverändert. Build **macOS 1.2 (18)** (Build 17 war
+> eine verworfene Zwischenfassung — nur Attributed-Ansicht, ohne Umschalter).
+> Deutsche Store-Texte, Beschreibung/Keywords/Werbetext aus macOS 1.1 übernommen;
+> nur **„Neu in dieser Version"** (de + en, Abschnitt unten) ist neu. Mac-
+> Screenshots: der 6er-Satz aus 1.0/1.1 bleibt (zeigt die „Formatierte Ansicht",
+> unverändert). Prüf-Notizen auf 1.2 aktualisiert (Auswahl-Feature + Testschritte).
+> **10.09.2026 — per ASC-API zur Prüfung eingereicht** (Erics Freigabe),
+> Submission `383298fe-8440-44f7-8212-7f8bba6779bf`, Status **WAITING_FOR_REVIEW**,
+> Auto-Release nach Genehmigung.
 
 ---
 
@@ -124,6 +144,43 @@ für **de und en**. Grund: die Reader-Toolbar hat jetzt „Text auswählen" +
 die alte Toolbar. 01–03 (Leerzustand, Entwurf, Editor) unverändert; 08/09 (de,
 Dateien-App / Teilen-Extension) unverändert. Erzeugen wie gehabt mit
 `.claude/skills/run-md-viewer/screenshots-ios.sh` bzw. `driver.sh`.
+
+---
+
+## macOS 1.2 — Textauswahl in der Vorschau (Mac, Ticket T-2026-005)
+
+Nur der macOS-Strang. Beschreibung / Keywords / Werbetext / Untertitel bleiben
+wie macOS 1.1 (de + en). Geändert wird **nur „Neu in dieser Version"** (de + en).
+Screenshots: der 6er-Mac-Satz aus 1.0/1.1 bleibt (zeigt die „Formatierte
+Ansicht", technisch unverändert). Build **macOS 1.2 (18)**.
+
+### Neu in dieser Version / Release Notes — macOS 1.2 (de-DE)
+
+```
+Textauswahl in der Vorschau
+
+• Auf dem Mac lässt sich der Text in der Vorschau jetzt direkt mit der Maus markieren und kopieren, ohne den Modus zu wechseln.
+• ⌘A wählt das ganze Dokument aus, ⌘C kopiert. ⌘C ohne Auswahl kopiert den gesamten Text ohne Markdown-Zeichen.
+• Für Tabellen mit Rahmen, Syntax-Farben und Bilder oben rechts auf „Formatierte Ansicht" umschalten.
+```
+
+### What's New / Release Notes — macOS 1.2 (en-US)
+
+```
+Text selection in the preview
+
+• On the Mac you can now select and copy text in the preview directly with the mouse, without switching modes.
+• Cmd-A selects the whole document, Cmd-C copies. Cmd-C with nothing selected copies the entire text with the Markdown syntax removed.
+• Switch to Formatted View (top right) for bordered tables, syntax colors and images.
+```
+
+### App-Prüfungs-Anmerkungen — macOS 1.2
+
+Das Notes-Feld wurde auf 1.2 aktualisiert (Abschnitt „WHAT CHANGED IN macOS 1.2"
+beschreibt die selektierbare Vorschau + den „Formatierte Ansicht"-Umschalter,
+plus Testschritte 3/4 für den Reviewer: mit der Maus markieren + ⌘C, ⌘A, Toggle).
+Kein Anhang nötig (kein Guideline-2.1-Fall erwartet — reine UI-Änderung, keine
+neuen Berechtigungen, kein Netz).
 
 ---
 
