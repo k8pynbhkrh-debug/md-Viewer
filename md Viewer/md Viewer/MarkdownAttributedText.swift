@@ -28,6 +28,14 @@ struct MarkdownAttributedText: UIViewRepresentable {
     /// like the "Copy All" toolbar button. With a selection, ⌘C copies that.
     let plainTextForCopyAll: String
 
+    /// The open document's folder, for resolving relative image paths. `nil`
+    /// for an unsaved draft.
+    let documentFolderURL: URL?
+
+    /// Shared with the MarkdownUI preview — tracks which folders the reader
+    /// has granted access to for relative images.
+    let accessStore: ImageFolderAccessStore
+
     /// Called after a ⌘C-with-no-selection "copy all", so the caller can show
     /// the same confirmation toast the "Copy All" button uses (a programmatic
     /// pasteboard write is otherwise silent).
@@ -48,6 +56,7 @@ struct MarkdownAttributedText: UIViewRepresentable {
         view.attributedText = attributedString(fromMarkdown: markdown, baseFont: Self.baseFont)
         view.copyAllProvider = { plainTextForCopyAll }
         view.onCopyAll = onCopyAll
+        loadImages(into: view)
         return view
     }
 
@@ -55,10 +64,35 @@ struct MarkdownAttributedText: UIViewRepresentable {
         let rendered = attributedString(fromMarkdown: markdown, baseFont: Self.baseFont)
         if view.attributedText != rendered {
             view.attributedText = rendered
+            loadImages(into: view)
         }
         if let view = view as? CopyAllTextView {
             view.copyAllProvider = { plainTextForCopyAll }
             view.onCopyAll = onCopyAll
+        }
+    }
+
+    /// Upgrades `view.attributedText` in place once any images referenced by
+    /// `markdown` have loaded — the text itself is already showing (set
+    /// synchronously above), so the reader never sees a blank state while
+    /// images resolve off the main thread. A previous, now-superseded pass
+    /// (the markdown changed again before it finished) is cancelled via
+    /// `CopyAllTextView.pendingImageTask`.
+    private func loadImages(into view: UITextView) {
+        guard let view = view as? CopyAllTextView else { return }
+        let markdown = self.markdown
+        let baseFont = Self.baseFont
+        let documentFolderURL = self.documentFolderURL
+        let accessStore = self.accessStore
+        view.pendingImageTask = Task {
+            let withImages = await attributedString(
+                fromMarkdown: markdown,
+                baseFont: baseFont,
+                documentFolderURL: documentFolderURL,
+                accessStore: accessStore
+            )
+            guard !Task.isCancelled else { return }
+            view.attributedText = withImages
         }
     }
 
@@ -84,6 +118,15 @@ final class CopyAllTextView: UITextView {
     var copyAllProvider: () -> String = { "" }
     /// Run after a successful no-selection "copy all".
     var onCopyAll: () -> Void = {}
+
+    /// The in-flight "load this markdown's images" pass. Assigning a new
+    /// value cancels whichever one was running — the markdown changed again
+    /// before images resolved, so that pass's result no longer applies.
+    var pendingImageTask: Task<Void, Never>? {
+        didSet { oldValue?.cancel() }
+    }
+
+    deinit { pendingImageTask?.cancel() }
 
     override var canBecomeFirstResponder: Bool { true }
 
@@ -133,9 +176,11 @@ final class CopyAllTextView: UITextView {
 /// headings (scaled + bold), bold / italic / strikethrough, inline code and
 /// fenced code blocks (monospaced, tinted background), block quotes (indented,
 /// secondary colour), ordered / unordered lists (marker + hanging indent),
-/// links (`.link` attribute, tint colour) and thematic breaks. Not shown:
-/// images — on the Mac this view is about selecting and copying prose, and the
-/// reader still has the rendered preview on iOS/iPadOS.
+/// links (`.link` attribute, tint colour) and thematic breaks. Images are
+/// **not** handled here — `AttributedString(markdown:)` itself drops `![]()`
+/// entirely (verified empirically: it leaves only the alt text, with no
+/// attribute marking it as having been an image). The image-aware overload
+/// below pre-processes them separately before calling this function.
 ///
 /// Font sizes derive from `baseFont` so Dynamic Type is respected. On a parse
 /// failure the raw (table-flattened) source is returned in `baseFont`.
@@ -170,12 +215,157 @@ func attributedString(fromMarkdown markdown: String, baseFont: UIFont) -> NSAttr
         let rendered = renderBlock(block, from: parsed, baseFont: baseFont)
         guard rendered.length > 0 else { continue }
         if result.length > 0 {
-            result.append(NSAttributedString(string: "\n"))
+            // A real blank line, not just one `\n` — the visible gap between
+            // paragraphs must live in the *text* (`\n\n`), not only in the
+            // `paragraphSpacing` attribute below. Attribute-only spacing
+            // looks identical on screen but is invisible to a plain-text
+            // copy: selecting a range and ⌘C only carries the characters,
+            // so a reader pasting elsewhere saw paragraphs merge into a
+            // single run-on line. Explicit `.font` keeps this blank line's
+            // height in step with Dynamic Type, matching the surrounding text.
+            result.append(NSAttributedString(string: "\n\n", attributes: [.font: baseFont]))
         }
         result.append(rendered)
     }
 
     return result.length > 0 ? result : plainFallback()
+}
+
+// MARK: - Images
+
+/// The image-aware sibling of `attributedString(fromMarkdown:baseFont:)`:
+/// same text rendering, plus every `![alt](src)` resolved and spliced in as
+/// an inline `NSTextAttachment`. Runs the (potentially slow — folder access,
+/// disk I/O, Base64 decode) image resolution off the main actor via
+/// `MarkdownImageLoader`; only the final, cheap splice-into-the-string step
+/// touches the (already-displayed) text.
+///
+/// A reference that can't be shown gets a static placeholder glyph rather
+/// than vanishing silently — matching the MarkdownUI preview's placeholders,
+/// minus the interactive "choose folder" button: an `NSTextAttachment` can't
+/// host a SwiftUI button, and the reader can switch to "Formatted View" for
+/// that. See `MarkdownImageProvider.swift` for the interactive version.
+func attributedString(
+    fromMarkdown markdown: String,
+    baseFont: UIFont,
+    documentFolderURL: URL?,
+    accessStore: ImageFolderAccessStore
+) async -> NSAttributedString {
+    let (sanitized, references) = extractImageReferences(from: markdown)
+    let base = attributedString(fromMarkdown: sanitized, baseFont: baseFont)
+    guard !references.isEmpty else { return base }
+
+    let result = NSMutableAttributedString(attributedString: base)
+    await insertImageAttachments(into: result, references: references, documentFolderURL: documentFolderURL, accessStore: accessStore)
+    return result
+}
+
+/// Finds every `![alt](src)` in `markdown` and replaces it with a single
+/// `\u{FFFC}` (object replacement character) placeholder, so the reference
+/// survives — as one inert character, at a known position — through
+/// `markdownForAttributedString`'s table/checkbox clean-up and the Foundation
+/// Markdown parser, both of which would otherwise drop it. Nested
+/// constructs (an image inside a link, `[![alt](img)](url)`) are not
+/// matched — same "light contract" scope as the rest of this file.
+///
+/// - Postcondition: the returned references are in the same left-to-right
+///   order as their `\u{FFFC}` placeholders in `sanitized`, so a positional
+///   walk (`insertImageAttachments`) can pair them up correctly.
+func extractImageReferences(from markdown: String) -> (sanitized: String, references: [(alt: String, source: String)]) {
+    guard let regex = try? NSRegularExpression(pattern: #"!\[([^\]]*)\]\(([^)\s]+)\)"#) else {
+        return (markdown, [])
+    }
+    let ns = markdown as NSString
+    let matches = regex.matches(in: markdown, range: NSRange(location: 0, length: ns.length))
+    guard !matches.isEmpty else { return (markdown, []) }
+
+    var references: [(alt: String, source: String)] = []
+    let sanitized = NSMutableString()
+    var cursor = 0
+    for match in matches {
+        guard match.numberOfRanges == 3 else { continue }
+        sanitized.append(ns.substring(with: NSRange(location: cursor, length: match.range.location - cursor)))
+        sanitized.append("\u{FFFC}")
+        references.append((
+            alt: ns.substring(with: match.range(at: 1)),
+            source: ns.substring(with: match.range(at: 2))
+        ))
+        cursor = match.range.location + match.range.length
+    }
+    sanitized.append(ns.substring(from: cursor))
+    return (sanitized as String, references)
+}
+
+/// Replaces each `\u{FFFC}` placeholder in `text`, in order, with the
+/// corresponding `references` entry resolved to an image attachment.
+///
+/// - Precondition: `references.count` matches the number of `\u{FFFC}`
+///   characters in `text` (guaranteed by `extractImageReferences`, which
+///   produces both together).
+private func insertImageAttachments(
+    into text: NSMutableAttributedString,
+    references: [(alt: String, source: String)],
+    documentFolderURL: URL?,
+    accessStore: ImageFolderAccessStore
+) async {
+    var searchStart = 0
+    for reference in references {
+        let ns = text.string as NSString
+        let placeholderRange = ns.range(
+            of: "\u{FFFC}",
+            range: NSRange(location: searchStart, length: ns.length - searchStart)
+        )
+        guard placeholderRange.location != NSNotFound else { break }
+
+        let url = URL(string: reference.source, relativeTo: documentFolderURL)
+        let accessibleFolder = url.flatMap { accessStore.accessibleFolderURL(forFileAt: $0) }
+        let result = await MarkdownImageLoader.shared.load(url: url, accessibleFolderURL: accessibleFolder)
+
+        let attachment: NSTextAttachment
+        switch result {
+        case .image(let uiImage):
+            let fitting = FitWidthTextAttachment()
+            fitting.image = uiImage
+            attachment = fitting
+        case .needsFolderAccess:
+            attachment = NSTextAttachment()
+            attachment.image = UIImage(systemName: "folder.badge.questionmark")?
+                .withTintColor(.secondaryLabel, renderingMode: .alwaysOriginal)
+        case .unavailable:
+            attachment = NSTextAttachment()
+            attachment.image = UIImage(systemName: "photo")?
+                .withTintColor(.secondaryLabel, renderingMode: .alwaysOriginal)
+        }
+
+        let replacement = NSAttributedString(attachment: attachment)
+        text.replaceCharacters(in: placeholderRange, with: replacement)
+        searchStart = placeholderRange.location + replacement.length
+    }
+}
+
+/// An `NSTextAttachment` that scales its image down to fit the text
+/// container's width, preserving aspect ratio, but never upscales past the
+/// image's own pixel size — the `NSTextAttachment` counterpart to
+/// `FitWidthLayout` (`MarkdownImageProvider.swift`), needed because a plain
+/// `NSTextAttachment` renders at the image's native pixel size regardless of
+/// the container width.
+private final class FitWidthTextAttachment: NSTextAttachment {
+    override func attachmentBounds(
+        for textContainer: NSTextContainer?,
+        proposedLineFragment lineFrag: CGRect,
+        glyphPosition position: CGPoint,
+        characterIndex charIndex: Int
+    ) -> CGRect {
+        guard let image, image.size.width > 0, image.size.height > 0, lineFrag.width > 0 else {
+            return super.attachmentBounds(
+                for: textContainer, proposedLineFragment: lineFrag,
+                glyphPosition: position, characterIndex: charIndex
+            )
+        }
+        let width = min(image.size.width, lineFrag.width)
+        let height = width * (image.size.height / image.size.width)
+        return CGRect(x: 0, y: 0, width: width, height: height)
+    }
 }
 
 /// Pre-processes the Markdown so Foundation's parser (no GFM tables, literal
@@ -270,7 +460,9 @@ private func renderBlock(_ block: MarkdownBlock,
     let blockColor: UIColor = (blockQuoteDepth > 0) ? .secondaryLabel : .label
 
     let paragraph = NSMutableParagraphStyle()
-    paragraph.paragraphSpacing = baseFont.pointSize * 0.5
+    // The gap between blocks now comes from a real blank line (`"\n\n"` in
+    // the join above), not this attribute — attribute-only spacing doesn't
+    // survive a plain-text copy of a partial selection.
     paragraph.lineBreakMode = .byWordWrapping
     if headerLevel != nil {
         paragraph.paragraphSpacingBefore = baseFont.pointSize * 0.7

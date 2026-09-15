@@ -18,6 +18,9 @@ struct DocumentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var content: Result<String, DocumentError>?
     @State private var highlightr = Highlightr()
+    /// Security-scoped bookmarks for folders granted access to, so relative
+    /// image paths in the preview can resolve — see `ImageFolderAccess.swift`.
+    @State private var imageAccessStore = ImageFolderAccessStore()
 
     /// The file this document writes to, or `nil` while it is still an unsaved
     /// draft. Once set (opened file, or first "save as"), the red checkmark
@@ -58,6 +61,11 @@ struct DocumentView: View {
     /// True while there is no backing file yet — the document has never been
     /// written to disk.
     private var isDraft: Bool { fileURL == nil }
+
+    /// The open document's folder — where relative image paths resolve
+    /// against, and where a "grant folder access" picker starts browsing.
+    /// `nil` for an unsaved draft.
+    private var documentFolderURL: URL? { fileURL?.deletingLastPathComponent() }
 
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
     private func syntaxTheme(for scheme: ColorScheme) -> String {
@@ -126,6 +134,7 @@ struct DocumentView: View {
     var body: some View {
         NavigationStack {
             documentContent
+                .environment(imageAccessStore)
                 .navigationTitle(navigationTitle)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbarContent }
@@ -192,6 +201,8 @@ struct DocumentView: View {
                     MarkdownAttributedText(
                         markdown: savedText,
                         plainTextForCopyAll: plainText(fromMarkdown: savedText),
+                        documentFolderURL: documentFolderURL,
+                        accessStore: imageAccessStore,
                         onCopyAll: { confirmCopied() }
                     )
                 }
@@ -318,7 +329,8 @@ struct DocumentView: View {
     private func preview(markdown: String) -> some View {
         GeometryReader { geometry in
             ScrollView {
-                Markdown(markdown)
+                Markdown(markdown, imageBaseURL: documentFolderURL)
+                    .markdownImageProvider(AppImageProvider(documentFolderURL: documentFolderURL))
                     .markdownCodeSyntaxHighlighter(
                         HighlightrSyntaxHighlighter(highlightr: highlightr)
                     )
@@ -330,13 +342,16 @@ struct DocumentView: View {
                         .markdownMargin(top: 0, bottom: 16)
                     }
                     .markdownBlockStyle(\.codeBlock) { configuration in
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            configuration.label
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(12)
+                        Group {
+                            if configuration.language?.lowercased() == "mermaid" {
+                                MermaidDiagramView(
+                                    source: configuration.content,
+                                    fallback: AnyView(codeBlockContainer(configuration))
+                                )
+                            } else {
+                                codeBlockContainer(configuration)
+                            }
                         }
-                        .background(codeBlockBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         .markdownMargin(top: 0, bottom: 16)
                     }
                     // Fill the available width (MarkdownUI otherwise sizes
@@ -352,6 +367,20 @@ struct DocumentView: View {
                     .textSelection(.enabled)
             }
         }
+    }
+
+    /// The normal (non-Mermaid) fenced-code-block rendering: syntax-
+    /// highlighted, horizontally scrollable, tinted panel. Shared between the
+    /// default `codeBlock` style and Mermaid's fallback when a diagram fails
+    /// to render.
+    private func codeBlockContainer(_ configuration: CodeBlockConfiguration) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            configuration.label
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(12)
+        }
+        .background(codeBlockBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     @ToolbarContentBuilder
