@@ -88,6 +88,26 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > **10.09.2026 — per ASC-API zur Prüfung eingereicht** (Erics Freigabe),
 > Submission `383298fe-8440-44f7-8212-7f8bba6779bf`, Status **WAITING_FOR_REVIEW**,
 > Auto-Release nach Genehmigung.
+>
+> **Version 1.5 (in Arbeit, 15.09.2026, iOS-Strang) — Bilder & Mermaid-Diagramme
+> in der Vorschau.** Ticket **T-2026-006**: relative Bildpfade (security-scoped
+> Bookmark auf den enthaltenden Ordner, sichtbarer Platzhalter mit „Ordner
+> wählen"-Button bei fehlendem Zugriff statt stiller Leerstelle) und
+> eingebettete `data:`-URI-Bilder (off-main-thread dekodiert, damit große Blobs
+> die Darstellung nicht mehr nach dem ersten Bild abbrechen lassen) werden in
+> der MarkdownUI-Vorschau jetzt angezeigt. Zusätzlich: `` ```mermaid``` ``-
+> Codeblöcke rendern als Diagramm (offline über gebündeltes `mermaid.min.js`
+> in einer unsichtbaren `WKWebView`), mit Fehler-Fallback auf den rohen
+> Codeblock. Nebenbei ein Bugfix in der Mac-Textvorschau
+> (`MarkdownAttributedText.swift`): der Absatzabstand war nur ein visuelles
+> Attribut, keine echte Leerzeile im Text, wodurch ⌘C/Copy-All Absätze beim
+> Einfügen zusammenlaufen ließ — jetzt eine echte `\n\n`. Commit `b493a46` auf
+> `ticket/T-2026-006-…`, 61 Tests grün, auf dem iOS-Simulator gegen alle drei
+> Fälle verifiziert. Deutsche + englische Store-Texte: Abschnitt **„Version
+> 1.5"** unten. Neuer Screenshot 05 (Mermaid + eingebettetes Bild), Rest ab
+> Position 5 um eins nach hinten. **macOS bleibt vorerst bei 1.2** — der
+> Absatz-Kopier-Fix wird von Eric von Hand auf einem echten Mac
+> gegengeprüft, bevor daraus eine macOS-Version wird.
 
 ---
 
@@ -144,6 +164,67 @@ für **de und en**. Grund: die Reader-Toolbar hat jetzt „Text auswählen" +
 die alte Toolbar. 01–03 (Leerzustand, Entwurf, Editor) unverändert; 08/09 (de,
 Dateien-App / Teilen-Extension) unverändert. Erzeugen wie gehabt mit
 `.claude/skills/run-md-viewer/screenshots-ios.sh` bzw. `driver.sh`.
+
+---
+
+## Version 1.5 — geänderte Texte (iOS, 15.09.2026)
+
+Nur der iOS-Strang. Ticket **T-2026-006**: Bilder (relativer Pfad mit
+Ordnerzugriff-Bookmark **und** eingebettete `data:`-URIs) sowie Mermaid-
+Codeblöcke werden in der Vorschau jetzt tatsächlich dargestellt statt
+wegzufallen bzw. als Code-Text zu erscheinen. Beschreibung/Keywords/Werbetext/
+Untertitel bleiben wie 1.4; geändert wird **„Neu in dieser Version"** (de + en)
+und die Screenshots (neuer Screenshot 05, Rest um eins nach hinten
+verschoben). **macOS bleibt vorerst bei 1.2** — der im selben Commit
+enthaltene Absatz-Kopier-Fix für die Mac-Textvorschau
+(`MarkdownAttributedText.swift`: Absatzabstand war nur ein Attribut, keine
+echte Leerzeile im Text, wodurch ⌘C/Copy-All Absätze beim Einfügen
+zusammenlaufen ließ) wird von Eric von Hand auf einem echten Mac
+gegengeprüft, bevor daraus eine macOS-Version wird.
+
+### Neu in dieser Version / Release Notes — 1.5 (de-DE)
+
+```
+Bilder und Diagramme in der Vorschau
+
+• Bilder aus .md-Dateien werden jetzt angezeigt — sowohl relative Pfade (z. B. ![](ordner/foto.jpg)) als auch eingebettete data:-Bilder. Bei relativen Pfaden fragt md Viewer bei Bedarf einmalig nach dem enthaltenden Ordner.
+• ```mermaid```-Codeblöcke erscheinen als gerendertes Diagramm statt als Text; bei einem Fehler im Diagramm wird wie gewohnt der Code angezeigt.
+```
+
+### What's New / Release Notes — 1.5 (en-US)
+
+```
+Images and diagrams in the preview
+
+• Images referenced from .md files are now shown — both relative paths (e.g. ![](folder/photo.jpg)) and embedded data: images. For relative paths, md Viewer asks once for access to the containing folder when needed.
+• ```mermaid``` code blocks now render as diagrams instead of plain text; a diagram that fails to parse still shows the underlying code, as before.
+```
+
+### App-Prüfungs-Anmerkungen — 1.5 (englisch, ans Notes-Feld anhängen)
+
+```
+Version 1.5 adds image and diagram rendering to the reading view. Images referenced by relative path are resolved against the folder containing the opened .md file; the app requests read access to that folder via a security-scoped bookmark (UIDocumentPickerViewController, folder content type) only when a document actually contains a relative image reference, and only for reading. Embedded data: URI images are decoded off the main thread. Mermaid ("```mermaid```") code fences are rendered to a diagram via a bundled, offline copy of Mermaid.js (no network access) and rasterized locally; a diagram that fails to parse falls back to the plain code block. No new data collection, no network access.
+```
+
+### Screenshots — 1.5
+
+Neuer Screenshot **05** je iPhone 6,9" (1320×2868) und iPad 13" (2064×2752),
+für **de und en** — zeigt ein Mermaid-Flussdiagramm und ein eingebettetes
+`data:`-Bild (Balkendiagramm) im selben Dokument. Alle bisherigen Bilder ab
+Position 5 um eins nach hinten verschoben (de/iPad: 05–09 → 06–10, de wie
+gehabt 10 Bilder inkl. 09/10 Dateien-App/Teilen-Extension; en: 05–07 → 06–08,
+weiterhin ohne die beiden CLI-unscriptbaren Motive). Demo-Dokumente:
+`demo-dokumente/de/Diagramme-Bilder.md` und `demo-dokumente/en/Diagrams-Images.md`
+— fiktiver Sprint-Fortschritt (Balkendiagramm als eingebettetes PNG, per
+`data:`-URI) + fiktiver Freigabe-Workflow (Mermaid-Flowchart), inhaltlich
+passend zu den bestehenden Team-Notiz-Demodateien. Bewusst **nicht** über die
+Ordnerzugriff-Variante gezeigt: der „Ordner wählen"-Button lässt sich im
+Simulator nicht per Skript antippen (kein GUI-Klick-Harness), daher
+demonstriert der Screenshot die `data:`-URI-Bildvariante, die keinen
+Ordnerzugriff braucht. Aufgenommen mit `driver.sh build` +
+`simctl openurl`/`screenshot` (iPad: `openurl` im Hintergrund + Kill nach 12 s,
+siehe `ipad-manual.sh`-Muster); iPad-Aufnahmen mit `fix-bezel.py` vom
+bekannten grauen Eckenartefakt befreit.
 
 ---
 
