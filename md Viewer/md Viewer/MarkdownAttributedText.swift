@@ -80,6 +80,13 @@ struct MarkdownAttributedText: UIViewRepresentable {
     /// `CopyAllTextView.pendingImageTask`.
     private func loadImages(into view: UITextView) {
         guard let view = view as? CopyAllTextView else { return }
+        // Cheap pre-check: a document with no `![` at all has no images to
+        // resolve, so skip the async pass (and the `attributedText`
+        // reassignment it ends in) entirely. Reassigning `attributedText` —
+        // even to an equal-content string — clears the view's current mouse
+        // selection, which otherwise silently broke drag-to-select on every
+        // image-free document (the common case) shortly after it opened.
+        guard markdown.contains("![") else { return }
         let markdown = self.markdown
         let baseFont = Self.baseFont
         let documentFolderURL = self.documentFolderURL
@@ -132,8 +139,16 @@ final class CopyAllTextView: UITextView {
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        if window != nil, !isFirstResponder {
-            becomeFirstResponder()
+        // Deferred to the next run loop turn: called synchronously, this can
+        // land before the window has become key, in which case
+        // `becomeFirstResponder()` silently no-ops — the view never actually
+        // gains first-responder status, and with it never installs the text
+        // interaction that makes mouse drag-to-select work at all (not just
+        // ⌘A/⌘C, which was this method's original motivation).
+        guard window != nil, !isFirstResponder else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.window != nil, !self.isFirstResponder else { return }
+            self.becomeFirstResponder()
         }
     }
 
