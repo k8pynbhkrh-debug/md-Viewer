@@ -105,9 +105,27 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > `ticket/T-2026-006-…`, 61 Tests grün, auf dem iOS-Simulator gegen alle drei
 > Fälle verifiziert. Deutsche + englische Store-Texte: Abschnitt **„Version
 > 1.5"** unten. Neuer Screenshot 05 (Mermaid + eingebettetes Bild), Rest ab
-> Position 5 um eins nach hinten. **macOS bleibt vorerst bei 1.2** — der
-> Absatz-Kopier-Fix wird von Eric von Hand auf einem echten Mac
-> gegengeprüft, bevor daraus eine macOS-Version wird.
+> Position 5 um eins nach hinten.
+>
+> **16.09.2026 — Eric hat den Mac-Fix von Hand getestet** (Debug-Build, Mac
+> Catalyst) und dabei einen zweiten, unabhängigen Bug gefunden: Maus-Ziehen
+> zum Markieren funktionierte in der Standard-Vorschau **gar nicht** (nicht
+> nur ⌘A/⌘C, wie der ursprüngliche Kommentar unterstellte) — `didMoveToWindow()`
+> rief `becomeFirstResponder()` zu früh (synchron, vor dem Key-Window-Wechsel)
+> auf, der Aufruf verpuffte wirkungslos. Fix: auf den nächsten Runloop-Tick
+> verschoben (Commit `64602a5`). Nebenbei ein zweiter Fix: der asynchrone
+> Bild-Ladepass in `MarkdownAttributedText` lief auch für bildlose Dokumente
+> und setzte `attributedText` unnötig neu (löscht die Mausauswahl) — jetzt per
+> Kurz-Check übersprungen. Beide Fixes von Eric live gegengeprüft (Drag +
+> ⌘C, korrekt getrennte Absätze). **Daraufhin macOS 1.3 (Build 19) vorbereitet**
+> und eingerichtet, Details unten unter **„macOS 1.3"**.
+>
+> **16.09.2026 10:48/10:49 UTC — beide zur Prüfung eingereicht** (Erics
+> Freigabe, per ASC-API `reviewSubmissions`). iOS 1.5 Submission
+> `0d055f8e-4c82-4880-8183-95a0b4923eec`, macOS 1.3 Submission
+> `32be5cd5-9c28-4b25-992d-37ab68704f4a`, beide Status **WAITING_FOR_REVIEW**,
+> Auto-Release nach Genehmigung. Getrennte Review-Queues wie bei allen
+> vorigen Versionen.
 
 ---
 
