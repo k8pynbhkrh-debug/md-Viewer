@@ -597,6 +597,46 @@
           }
         }
       }
+    },
+    "Image – folder access needed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild – Ordnerzugriff nötig"
+          }
+        }
+      }
+    },
+    "Choose Folder" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordner wählen"
+          }
+        }
+      }
+    },
+    "Image unavailable" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild nicht verfügbar"
+          }
+        }
+      }
+    },
+    "Diagram could not be rendered" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagramm konnte nicht gerendert werden"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

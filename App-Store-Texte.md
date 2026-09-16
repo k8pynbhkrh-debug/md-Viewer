@@ -88,6 +88,44 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > **10.09.2026 — per ASC-API zur Prüfung eingereicht** (Erics Freigabe),
 > Submission `383298fe-8440-44f7-8212-7f8bba6779bf`, Status **WAITING_FOR_REVIEW**,
 > Auto-Release nach Genehmigung.
+>
+> **Version 1.5 (in Arbeit, 15.09.2026, iOS-Strang) — Bilder & Mermaid-Diagramme
+> in der Vorschau.** Ticket **T-2026-006**: relative Bildpfade (security-scoped
+> Bookmark auf den enthaltenden Ordner, sichtbarer Platzhalter mit „Ordner
+> wählen"-Button bei fehlendem Zugriff statt stiller Leerstelle) und
+> eingebettete `data:`-URI-Bilder (off-main-thread dekodiert, damit große Blobs
+> die Darstellung nicht mehr nach dem ersten Bild abbrechen lassen) werden in
+> der MarkdownUI-Vorschau jetzt angezeigt. Zusätzlich: `` ```mermaid``` ``-
+> Codeblöcke rendern als Diagramm (offline über gebündeltes `mermaid.min.js`
+> in einer unsichtbaren `WKWebView`), mit Fehler-Fallback auf den rohen
+> Codeblock. Nebenbei ein Bugfix in der Mac-Textvorschau
+> (`MarkdownAttributedText.swift`): der Absatzabstand war nur ein visuelles
+> Attribut, keine echte Leerzeile im Text, wodurch ⌘C/Copy-All Absätze beim
+> Einfügen zusammenlaufen ließ — jetzt eine echte `\n\n`. Commit `b493a46` auf
+> `ticket/T-2026-006-…`, 61 Tests grün, auf dem iOS-Simulator gegen alle drei
+> Fälle verifiziert. Deutsche + englische Store-Texte: Abschnitt **„Version
+> 1.5"** unten. Neuer Screenshot 05 (Mermaid + eingebettetes Bild), Rest ab
+> Position 5 um eins nach hinten.
+>
+> **16.09.2026 — Eric hat den Mac-Fix von Hand getestet** (Debug-Build, Mac
+> Catalyst) und dabei einen zweiten, unabhängigen Bug gefunden: Maus-Ziehen
+> zum Markieren funktionierte in der Standard-Vorschau **gar nicht** (nicht
+> nur ⌘A/⌘C, wie der ursprüngliche Kommentar unterstellte) — `didMoveToWindow()`
+> rief `becomeFirstResponder()` zu früh (synchron, vor dem Key-Window-Wechsel)
+> auf, der Aufruf verpuffte wirkungslos. Fix: auf den nächsten Runloop-Tick
+> verschoben (Commit `64602a5`). Nebenbei ein zweiter Fix: der asynchrone
+> Bild-Ladepass in `MarkdownAttributedText` lief auch für bildlose Dokumente
+> und setzte `attributedText` unnötig neu (löscht die Mausauswahl) — jetzt per
+> Kurz-Check übersprungen. Beide Fixes von Eric live gegengeprüft (Drag +
+> ⌘C, korrekt getrennte Absätze). **Daraufhin macOS 1.3 (Build 19) vorbereitet**
+> und eingerichtet, Details unten unter **„macOS 1.3"**.
+>
+> **16.09.2026 10:48/10:49 UTC — beide zur Prüfung eingereicht** (Erics
+> Freigabe, per ASC-API `reviewSubmissions`). iOS 1.5 Submission
+> `0d055f8e-4c82-4880-8183-95a0b4923eec`, macOS 1.3 Submission
+> `32be5cd5-9c28-4b25-992d-37ab68704f4a`, beide Status **WAITING_FOR_REVIEW**,
+> Auto-Release nach Genehmigung. Getrennte Review-Queues wie bei allen
+> vorigen Versionen.
 
 ---
 
@@ -147,6 +185,67 @@ Dateien-App / Teilen-Extension) unverändert. Erzeugen wie gehabt mit
 
 ---
 
+## Version 1.5 — geänderte Texte (iOS, 15.09.2026)
+
+Nur der iOS-Strang. Ticket **T-2026-006**: Bilder (relativer Pfad mit
+Ordnerzugriff-Bookmark **und** eingebettete `data:`-URIs) sowie Mermaid-
+Codeblöcke werden in der Vorschau jetzt tatsächlich dargestellt statt
+wegzufallen bzw. als Code-Text zu erscheinen. Beschreibung/Keywords/Werbetext/
+Untertitel bleiben wie 1.4; geändert wird **„Neu in dieser Version"** (de + en)
+und die Screenshots (neuer Screenshot 05, Rest um eins nach hinten
+verschoben). **macOS bleibt vorerst bei 1.2** — der im selben Commit
+enthaltene Absatz-Kopier-Fix für die Mac-Textvorschau
+(`MarkdownAttributedText.swift`: Absatzabstand war nur ein Attribut, keine
+echte Leerzeile im Text, wodurch ⌘C/Copy-All Absätze beim Einfügen
+zusammenlaufen ließ) wird von Eric von Hand auf einem echten Mac
+gegengeprüft, bevor daraus eine macOS-Version wird.
+
+### Neu in dieser Version / Release Notes — 1.5 (de-DE)
+
+```
+Bilder und Diagramme in der Vorschau
+
+• Bilder aus .md-Dateien werden jetzt angezeigt — sowohl relative Pfade (z. B. ![](ordner/foto.jpg)) als auch eingebettete data:-Bilder. Bei relativen Pfaden fragt md Viewer bei Bedarf einmalig nach dem enthaltenden Ordner.
+• ```mermaid```-Codeblöcke erscheinen als gerendertes Diagramm statt als Text; bei einem Fehler im Diagramm wird wie gewohnt der Code angezeigt.
+```
+
+### What's New / Release Notes — 1.5 (en-US)
+
+```
+Images and diagrams in the preview
+
+• Images referenced from .md files are now shown — both relative paths (e.g. ![](folder/photo.jpg)) and embedded data: images. For relative paths, md Viewer asks once for access to the containing folder when needed.
+• ```mermaid``` code blocks now render as diagrams instead of plain text; a diagram that fails to parse still shows the underlying code, as before.
+```
+
+### App-Prüfungs-Anmerkungen — 1.5 (englisch, ans Notes-Feld anhängen)
+
+```
+Version 1.5 adds image and diagram rendering to the reading view. Images referenced by relative path are resolved against the folder containing the opened .md file; the app requests read access to that folder via a security-scoped bookmark (UIDocumentPickerViewController, folder content type) only when a document actually contains a relative image reference, and only for reading. Embedded data: URI images are decoded off the main thread. Mermaid ("```mermaid```") code fences are rendered to a diagram via a bundled, offline copy of Mermaid.js (no network access) and rasterized locally; a diagram that fails to parse falls back to the plain code block. No new data collection, no network access.
+```
+
+### Screenshots — 1.5
+
+Neuer Screenshot **05** je iPhone 6,9" (1320×2868) und iPad 13" (2064×2752),
+für **de und en** — zeigt ein Mermaid-Flussdiagramm und ein eingebettetes
+`data:`-Bild (Balkendiagramm) im selben Dokument. Alle bisherigen Bilder ab
+Position 5 um eins nach hinten verschoben (de/iPad: 05–09 → 06–10, de wie
+gehabt 10 Bilder inkl. 09/10 Dateien-App/Teilen-Extension; en: 05–07 → 06–08,
+weiterhin ohne die beiden CLI-unscriptbaren Motive). Demo-Dokumente:
+`demo-dokumente/de/Diagramme-Bilder.md` und `demo-dokumente/en/Diagrams-Images.md`
+— fiktiver Sprint-Fortschritt (Balkendiagramm als eingebettetes PNG, per
+`data:`-URI) + fiktiver Freigabe-Workflow (Mermaid-Flowchart), inhaltlich
+passend zu den bestehenden Team-Notiz-Demodateien. Bewusst **nicht** über die
+Ordnerzugriff-Variante gezeigt: der „Ordner wählen"-Button lässt sich im
+Simulator nicht per Skript antippen (kein GUI-Klick-Harness), daher
+demonstriert der Screenshot die `data:`-URI-Bildvariante, die keinen
+Ordnerzugriff braucht. Aufgenommen mit `driver.sh build` +
+`simctl openurl`/`screenshot` (iPad: `openurl` im Hintergrund + Kill nach 12 s,
+siehe `ipad-manual.sh`-Muster); iPad-Aufnahmen mit `fix-bezel.py` vom
+bekannten grauen Eckenartefakt befreit.
+
+---
+
 ## macOS 1.2 — Textauswahl in der Vorschau (Mac, Ticket T-2026-005)
 
 Nur der macOS-Strang. Beschreibung / Keywords / Werbetext / Untertitel bleiben
@@ -181,6 +280,65 @@ beschreibt die selektierbare Vorschau + den „Formatierte Ansicht"-Umschalter,
 plus Testschritte 3/4 für den Reviewer: mit der Maus markieren + ⌘C, ⌘A, Toggle).
 Kein Anhang nötig (kein Guideline-2.1-Fall erwartet — reine UI-Änderung, keine
 neuen Berechtigungen, kein Netz).
+
+---
+
+## macOS 1.3 — Bilder, Mermaid-Diagramme + zwei Auswahl-Fixes (16.09.2026)
+
+Nur der macOS-Strang. Bringt den Mac auf den Funktionsstand von iOS 1.5
+nach: Ticket **T-2026-006** (Bilder, relativ + eingebettet, sowie
+Mermaid-Codeblöcke in der Vorschau) gilt auch für `MarkdownAttributedText.swift`
+(Mac-Standardvorschau) — Bilder erscheinen dort jetzt ebenfalls; Mermaid-
+Diagramme rendern in der „Formatierten Ansicht" (dieselbe `preview(markdown:)`-
+Funktion wie auf iOS/iPadOS).
+
+Zusätzlich zwei auf einem echten Mac gefundene und behobene Bugs in
+derselben Datei (Commit `64602a5`, Details dort):
+- **Absatz-Kopier-Fix:** der Absatzabstand in der Standard-Vorschau war nur
+  ein visuelles Attribut, keine echte Leerzeile im Text — ⌘C/Copy-All ließen
+  Absätze beim Einfügen zusammenlaufen. Jetzt eine echte `\n\n`.
+- **Maus-Textauswahl-Fix:** `didMoveToWindow()` rief `becomeFirstResponder()`
+  synchron auf; landete das vor dem Key-Window-Wechsel, verpuffte der Aufruf,
+  die View bekam nie First-Responder-Status und Maus-Ziehen-zum-Markieren
+  funktionierte in der Standardvorschau **gar nicht** (nicht nur ⌘A/⌘C, wie
+  ursprünglich angenommen) — nur nach Wechsel in die „Formatierte Ansicht"
+  und zurück ging es zufällig. Fix: auf den nächsten Runloop-Tick verschoben.
+  Von Eric auf einem echten Mac verifiziert (Debug-Build, Mac Catalyst).
+
+Build **macOS 1.3 (19)** — 1.2 war Build 18. Beschreibung / Keywords /
+Werbetext / Untertitel bleiben wie 1.2; geändert wird **„Neu in dieser
+Version"** (de + en). Screenshots: der bestehende 6er-Mac-Satz bleibt
+(zeigt weiterhin nur die „Formatierte Ansicht" — für ein späteres Update
+könnte ein Bild-/Mermaid-Motiv sinnvoll sein, hier bewusst ausgelassen, um
+den Umfang klein zu halten).
+
+### Neu in dieser Version / Release Notes — macOS 1.3 (de-DE)
+
+```
+Bilder, Diagramme und zwei Auswahl-Fixes
+
+• Bilder aus .md-Dateien werden jetzt auch auf dem Mac angezeigt — relative Pfade und eingebettete data:-Bilder.
+• Mermaid-Codeblöcke rendern in der Formatierten Ansicht als Diagramm statt als Text.
+• Absätze bleiben beim Kopieren aus der Vorschau jetzt korrekt durch Leerzeilen getrennt.
+• Maus-Ziehen zum Markieren in der Standard-Vorschau funktioniert jetzt zuverlässig.
+```
+
+### What's New / Release Notes — macOS 1.3 (en-US)
+
+```
+Images, diagrams and two selection fixes
+
+• Images from .md files are now shown on the Mac too — relative paths and embedded data: images.
+• Mermaid code blocks render as diagrams in Formatted View instead of plain text.
+• Copying from the preview now keeps paragraphs correctly separated by blank lines.
+• Mouse drag-to-select in the default preview now works reliably.
+```
+
+### App-Prüfungs-Anmerkungen — macOS 1.3 (englisch, ans Notes-Feld anhängen)
+
+```
+Version 1.3 brings the Mac preview up to parity with iOS: images referenced from Markdown (relative paths, resolved against a security-scoped folder bookmark the user grants once, and embedded data: URIs) now render in both the default (selectable) preview and Formatted View; Mermaid ("```mermaid```") code fences render as diagrams in Formatted View via a bundled, offline copy of Mermaid.js. Also two bug fixes found in manual Mac testing: the default preview's paragraph spacing is now a real blank line in the copied text (previously visual-only, so copy/paste merged paragraphs), and mouse drag-to-select in the default preview, which previously did not work at all due to a first-responder timing issue, now works reliably. No new permissions, no network access.
+```
 
 ---
 
