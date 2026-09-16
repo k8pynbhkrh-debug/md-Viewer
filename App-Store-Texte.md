@@ -265,6 +265,65 @@ neuen Berechtigungen, kein Netz).
 
 ---
 
+## macOS 1.3 — Bilder, Mermaid-Diagramme + zwei Auswahl-Fixes (16.09.2026)
+
+Nur der macOS-Strang. Bringt den Mac auf den Funktionsstand von iOS 1.5
+nach: Ticket **T-2026-006** (Bilder, relativ + eingebettet, sowie
+Mermaid-Codeblöcke in der Vorschau) gilt auch für `MarkdownAttributedText.swift`
+(Mac-Standardvorschau) — Bilder erscheinen dort jetzt ebenfalls; Mermaid-
+Diagramme rendern in der „Formatierten Ansicht" (dieselbe `preview(markdown:)`-
+Funktion wie auf iOS/iPadOS).
+
+Zusätzlich zwei auf einem echten Mac gefundene und behobene Bugs in
+derselben Datei (Commit `64602a5`, Details dort):
+- **Absatz-Kopier-Fix:** der Absatzabstand in der Standard-Vorschau war nur
+  ein visuelles Attribut, keine echte Leerzeile im Text — ⌘C/Copy-All ließen
+  Absätze beim Einfügen zusammenlaufen. Jetzt eine echte `\n\n`.
+- **Maus-Textauswahl-Fix:** `didMoveToWindow()` rief `becomeFirstResponder()`
+  synchron auf; landete das vor dem Key-Window-Wechsel, verpuffte der Aufruf,
+  die View bekam nie First-Responder-Status und Maus-Ziehen-zum-Markieren
+  funktionierte in der Standardvorschau **gar nicht** (nicht nur ⌘A/⌘C, wie
+  ursprünglich angenommen) — nur nach Wechsel in die „Formatierte Ansicht"
+  und zurück ging es zufällig. Fix: auf den nächsten Runloop-Tick verschoben.
+  Von Eric auf einem echten Mac verifiziert (Debug-Build, Mac Catalyst).
+
+Build **macOS 1.3 (19)** — 1.2 war Build 18. Beschreibung / Keywords /
+Werbetext / Untertitel bleiben wie 1.2; geändert wird **„Neu in dieser
+Version"** (de + en). Screenshots: der bestehende 6er-Mac-Satz bleibt
+(zeigt weiterhin nur die „Formatierte Ansicht" — für ein späteres Update
+könnte ein Bild-/Mermaid-Motiv sinnvoll sein, hier bewusst ausgelassen, um
+den Umfang klein zu halten).
+
+### Neu in dieser Version / Release Notes — macOS 1.3 (de-DE)
+
+```
+Bilder, Diagramme und zwei Auswahl-Fixes
+
+• Bilder aus .md-Dateien werden jetzt auch auf dem Mac angezeigt — relative Pfade und eingebettete data:-Bilder.
+• Mermaid-Codeblöcke rendern in der Formatierten Ansicht als Diagramm statt als Text.
+• Absätze bleiben beim Kopieren aus der Vorschau jetzt korrekt durch Leerzeilen getrennt.
+• Maus-Ziehen zum Markieren in der Standard-Vorschau funktioniert jetzt zuverlässig.
+```
+
+### What's New / Release Notes — macOS 1.3 (en-US)
+
+```
+Images, diagrams and two selection fixes
+
+• Images from .md files are now shown on the Mac too — relative paths and embedded data: images.
+• Mermaid code blocks render as diagrams in Formatted View instead of plain text.
+• Copying from the preview now keeps paragraphs correctly separated by blank lines.
+• Mouse drag-to-select in the default preview now works reliably.
+```
+
+### App-Prüfungs-Anmerkungen — macOS 1.3 (englisch, ans Notes-Feld anhängen)
+
+```
+Version 1.3 brings the Mac preview up to parity with iOS: images referenced from Markdown (relative paths, resolved against a security-scoped folder bookmark the user grants once, and embedded data: URIs) now render in both the default (selectable) preview and Formatted View; Mermaid ("```mermaid```") code fences render as diagrams in Formatted View via a bundled, offline copy of Mermaid.js. Also two bug fixes found in manual Mac testing: the default preview's paragraph spacing is now a real blank line in the copied text (previously visual-only, so copy/paste merged paragraphs), and mouse drag-to-select in the default preview, which previously did not work at all due to a first-responder timing issue, now works reliably. No new permissions, no network access.
+```
+
+---
+
 ## English (U.S.) — 1.3 / macOS 1.1
 
 Neue ASC-Lokalisierung **English (U.S.)** für beide Plattformen. `en` ist die
