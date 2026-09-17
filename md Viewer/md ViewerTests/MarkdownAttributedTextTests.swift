@@ -156,6 +156,33 @@ struct MarkdownAttributedStringTests {
     }
 }
 
+@Suite("sanitizedForPlainTextCopy(_:)")
+struct SanitizedForPlainTextCopyTests {
+
+    // Contract — text with no markers passes through unchanged.
+    @Test("plain text is untouched")
+    func plainPassthrough() {
+        #expect(sanitizedForPlainTextCopy("Just a sentence.") == "Just a sentence.")
+    }
+
+    // Contract — a code block's U+2028 line separators (used on screen to
+    // keep the block one paragraph) become real newlines again, so a partial
+    // copy of a code block doesn't collapse onto one line elsewhere.
+    @Test("U+2028 line separators become real newlines")
+    func lineSeparatorsBecomeNewlines() {
+        let out = sanitizedForPlainTextCopy("let x = 1\u{2028}let y = 2")
+        #expect(out == "let x = 1\nlet y = 2")
+    }
+
+    // Contract — an image's leftover object-replacement character is dropped
+    // rather than pasted as a stray glyph.
+    @Test("U+FFFC object-replacement characters are dropped")
+    func objectReplacementCharactersAreDropped() {
+        let out = sanitizedForPlainTextCopy("before\u{FFFC}after")
+        #expect(out == "beforeafter")
+    }
+}
+
 @Suite("extractImageReferences(from:)")
 struct ExtractImageReferencesTests {
     @Test("no images: markdown and empty references pass through unchanged")

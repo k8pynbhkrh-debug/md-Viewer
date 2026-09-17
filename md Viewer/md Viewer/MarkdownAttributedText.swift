@@ -114,12 +114,16 @@ struct MarkdownAttributedText: UIViewRepresentable {
 ///   own under Catalyst, which is why ⌘A otherwise did nothing.
 /// - `selectAll(_:)` selects the whole document and shows the selection.
 /// - `copy(_:)` with no selection copies the entire document as plain text
-///   (matching the "Copy All" button); with a selection it copies that.
+///   (matching the "Copy All" button); with a selection it copies that
+///   range's text, run through `sanitizedForPlainTextCopy` to strip the
+///   display-only stand-ins (see that function) so the paste is clean.
 ///
 /// - Precondition (`copy(_:)` copy-all branch): `copyAllProvider` returns the
 ///   document's plain text.
 /// - Postcondition (copy-all branch): `UIPasteboard.general.string` holds that
 ///   text and `onCopyAll` has run.
+/// - Postcondition (selection branch): `UIPasteboard.general.string` holds
+///   the selected range's text with no `\u{2028}` or `\u{FFFC}` markers.
 final class CopyAllTextView: UITextView {
     /// Supplies the whole-document plain text for a no-selection ⌘C.
     var copyAllProvider: () -> String = { "" }
@@ -170,7 +174,8 @@ final class CopyAllTextView: UITextView {
 
     override func copy(_ sender: Any?) {
         guard selectedRange.length == 0 else {
-            super.copy(sender)
+            let selected = (attributedText.string as NSString).substring(with: selectedRange)
+            UIPasteboard.general.string = sanitizedForPlainTextCopy(selected)
             return
         }
         let all = copyAllProvider()
@@ -178,6 +183,24 @@ final class CopyAllTextView: UITextView {
         UIPasteboard.general.string = all
         onCopyAll()
     }
+}
+
+/// Undoes the display-only stand-ins `attributedString(fromMarkdown:baseFont:)`
+/// puts in the rendered text, so a partial-selection copy pastes as clean
+/// plain text elsewhere instead of leaking internal markers:
+/// - `\u{2028}` (Unicode line separator) — used to collapse a fenced code
+///   block into one paragraph on screen — becomes a real `\n` again, so a
+///   pasted multi-line code block doesn't collapse onto one line.
+/// - `\u{FFFC}` (object replacement character, left behind by an inline
+///   image `NSTextAttachment`) is dropped — an image has nothing sensible to
+///   contribute to a plain-text paste.
+///
+/// - Precondition: `text` is a substring of `attributedText.string` from
+///   `attributedString(fromMarkdown:baseFont:)`.
+/// - Postcondition: the result contains neither marker character.
+func sanitizedForPlainTextCopy(_ text: String) -> String {
+    text.replacingOccurrences(of: "\u{2028}", with: "\n")
+        .replacingOccurrences(of: "\u{FFFC}", with: "")
 }
 
 // MARK: - Markdown → NSAttributedString
@@ -531,8 +554,9 @@ private func renderBlock(_ block: MarkdownBlock,
     if isCodeBlock {
         // Collapse the interior newlines to U+2028 so the block is a single
         // paragraph: one paragraph style, one uninterrupted background panel,
-        // no per-line gaps. (Copy still works; `plainText(fromMarkdown:)` backs
-        // "Copy All" with real newlines.)
+        // no per-line gaps. `CopyAllTextView.copy(_:)` converts U+2028 back to
+        // `\n` for a partial-selection copy (see `sanitizedForPlainTextCopy`);
+        // `plainText(fromMarkdown:)` backs "Copy All" with real newlines.
         let body = styled.mutableString
         body.replaceOccurrences(of: "\n", with: "\u{2028}",
                                 options: [], range: NSRange(location: 0, length: body.length))
