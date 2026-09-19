@@ -2,6 +2,7 @@
 
 - Nach jedem `git commit` automatisch `git push origin main` ausführen, ohne vorher nachzufragen. Gilt nur für normale Commits auf `main` — destruktive/history-verändernde Operationen (force-push, reset, etc.) bleiben zustimmungspflichtig.
 - App-Store-Einreichung (Build hochladen, Screenshots/Texte, Review): der globale Skill **`app-store-release`** beschreibt die Abfolge. Projektspezifisch: `ci/testflight.sh`, `App-Store-Texte.md`, Skill `run-md-viewer` (Screenshots).
+  Einreichen zur Prüfung: `ci/asc-submit.sh <appStoreVersion-id> [--dry-run]` (prüft Vor-/Nachbedingungen; erst nach ausdrücklichem Ja des Users ausführen).
 
 ## Design by Contract
 
