@@ -354,6 +354,13 @@ Auswählbarer Text). Build **macOS 1.4 (20)** — 1.3 war Build 19.
 Beschreibung / Keywords / Werbetext / Untertitel / Screenshots bleiben; geändert
 wird nur **„Neu in dieser Version"** (de + en).
 
+**19.09.2026 — zur Prüfung eingereicht** (Erics Freigabe, per `ci/asc-submit.sh`).
+Version-ID `6fcd817c-ea75-4c87-86ce-c8b2752b03be`, Submission
+`00d77430-43bc-49a4-b605-498532640d4a`, Status **WAITING_FOR_REVIEW**,
+Auto-Release nach Genehmigung. Notes-Feld auf 1.4 umgeschrieben (WHAT CHANGED /
+HOW TO TEST). Nicht auf einem echten Mac von Hand getestet, nur im Release-Archive
+kompiliert.
+
 ### Neu in dieser Version / Release Notes — macOS 1.4 (de-DE)
 
 ```
