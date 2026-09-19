@@ -342,6 +342,44 @@ Version 1.3 brings the Mac preview up to parity with iOS: images referenced from
 
 ---
 
+## macOS 1.4 — Formatierte Ansicht als Standard (19.09.2026)
+
+Nur der macOS-Strang. iOS/iPadOS unverändert (dort war die formatierte Ansicht
+schon immer der Standard; „Text auswählen" ist der Umweg zum Kopieren). Auf dem
+Mac war es umgekehrt: Dokumente öffneten in der auswählbaren Textansicht
+(`MarkdownAttributedText`, Tabellen als Tabulator-Zeilen), die Formatierte
+Ansicht war der Umschalter. Jetzt `showFormattedPreview = true` als Startwert in
+`DocumentView.swift`; der Toolbar-Umschalter bleibt (Formatierte Ansicht ↔
+Auswählbarer Text). Build **macOS 1.4 (20)** — 1.3 war Build 19.
+Beschreibung / Keywords / Werbetext / Untertitel / Screenshots bleiben; geändert
+wird nur **„Neu in dieser Version"** (de + en).
+
+### Neu in dieser Version / Release Notes — macOS 1.4 (de-DE)
+
+```
+Dokumente öffnen in der Formatierten Ansicht
+
+• Auf dem Mac öffnet sich eine Datei jetzt direkt in der formatierten Ansicht, mit Tabellen, Bildern und Diagrammen.
+• Zum Markieren und Kopieren wechselst du mit "Auswählbarer Text" in die Textansicht und mit "Formatierte Ansicht" wieder zurück.
+```
+
+### What's New / Release Notes — macOS 1.4 (en-US)
+
+```
+Documents open in Formatted View
+
+• On the Mac, a file now opens straight in the formatted view, with tables, images and diagrams.
+• To select and copy text, switch to the text view with "Selectable Text", and back with "Formatted View".
+```
+
+### App-Prüfungs-Anmerkungen — macOS 1.4 (englisch, ans Notes-Feld anhängen)
+
+```
+Version 1.4 only changes the Mac default view: documents now open in Formatted View (rendered Markdown with tables, images and diagrams) instead of the selectable text view, matching iOS. The toolbar toggle ("Selectable Text" / "Formatted View") is unchanged. No new permissions, no network access.
+```
+
+---
+
 ## English (U.S.) — 1.3 / macOS 1.1
 
 Neue ASC-Lokalisierung **English (U.S.)** für beide Plattformen. `en` ist die
