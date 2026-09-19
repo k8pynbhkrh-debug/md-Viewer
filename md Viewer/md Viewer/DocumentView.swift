@@ -42,16 +42,16 @@ struct DocumentView: View {
     /// While true the reader shows the plain-text, natively selectable view
     /// instead of the rendered Markdown, so a passage can be selected and
     /// copied. Never true together with `isEditing`. iOS/iPadOS only — on the
-    /// Mac the default preview is already selectable (see `showFormattedPreview`).
+    /// Mac the toolbar toggle `showFormattedPreview` does this job.
     @State private var isSelectingText = false
     #if targetEnvironment(macCatalyst)
-    /// Mac only. The Mac's default preview is `MarkdownAttributedText` — one
-    /// continuous, mouse-selectable string (⌘A / ⌘C work there), at the cost of
-    /// tables rendering as tab-separated rows and no images. When this is true
-    /// the reader has toggled to the full MarkdownUI rendering instead (bordered
-    /// tables, syntax-highlighted code, images) for reading — not selectable
-    /// under Catalyst. iOS/iPadOS always use the MarkdownUI `preview`.
-    @State private var showFormattedPreview = false
+    /// Mac only. Like iOS/iPadOS, a document opens in the full MarkdownUI
+    /// rendering (bordered tables, syntax-highlighted code, images) — that is
+    /// what people want to read. It is not selectable under Catalyst, so the
+    /// toolbar toggles to `MarkdownAttributedText` — one continuous,
+    /// mouse-selectable string (⌘A / ⌘C work there), at the cost of tables
+    /// rendering as tab-separated rows — for when something needs copying.
+    @State private var showFormattedPreview = true
     #endif
     @FocusState private var editorFocused: Bool
 
@@ -194,10 +194,9 @@ struct DocumentView: View {
                 if showFormattedPreview {
                     preview(markdown: savedText)
                 } else {
-                    // Default Mac preview: selectable in place (mouse, ⌘A, ⌘C)
-                    // — MarkdownUI's rendered output is not selectable under
-                    // Catalyst. The toolbar toggles to `preview` for the full
-                    // rendering.
+                    // Selectable Mac preview (mouse, ⌘A, ⌘C) — MarkdownUI's
+                    // rendered output is not selectable under Catalyst. Reached
+                    // via the toolbar toggle; the default is `preview`.
                     MarkdownAttributedText(
                         markdown: savedText,
                         plainTextForCopyAll: plainText(fromMarkdown: savedText),
@@ -452,9 +451,9 @@ struct DocumentView: View {
             }
             if isLoaded {
                 #if targetEnvironment(macCatalyst)
-                // The Mac's default preview is already selectable; this toggles
-                // to the full MarkdownUI rendering (bordered tables, syntax
-                // highlighting, images) for reading, and back.
+                // The Mac opens in the full MarkdownUI rendering (bordered
+                // tables, syntax highlighting, images); this toggles to the
+                // selectable text preview for copying, and back.
                 ToolbarItem(placement: .primaryAction) {
                     Button(
                         showFormattedPreview ? "Selectable Text" : "Formatted View",
@@ -464,7 +463,7 @@ struct DocumentView: View {
                     }
                     .disabled(savedText.isEmpty)
                     .accessibilityHint(showFormattedPreview
-                                       ? "Switches back to the selectable preview"
+                                       ? "Switches to the selectable preview"
                                        : "Switches to the fully rendered preview with tables and images, which cannot be selected")
                 }
                 #else

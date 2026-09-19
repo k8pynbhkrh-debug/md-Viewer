@@ -576,13 +576,13 @@
         }
       }
     },
-    "Switches back to the selectable preview" : {
-      "comment" : "Accessibility hint for the Mac Formatted-View toggle, shown while the rendered preview is up.",
+    "Switches to the selectable preview" : {
+      "comment" : "Accessibility hint for the Mac Formatted-View toggle, shown while the rendered preview is up (the Mac default).",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wechselt zurück zur auswählbaren Vorschau"
+            "value" : "Wechselt zur auswählbaren Vorschau"
           }
         }
       }
