@@ -330,6 +330,7 @@ struct DocumentView: View {
             ScrollView {
                 Markdown(markdown, imageBaseURL: documentFolderURL)
                     .markdownImageProvider(AppImageProvider(documentFolderURL: documentFolderURL))
+                    .markdownInlineImageProvider(AppInlineImageProvider(accessStore: imageAccessStore))
                     .markdownCodeSyntaxHighlighter(
                         HighlightrSyntaxHighlighter(highlightr: highlightr)
                     )

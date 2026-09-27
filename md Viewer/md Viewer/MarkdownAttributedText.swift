@@ -369,6 +369,10 @@ private func insertImageAttachments(
             attachment = NSTextAttachment()
             attachment.image = UIImage(systemName: "folder.badge.questionmark")?
                 .withTintColor(.secondaryLabel, renderingMode: .alwaysOriginal)
+        case .remoteBlocked:
+            attachment = NSTextAttachment()
+            attachment.image = UIImage(systemName: "network.slash")?
+                .withTintColor(.secondaryLabel, renderingMode: .alwaysOriginal)
         case .unavailable:
             attachment = NSTextAttachment()
             attachment.image = UIImage(systemName: "photo")?

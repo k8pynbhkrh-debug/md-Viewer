@@ -3,8 +3,9 @@ import SwiftUI
 
 /// Loads and displays Markdown images for the MarkdownUI preview
 /// (`DocumentView.preview(markdown:)`): relative paths resolved against the
-/// document's folder (via `ImageFolderAccessStore`), `data:` URIs, and plain
-/// `http(s)` URLs. Replaces MarkdownUI's network-only `DefaultImageProvider`.
+/// document's folder (via `ImageFolderAccessStore`) and `data:` URIs;
+/// `http(s)` images get a "not loaded" placeholder — md Viewer never fetches
+/// from the network. Replaces MarkdownUI's network-only `DefaultImageProvider`.
 struct AppImageProvider: ImageProvider {
     /// The open document's folder — where a "grant access" picker for a
     /// missing relative image should start browsing. `nil` for an unsaved
@@ -14,6 +15,34 @@ struct AppImageProvider: ImageProvider {
 
     func makeImage(url: URL?) -> some View {
         MarkdownImageView(url: url, documentFolderURL: documentFolderURL)
+    }
+}
+
+/// Loads images that sit *inside* a line of text (`Status: ![](badge.png) ok`)
+/// — MarkdownUI routes those through a separate inline provider, whose
+/// default fetches over the network. Same sources and limits as
+/// `AppImageProvider`; anything that can't be shown (remote, missing, folder
+/// not yet granted) becomes a text-sized SF Symbol instead, since an inline
+/// slot can only hold an `Image`, not a placeholder view.
+///
+/// Never throws: MarkdownUI loads a paragraph's inline images as one group
+/// and drops *all* of them if any single load throws.
+struct AppInlineImageProvider: InlineImageProvider {
+    let accessStore: ImageFolderAccessStore
+
+    func image(with url: URL, label: String) async throws -> Image {
+        let accessibleFolder = accessStore.accessibleFolderURL(forFileAt: url)
+        switch await MarkdownImageLoader.shared.load(url: url, accessibleFolderURL: accessibleFolder) {
+        case .image(let uiImage):
+            guard let cgImage = uiImage.cgImage else { return Image(systemName: "photo") }
+            return Image(cgImage, scale: 1, label: Text(label))
+        case .remoteBlocked:
+            return Image(systemName: "network.slash")
+        case .needsFolderAccess:
+            return Image(systemName: "folder.badge.questionmark")
+        case .unavailable:
+            return Image(systemName: "photo")
+        }
     }
 }
 
@@ -73,6 +102,13 @@ private struct MarkdownImageView: View {
                 text: String(localized: "Image – folder access needed"),
                 actionTitle: String(localized: "Choose Folder"),
                 action: { showFolderPicker = true }
+            )
+        case .remoteBlocked:
+            ImagePlaceholder(
+                systemImage: "network.slash",
+                text: String(localized: "External image – not loaded"),
+                actionTitle: nil,
+                action: nil
             )
         case .unavailable:
             ImagePlaceholder(
