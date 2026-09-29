@@ -160,8 +160,9 @@ private struct DocumentTab: View {
 }
 
 /// "+" with "New Document" / "Open…". The same two actions as the empty state
-/// and the ⌘N / ⌘O menu commands.
-private struct NewDocumentMenu: View {
+/// and the ⌘N / ⌘O menu commands. Sits in the tab bar, and on the iPad in the
+/// toolbar while there is no tab bar yet (one document).
+struct NewDocumentMenu: View {
     let store: OpenDocumentsStore
 
     var body: some View {

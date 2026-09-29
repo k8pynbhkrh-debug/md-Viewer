@@ -57,7 +57,8 @@ final class OpenDocumentsStore {
     // MARK: - Opening
 
     /// Opens `url` as a new, active tab — or, if a tab for that file exists,
-    /// activates it (re-reading the file unless it is being edited).
+    /// activates it (taking over `url` and re-reading the file unless it is
+    /// being edited).
     ///
     /// - Precondition: `url.isFileURL`.
     /// - Postcondition: the returned session refers to `url` and is active;
@@ -69,8 +70,13 @@ final class OpenDocumentsStore {
         defer { checkInvariants() }
 
         if let existing = documents.first(where: { $0.refersTo(url) }) {
-            if !existing.isEditing && existing.content != nil {
-                existing.reloadFromDisk()
+            // Not being edited: take over the freshly handed-over URL (it
+            // carries current access rights) and re-read the file — this also
+            // heals a tab that showed a load error. A working copy is never
+            // touched.
+            if !existing.isEditing {
+                existing.retarget(to: url)
+                bookmarks[existing.id] = Self.makeBookmark(for: url) ?? bookmarks[existing.id]
             }
             activeID = existing.id
             persist()
