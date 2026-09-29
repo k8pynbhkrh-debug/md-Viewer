@@ -29,6 +29,7 @@
 		F9377B32045948206EDCDC3C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5767D86ACF34E68B083D5984 /* ShareViewController.swift */; };
 		E7FBEE15B98351D9C8E0BF51 /* ImageFolderAccessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */; };
 		E7FBEE15B98351D9C8E0BF62 /* MarkdownImageLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516F9 /* MarkdownImageLoaderTests.swift */; };
+		E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,7 @@
 		DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultMarkdownAppRegistration.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ImageFolderAccessTests.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA40516F9 /* MarkdownImageLoaderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageLoaderTests.swift; sourceTree = "<group>"; };
+		65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OpenDocumentsStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -172,6 +174,7 @@
 				65AC828D8063669DA40516D7 /* MarkdownAttributedTextTests.swift */,
 				65AC828D8063669DA40516F9 /* MarkdownImageLoaderTests.swift */,
 				65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */,
+				65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */,
 			);
 			name = "md ViewerTests";
 			path = "md ViewerTests";
@@ -370,6 +373,7 @@
 				E7FBEE15B98351D9C8E0BF40 /* MarkdownAttributedTextTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF62 /* MarkdownImageLoaderTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF51 /* ImageFolderAccessTests.swift in Sources */,
+				E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +542,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "md Viewer/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -577,7 +581,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "md Viewer/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
