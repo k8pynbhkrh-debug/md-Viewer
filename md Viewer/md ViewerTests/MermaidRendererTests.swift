@@ -11,6 +11,14 @@ import WebKit
 struct MermaidRendererTests {
     private let simpleDiagram = "flowchart LR\n  A[Start] --> B[Ende]"
 
+    /// A renderer with a generous page-load limit: in a busy simulator (the
+    /// whole test target running in parallel) WebKit's cold start plus the
+    /// ~3 MB Mermaid bundle can exceed the app's 20 s. What these tests
+    /// check is the per-diagram behaviour, not the cold start.
+    private func makeRenderer(renderTimeout: Duration = .seconds(5)) -> MermaidRenderer {
+        MermaidRenderer(renderTimeout: renderTimeout, pageLoadTimeout: .seconds(60))
+    }
+
     private func isSuccess(_ result: MermaidRenderResult) -> Bool {
         if case .success = result { return true }
         return false
@@ -18,7 +26,7 @@ struct MermaidRendererTests {
 
     @Test("a valid diagram renders within the size cap")
     func validDiagramRenders() async throws {
-        let renderer = MermaidRenderer()
+        let renderer = makeRenderer()
         let result = await renderer.render(source: simpleDiagram, colorScheme: .light)
         guard case .success(let image) = result else {
             Issue.record("expected success, got \(result)")
@@ -32,7 +40,7 @@ struct MermaidRendererTests {
 
     @Test("a malformed diagram fails as invalid")
     func malformedDiagramFails() async {
-        let renderer = MermaidRenderer()
+        let renderer = makeRenderer()
         let result = await renderer.render(source: "flowchart LR\n  A -->> -->", colorScheme: .light)
         #expect(result == .failure(.invalid))
     }
@@ -41,7 +49,7 @@ struct MermaidRendererTests {
     // JavaScript runs.
     @Test("source over the length limit is rejected as too large")
     func oversizedSourceIsRejected() async {
-        let renderer = MermaidRenderer()
+        let renderer = makeRenderer()
         let source = "flowchart LR\n" + String(repeating: "A-->B\n", count: MermaidRenderer.maxSourceLength / 6 + 1)
         #expect(source.utf16.count > MermaidRenderer.maxSourceLength)
         #expect(await renderer.render(source: source, colorScheme: .light) == .failure(.tooLarge))
@@ -49,7 +57,7 @@ struct MermaidRendererTests {
 
     @Test("a diagram wider than the dimension cap falls back as too large")
     func oversizedOutputIsRejected() async {
-        let renderer = MermaidRenderer(renderTimeout: .seconds(20))
+        let renderer = makeRenderer(renderTimeout: .seconds(20))
         let chain = (0..<120).map { "N\($0)[Knoten \($0)]" }.joined(separator: " --> ")
         let source = "flowchart LR\n  " + chain
         #expect(source.utf16.count <= MermaidRenderer.maxSourceLength)
@@ -64,7 +72,7 @@ struct MermaidRendererTests {
         // take a few seconds in the simulator, and the recovery render below
         // runs on a freshly rebuilt page.
         let renderTimeout: Duration = .seconds(5)
-        let renderer = MermaidRenderer(renderTimeout: renderTimeout)
+        let renderer = makeRenderer(renderTimeout: renderTimeout)
         let defaultScript = renderer.makeRenderScript
 
         // Warm up so the timing below measures only the missing answer, not
@@ -84,7 +92,7 @@ struct MermaidRendererTests {
 
     @Test("concurrent renders are serialized and all complete")
     func concurrentRendersComplete() async {
-        let renderer = MermaidRenderer()
+        let renderer = makeRenderer()
         async let a = renderer.render(source: simpleDiagram, colorScheme: .light)
         async let b = renderer.render(source: "flowchart TD\n  X --> Y", colorScheme: .light)
         async let c = renderer.render(source: "not a diagram %%%", colorScheme: .light)
@@ -98,7 +106,7 @@ struct MermaidRendererTests {
     // because the harness stays loaded.
     @Test("navigation attempts from the page are cancelled")
     func navigationAttemptsAreCancelled() async {
-        let renderer = MermaidRenderer()
+        let renderer = makeRenderer()
         let defaultScript = renderer.makeRenderScript
         renderer.makeRenderScript = { id, source, theme in
             "window.location.href = 'https://example.com/'; window.location.href = 'file:///etc/hosts'; "

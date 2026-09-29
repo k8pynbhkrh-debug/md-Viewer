@@ -36,6 +36,20 @@ hooks help:
   simulator won't reliably feed the clipboard into `PasteButton`). Launch
   with `xcrun simctl launch <udid> com.eribert.md-Viewer -mdviewerDraft $'# Titel\n\nText'`.
 
+Since v1.5 the app keeps **several documents open as tabs** (T-2026-324):
+`OpenDocumentsStore` (tabs + active tab, restores open *files* on launch via
+bookmarks in UserDefaults key `openDocuments`) owns one `DocumentSession` per
+tab (content, editing state, undo). Every `openurl` adds a tab — or jumps to
+the existing one for the same file. Mac/iPad (regular width, ≥ 2 tabs) show a
+tab bar under the navigation bar; the iPhone has a "Geöffnete Dokumente"
+toolbar button (sheet list). Because of the restore, a plain relaunch comes
+back with the previous tabs — `simctl uninstall` first for a clean empty
+state (the screenshot scripts already do). DEBUG hook
+`-mdviewerDocumentList` opens the iPhone list at launch. Note: `simctl
+openurl` copies into `Inbox/` and renames on collision (`Notiz-1.md`), so the
+"same file → same tab" rule does not kick in there; the Files app opens in
+place and does.
+
 There is also a **Share extension** target `ShareExtension`
 (`com.eribert.md-Viewer.ShareExtension`, `com.apple.share-services`) that
 renders a shared Markdown/text file in a sheet right inside the share
