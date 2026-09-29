@@ -168,15 +168,19 @@ final class DocumentSession: Identifiable {
         assert(content != nil)
     }
 
-    /// Re-reads the backing file, e.g. when the same file is opened again.
+    /// Points the session at `url` — the same file, handed over again by the
+    /// system (Files app, Finder, "Open…") with fresh access rights — and
+    /// re-reads it. Lets a tab that failed to load (e.g. access lost after a
+    /// relaunch) recover by opening the file again.
     ///
-    /// - Precondition: `!isEditing` — a reload must never overwrite a working
-    ///   copy.
-    /// - Postcondition: `content` reflects the file on disk now.
-    func reloadFromDisk() {
-        precondition(!isEditing, "reloadFromDisk would discard the working copy")
-        guard let fileURL else { return }
-        content = loadMarkdown(from: fileURL)
+    /// - Precondition: `!isEditing`, `refersTo(url)`.
+    /// - Postcondition: `fileURL == url` and `content` reflects the file now.
+    func retarget(to url: URL) {
+        precondition(!isEditing, "retarget would discard the working copy")
+        precondition(refersTo(url), "retarget to a different file")
+        fileURL = url
+        content = loadMarkdown(from: url)
+        assert(fileURL == url && content != nil)
     }
 
     // MARK: - Editing

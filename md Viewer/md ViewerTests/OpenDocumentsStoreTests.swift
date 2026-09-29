@@ -131,6 +131,31 @@ struct OpenDocumentsStoreTests {
         #expect(a.savedText == "# Alt")
     }
 
+    // Re-opening takes over the freshly handed-over URL — heals a load error.
+    @Test("re-opening a file whose tab shows a load error loads it again via the new URL")
+    func openDuplicateHealsLoadError() throws {
+        let fx = try Fixture()
+        let store = fx.makeStore()
+        let url = try fx.file("a.md", "")          // empty → load fails
+        let a = store.open(url)
+        a.loadIfNeeded()
+        guard case .failure = a.content else {
+            Issue.record("expected a load failure first, got \(String(describing: a.content))")
+            return
+        }
+        try Data("# Jetzt lesbar".utf8).write(to: url)
+        let respelled = url.deletingLastPathComponent()
+            .appendingPathComponent(".")
+            .appendingPathComponent(url.lastPathComponent)
+
+        let again = store.open(respelled)
+
+        #expect(again === a)
+        #expect(store.documents.count == 1)
+        #expect(a.fileURL == respelled)
+        #expect(a.savedText == "# Jetzt lesbar")
+    }
+
     // Contract — invariant: a tab switch never loses unsaved changes.
     @Test("switching tabs keeps editing state and undo history")
     func switchKeepsEditingState() throws {
@@ -534,6 +559,24 @@ struct DocumentSessionTests {
         #expect(session.isEditing)
         #expect(session.editedText == "# Neu")
         #expect(session.saveError != nil)
+    }
+
+    // Contract — retarget postcondition: new URL, content re-read.
+    @Test("retarget switches to the new URL of the same file and re-reads it")
+    func retarget() throws {
+        let url = try tempFile("# Alt")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let session = DocumentSession(source: .existing(url))
+        session.loadIfNeeded()
+        try Data("# Neu".utf8).write(to: url)
+        let respelled = url.deletingLastPathComponent()
+            .appendingPathComponent(".")
+            .appendingPathComponent(url.lastPathComponent)
+
+        session.retarget(to: respelled)
+
+        #expect(session.fileURL == respelled)
+        #expect(session.savedText == "# Neu")
     }
 
     @Test("refersTo matches the same file under a different spelling only")

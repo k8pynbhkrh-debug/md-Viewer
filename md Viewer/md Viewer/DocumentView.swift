@@ -45,6 +45,17 @@ struct DocumentView: View {
         horizontalSizeClass != .regular
     }
 
+    /// iPad with a single document: no tab bar yet, so the toolbar offers the
+    /// "+" (new / open) — otherwise a second document could only come from
+    /// the Files app or a hardware keyboard. The Mac has the File menu.
+    private var showsNewDocumentButton: Bool {
+        #if targetEnvironment(macCatalyst)
+        false
+        #else
+        horizontalSizeClass == .regular && !showsTabBar
+        #endif
+    }
+
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
     private func syntaxTheme(for scheme: ColorScheme) -> String {
         scheme == .dark ? "atom-one-dark" : "atom-one-light"
@@ -299,8 +310,14 @@ struct DocumentView: View {
     }
 
     /// iPhone: opens the list of open documents (switch, close, new, open).
+    /// iPad with one document: "+" for a new or another document.
     @ToolbarContentBuilder
     private var documentListItem: some ToolbarContent {
+        if showsNewDocumentButton {
+            ToolbarItem(placement: .cancellationAction) {
+                NewDocumentMenu(store: store)
+            }
+        }
         if showsDocumentListButton {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Open Documents", systemImage: "square.on.square") {
