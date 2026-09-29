@@ -23,6 +23,9 @@ enum ImageLoadResult: Equatable {
 /// extra bookkeeping — large embedded images no longer stall or abort the
 /// preview (the originally reported bug).
 ///
+/// Shared by the app and the Share extension, so both apply the same
+/// no-network rule and the same limits.
+///
 /// Contract:
 /// - Invariant: never touches the network. `http(s)` URLs yield
 ///   `.remoteBlocked` without any request being made.
@@ -80,9 +83,15 @@ actor MarkdownImageLoader {
         guard let folder = accessibleFolderURL else { return .needsFolderAccess }
         let scoped = folder.startAccessingSecurityScopedResource()
         defer { if scoped { folder.stopAccessingSecurityScopedResource() } }
-        guard let data = try? Data(contentsOf: url) else { return .unavailable }
-        return Self.decodeImage(data)
+        // Straight from the file: ImageIO reads only what it needs for the
+        // downsampled thumbnail, so a huge file is never loaded whole.
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, Self.sourceOptions) else {
+            return .unavailable
+        }
+        return Self.decodeImage(source)
     }
+
+    private static let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
 
     /// Decodes any ImageIO format (JPEG, PNG, HEIC, WebP, GIF, …) straight to
     /// at most `maxPixelDimension` on the longer side — never materialising
@@ -90,10 +99,13 @@ actor MarkdownImageLoader {
     /// images come out at their natural size (the thumbnail API never
     /// upscales).
     static func decodeImage(_ data: Data) -> ImageLoadResult {
-        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions) else {
             return .unavailable
         }
+        return decodeImage(source)
+    }
+
+    private static func decodeImage(_ source: CGImageSource) -> ImageLoadResult {
         let thumbnailOptions = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,

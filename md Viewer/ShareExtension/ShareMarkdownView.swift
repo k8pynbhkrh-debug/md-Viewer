@@ -21,6 +21,8 @@ struct ShareMarkdownView: View {
                 case .success(let markdown):
                     ScrollView {
                         Markdown(markdown)
+                            .markdownImageProvider(ShareImageProvider())
+                            .markdownInlineImageProvider(ShareInlineImageProvider())
                             .markdownBlockStyle(\.table) { configuration in
                                 ScrollView(.horizontal, showsIndicators: true) {
                                     configuration.label

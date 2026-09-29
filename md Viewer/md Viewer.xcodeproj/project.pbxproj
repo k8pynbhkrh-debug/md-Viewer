@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A1E0261000000000000BB01 /* MarkdownImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */; };
+		5A1E0261000000000000CC01 /* MarkdownImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */; };
+		5A1E0261000000000000BB02 /* MarkdownImageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA02 /* MarkdownImageViews.swift */; };
+		5A1E0261000000000000CC02 /* MarkdownImageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA02 /* MarkdownImageViews.swift */; };
+		5A1E0261000000000000CC03 /* ShareImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA03 /* ShareImageProvider.swift */; };
 		0711351D3037043600AC131E /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0711351C3037043600AC131E /* MarkdownUI */; };
 		1F3ACD69B52B435298330DDD /* MarkdownDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */; };
 		2534BC7F7EEED63706B31A57 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 36A2044F1DB64847957E5C91 /* MarkdownUI */; };
@@ -58,6 +63,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageLoading.swift; sourceTree = "<group>"; };
+		5A1E0261000000000000AA02 /* MarkdownImageViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageViews.swift; sourceTree = "<group>"; };
+		5A1E0261000000000000AA03 /* ShareImageProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareImageProvider.swift; sourceTree = "<group>"; };
 		021F58C35C561F70ADBC2BAC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0711350D3037029E00AC131E /* md Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "md Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		11733AF827EF488B2827C882 /* ShareMarkdownView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareMarkdownView.swift; sourceTree = "<group>"; };
@@ -182,6 +190,8 @@
 			children = (
 				8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */,
 				DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */,
+				5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */,
+				5A1E0261000000000000AA02 /* MarkdownImageViews.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -192,6 +202,7 @@
 			children = (
 				5767D86ACF34E68B083D5984 /* ShareViewController.swift */,
 				11733AF827EF488B2827C882 /* ShareMarkdownView.swift */,
+				5A1E0261000000000000AA03 /* ShareImageProvider.swift */,
 				021F58C35C561F70ADBC2BAC /* PrivacyInfo.xcprivacy */,
 				AA01BB02CC03DD04EE05FF06 /* ShareExtension.entitlements */,
 				696367B301E53954641FB059 /* Info.plist */,
@@ -346,6 +357,8 @@
 			files = (
 				6277079D31413FB1588D3E66 /* MarkdownDocument.swift in Sources */,
 				DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */,
+				5A1E0261000000000000BB01 /* MarkdownImageLoading.swift in Sources */,
+				5A1E0261000000000000BB02 /* MarkdownImageViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +380,9 @@
 				1F3ACD69B52B435298330DDD /* MarkdownDocument.swift in Sources */,
 				F9377B32045948206EDCDC3C /* ShareViewController.swift in Sources */,
 				C07F649CBFF9AF5A4AE6D525 /* ShareMarkdownView.swift in Sources */,
+				5A1E0261000000000000CC01 /* MarkdownImageLoading.swift in Sources */,
+				5A1E0261000000000000CC02 /* MarkdownImageViews.swift in Sources */,
+				5A1E0261000000000000CC03 /* ShareImageProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

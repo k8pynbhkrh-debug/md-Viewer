@@ -177,6 +177,15 @@ struct MarkdownImageLoaderTests {
 
         let missing = folder.appendingPathComponent("fehlt.png")
         #expect(await MarkdownImageLoader.shared.load(url: missing, accessibleFolderURL: folder) == .unavailable)
+
+        let notAnImage = folder.appendingPathComponent("text.png")
+        try Data("hello".utf8).write(to: notAnImage)
+        #expect(await MarkdownImageLoader.shared.load(url: notAnImage, accessibleFolderURL: folder) == .unavailable)
+    }
+
+    @Test("a relative image without a base URL or folder is not resolved (Share extension)")
+    func relativeImageWithoutFolder() async {
+        #expect(await MarkdownImageLoader.shared.load(url: URL(string: "bilder/foto.png"), accessibleFolderURL: nil) == .needsFolderAccess)
     }
 
     @Test("a nil URL (unparseable source) is unavailable")
