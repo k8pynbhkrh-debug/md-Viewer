@@ -3,8 +3,9 @@ import SwiftUI
 
 /// Loads and displays Markdown images for the MarkdownUI preview
 /// (`DocumentView.preview(markdown:)`): relative paths resolved against the
-/// document's folder (via `ImageFolderAccessStore`), `data:` URIs, and plain
-/// `http(s)` URLs. Replaces MarkdownUI's network-only `DefaultImageProvider`.
+/// document's folder (via `ImageFolderAccessStore`) and `data:` URIs;
+/// `http(s)` images get a "not loaded" placeholder — md Viewer never fetches
+/// from the network. Replaces MarkdownUI's network-only `DefaultImageProvider`.
 struct AppImageProvider: ImageProvider {
     /// The open document's folder — where a "grant access" picker for a
     /// missing relative image should start browsing. `nil` for an unsaved
@@ -14,6 +15,34 @@ struct AppImageProvider: ImageProvider {
 
     func makeImage(url: URL?) -> some View {
         MarkdownImageView(url: url, documentFolderURL: documentFolderURL)
+    }
+}
+
+/// Loads images that sit *inside* a line of text (`Status: ![](badge.png) ok`)
+/// — MarkdownUI routes those through a separate inline provider, whose
+/// default fetches over the network. Same sources and limits as
+/// `AppImageProvider`; anything that can't be shown (remote, missing, folder
+/// not yet granted) becomes a text-sized SF Symbol instead, since an inline
+/// slot can only hold an `Image`, not a placeholder view.
+///
+/// Never throws: MarkdownUI loads a paragraph's inline images as one group
+/// and drops *all* of them if any single load throws.
+struct AppInlineImageProvider: InlineImageProvider {
+    let accessStore: ImageFolderAccessStore
+
+    func image(with url: URL, label: String) async throws -> Image {
+        let accessibleFolder = accessStore.accessibleFolderURL(forFileAt: url)
+        switch await MarkdownImageLoader.shared.load(url: url, accessibleFolderURL: accessibleFolder) {
+        case .image(let uiImage):
+            guard let cgImage = uiImage.cgImage else { return Image(systemName: "photo") }
+            return Image(cgImage, scale: 1, label: Text(label))
+        case .remoteBlocked:
+            return Image(systemName: "network.slash")
+        case .needsFolderAccess:
+            return Image(systemName: "folder.badge.questionmark")
+        case .unavailable:
+            return Image(systemName: "photo")
+        }
     }
 }
 
@@ -74,6 +103,13 @@ private struct MarkdownImageView: View {
                 actionTitle: String(localized: "Choose Folder"),
                 action: { showFolderPicker = true }
             )
+        case .remoteBlocked:
+            ImagePlaceholder(
+                systemImage: "network.slash",
+                text: String(localized: "External image – not loaded"),
+                actionTitle: nil,
+                action: nil
+            )
         case .unavailable:
             ImagePlaceholder(
                 systemImage: "photo",
@@ -82,58 +118,5 @@ private struct MarkdownImageView: View {
                 action: nil
             )
         }
-    }
-}
-
-/// Sizes its (resizable) content down to fit the proposed width, preserving
-/// aspect ratio, but never upscales beyond its natural size — the same
-/// policy MarkdownUI's own default image provider uses, reimplemented here
-/// since that type is internal to the package. Also used by
-/// `MermaidDiagramView` for rendered diagrams.
-struct FitWidthLayout: Layout {
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        guard let view = subviews.first else { return .zero }
-        var size = view.sizeThatFits(.unspecified)
-        if let width = proposal.width, size.width > width, size.width > 0 {
-            let aspectRatio = size.width / size.height
-            size.width = width
-            size.height = width / aspectRatio
-        }
-        return size
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        subviews.first?.place(at: bounds.origin, proposal: ProposedViewSize(bounds.size))
-    }
-}
-
-/// A visible placeholder for an image the preview couldn't show — used
-/// instead of silently leaving a gap, so the reader knows why and, when
-/// there's something to do about it, how to fix it.
-private struct ImagePlaceholder: View {
-    let systemImage: String
-    let text: String
-    let actionTitle: String?
-    let action: (() -> Void)?
-
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.title2)
-                .foregroundStyle(.secondary)
-            Text(text)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            if let actionTitle, let action {
-                Button(actionTitle, action: action)
-                    .font(.footnote)
-                    .buttonStyle(.bordered)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

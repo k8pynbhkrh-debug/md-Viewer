@@ -153,11 +153,17 @@ final class MermaidRenderer: NSObject, WKNavigationDelegate {
         return String(json.dropFirst().dropLast())
     }
 
+    /// The Content-Security-Policy is what makes "no network access" hold
+    /// for diagrams too: whatever a diagram's source contains (an `<img>` in
+    /// a label, a CSS `url(…)`, a `fetch`), the page may only run the bundled
+    /// script and use inline styles and `data:` images — every other load is
+    /// refused by WebKit before a request is made.
     private static let harnessHTML = """
     <!DOCTYPE html>
     <html>
     <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' file: 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:">
     <style>html,body{margin:0;padding:0;background:transparent;}</style>
     <script src="mermaid.min.js"></script>
     </head>

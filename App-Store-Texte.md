@@ -1,6 +1,6 @@
 # App Store Connect — Texte für "md Viewer"
 
-Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Connect. Zeichenlimits sind Apples aktuelle Vorgaben (Stand August 2026).
+Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Connect. Zeichenlimits sind Apples aktuelle Vorgaben (Stand August 2026).
 
 > **Version 1.1 (02.09.2026):** Optionaler Edit-Modus (Datei direkt bearbeiten und
 > überspeichern). **Am 04.09.2026 von Apple genehmigt und im Store** (Auto-Release).
@@ -129,6 +129,62 @@ Stand: 08.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ---
 
+## Nächste Version (iOS 1.6 / macOS 1.5) — Offline-Härtung (T-2026-261, 27.09.2026)
+
+> **Noch nicht in ASC eingetragen** — alles unten erst mit der nächsten Version setzen.
+> Anlass: ChatGPT-Prüfbericht vom 20.09.2026. Bis einschließlich iOS 1.5 lud die App
+> `http(s)`-Bilder aus geöffneten Dokumenten per `URLSession` nach. Das widersprach
+> „keine Netzwerkzugriffe" in Beschreibung, Review Notes und Datenschutzseite. (macOS
+> war nicht betroffen, denn die Catalyst-Sandbox hat kein `network.client`-Entitlement.)
+> Ab dieser Version: kein Netzwerkcode mehr in der App, externe Bilder zeigen einen
+> Platzhalter, und der Mermaid-WebView sperrt jeden Abruf per Content-Security-Policy.
+> Privacy Manifest deklariert jetzt `UserDefaults` (CA92.1) für die Ordner-Bookmarks.
+>
+> **ASC-Checkliste beim Release:**
+> 1. Beschreibung de + en: die korrigierten Basistexte unten übernehmen (Zeile „Läuft
+>    vollständig offline …" + Absatz DATENSCHUTZ/PRIVACY).
+> 2. „Neu in dieser Version" de + en (unten).
+> 3. Review Notes: den Absatz ABOUT THE APP durch die Fassung unten ersetzen und die
+>    Versionsnotiz anhängen.
+> 4. App Privacy: bleibt **„Keine Daten erfasst"**, nur prüfen, nicht ändern.
+> 5. Im Release-Archive das Privacy Manifest prüfen (Xcode → Organizer → Archive →
+>    rechte Maustaste → „Generate Privacy Report"): Haupt-App muss
+>    „User Defaults — CA92.1" zeigen.
+> 6. Datenschutzseite `docs/index.html` ist bereits angepasst (geht mit dem Merge live).
+
+### Neu in dieser Version / Release Notes (de-DE)
+
+```
+Mehr Privatsphäre
+
+• md Viewer lädt keine Bilder mehr aus dem Internet. Bindet ein Dokument ein Bild per http/https-Adresse ein, erscheint stattdessen der Hinweis „Externes Bild – wird nicht geladen". Eingebettete Bilder und Bilder aus Ordnern auf deinem Gerät werden weiter angezeigt.
+• Sehr große Bilder werden beim Anzeigen automatisch verkleinert, damit auch umfangreiche Dokumente flüssig bleiben.
+```
+
+### What's New / Release Notes (en-US)
+
+```
+More privacy
+
+• md Viewer no longer loads images from the internet. If a document references an image by an http/https address, you'll see "External image – not loaded" instead. Embedded images and images from folders on your device still appear.
+• Very large images are automatically scaled down for display, so even big documents stay smooth.
+```
+
+### App Review notes — ABOUT THE APP (ersetzt die bisherige Fassung)
+
+```
+ABOUT THE APP
+md Viewer displays Markdown (.md / .markdown) and .txt files and lets the user edit and re-save them in place, or create a new document from pasted/typed text and save it as a .md file. No file manager, no account, no cloud, no backend, no analytics, no tracking, no in-app purchases, no ads, no user-generated content shared with anyone. Bundled open-source rendering libraries only (swift-markdown-ui, swift-cmark, Highlightr; Mermaid.js bundled as a local file), running on device. The app makes no network requests: remote (http/https) image references in documents are deliberately not loaded and show a placeholder instead, and the Mermaid rendering web view is locked down by a Content-Security-Policy that blocks all loads. Tapping a link in a document opens it in the system browser (user action only). No AI services. No ATT prompt. No location/contacts/camera prompts.
+```
+
+### App Review notes — Versionsnotiz (anhängen)
+
+```
+This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images. No new permissions, no data collection.
+```
+
+---
+
 ## Version 1.4 — geänderte Texte (iOS, 10.09.2026)
 
 Nur der iOS-Strang. Beschreibung/Keywords/Werbetext/Untertitel bleiben wie 1.3
@@ -219,6 +275,9 @@ Images and diagrams in the preview
 ```
 
 ### App-Prüfungs-Anmerkungen — 1.5 (englisch, ans Notes-Feld anhängen)
+
+> **Korrektur 27.09.2026:** „no network access" stimmte für iOS 1.5 nicht, denn `http(s)`-Bilder
+> wurden nachgeladen. Behoben ab der nächsten Version, siehe Abschnitt „Nächste Version" oben.
 
 ```
 Version 1.5 adds image and diagram rendering to the reading view. Images referenced by relative path are resolved against the folder containing the opened .md file; the app requests read access to that folder via a security-scoped bookmark (UIDocumentPickerViewController, folder content type) only when a document actually contains a relative image reference, and only for reading. Embedded data: URI images are decoded off the main thread. Mermaid ("```mermaid```") code fences are rendered to a diagram via a bundled, offline copy of Mermaid.js (no network access) and rasterized locally; a diagram that fails to parse falls back to the plain code block. No new data collection, no network access.
@@ -486,11 +545,11 @@ FEATURES
 - Full Unicode support: emoji, Arabic and Hebrew (right-to-left), Chinese, Japanese, and Korean characters
 - Supports Dynamic Type and VoiceOver
 - Automatic Dark Mode / Light Mode
-- Runs entirely offline, no network access in the code
+- Works fully offline: loads nothing from the internet, not even images a document links to
 
 PRIVACY
 
-md Viewer collects no data at all. No analytics, no tracking, no account, no cloud sync. Files you open, edit, and create are processed only locally on your device. The clipboard is read only when you explicitly tap Paste.
+md Viewer collects no data. No analytics, no tracking, no account, no cloud sync. Files you open, edit, and create are processed only locally on your device. The only thing the app remembers on your device is which folders you have allowed it to show images from. The clipboard is read only when you explicitly tap Paste.
 
 Who is it for? Anyone who regularly receives or manages .md or .txt files (notes, READMEs, technical docs, meeting notes) and wants to read them quickly and cleanly, edit them now and then, or jot down a new one, without opening a full editor.
 ```
@@ -706,11 +765,11 @@ FUNKTIONEN
 • Volle Unicode-Unterstützung: Emoji, arabische und hebräische Schrift (rechts-nach-links), chinesische, japanische und koreanische Zeichen
 • Unterstützt Dynamic Type und VoiceOver
 • Automatisches Dark Mode / Light Mode
-• Läuft komplett offline, keine Netzwerkzugriffe im Code
+• Läuft vollständig offline: lädt nichts aus dem Internet, auch keine in Dokumenten verlinkten Bilder
 
 DATENSCHUTZ
 
-md Viewer erhebt keinerlei Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete, bearbeitete und neu erstellte Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet. Die Zwischenablage wird nur gelesen, wenn du ausdrücklich auf „Einsetzen" tippst.
+md Viewer erhebt keine Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete, bearbeitete und neu erstellte Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet. Auf dem Gerät merkt sich die App nur, für welche Ordner du Bilder freigegeben hast. Die Zwischenablage wird nur gelesen, wenn du ausdrücklich auf „Einsetzen" tippst.
 
 Für wen ist die App? Für alle, die regelmäßig .md- oder .txt-Dateien bekommen oder verwalten (Notizen, READMEs, technische Doku, Protokolle) und sie schnell und sauber lesen, ab und zu bearbeiten oder kurz neu anlegen wollen, ohne einen vollen Editor zu öffnen.
 ```
@@ -924,7 +983,7 @@ https://k8pynbhkrh-debug.github.io/md-Viewer/
 
 ## Datenschutz-Fragebogen (App Privacy)
 
-Bei allen Kategorien **"Nicht erfasst"** — die App hat keinen Netzwerkzugriff und sammelt nichts. Siehe `Projektplan-Markdown-Viewer.md` Abschnitt 2 für die Begründung.
+Bei allen Kategorien **"Nicht erfasst"** — die App hat (ab der Version nach iOS 1.5) keinen Netzwerkcode und sammelt nichts. Lokal gespeicherte Ordner-Bookmarks verlassen das Gerät nie und zählen nach Apples Definition nicht als „erfasst". Siehe `Projektplan-Markdown-Viewer.md` Abschnitt 2 für die Begründung.
 
 ## Exportkontrolle (bei Einreichung abgefragt)
 

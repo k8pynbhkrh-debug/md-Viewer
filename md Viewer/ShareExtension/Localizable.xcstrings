@@ -32,6 +32,26 @@
         }
       }
     },
+    "External image – not loaded" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Externes Bild – wird nicht geladen"
+          }
+        }
+      }
+    },
+    "Image unavailable" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild nicht verfügbar"
+          }
+        }
+      }
+    },
     "The file could not be read as text. Only UTF-8 encoded files are supported." : {
       "localizations" : {
         "de" : {

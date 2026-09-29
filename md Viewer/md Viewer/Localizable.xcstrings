@@ -618,6 +618,16 @@
         }
       }
     },
+    "External image – not loaded" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Externes Bild – wird nicht geladen"
+          }
+        }
+      }
+    },
     "Image unavailable" : {
       "localizations" : {
         "de" : {
