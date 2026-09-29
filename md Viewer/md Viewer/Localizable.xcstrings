@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld open" : {
+      "comment" : "Accessibility value: number of open documents.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld geöffnet"
+          }
+        }
+      }
+    },
     "Alternatively, in the Finder: select a .md file, open Get Info (⌘I), choose md Viewer under Open with, and click Change All." : {
       "comment" : "Fallback hint shown when setting md Viewer as the default .md app fails (Mac).",
       "localizations" : {
@@ -38,6 +49,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schließen"
+          }
+        }
+      }
+    },
+    "Close %@" : {
+      "comment" : "Accessibility label of a tab's close button; %@ = file name.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ schließen"
+          }
+        }
+      }
+    },
+    "Close Tab" : {
+      "comment" : "File menu command (⌘W): closes the active document tab.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab schließen"
           }
         }
       }
@@ -177,6 +210,17 @@
         }
       }
     },
+    "Editing" : {
+      "comment" : "List subtitle for a document open in the editor without changes yet.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird bearbeitet"
+          }
+        }
+      }
+    },
     "Edits the Markdown text" : {
       "localizations" : {
         "de" : {
@@ -203,6 +247,83 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Laden …"
+          }
+        }
+      }
+    },
+    "New Tab" : {
+      "comment" : "Accessibility label of the + menu in the tab bar.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuer Tab"
+          }
+        }
+      }
+    },
+    "Open Documents" : {
+      "comment" : "iPhone toolbar button and sheet title listing all open documents.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geöffnete Dokumente"
+          }
+        }
+      }
+    },
+    "Show Next Tab" : {
+      "comment" : "Window menu command (⌃⇥).",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächsten Tab zeigen"
+          }
+        }
+      }
+    },
+    "Show Previous Tab" : {
+      "comment" : "Window menu command (⌃⇧⇥).",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorherigen Tab zeigen"
+          }
+        }
+      }
+    },
+    "Shows all open documents" : {
+      "comment" : "Accessibility hint of the open-documents button.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt alle geöffneten Dokumente"
+          }
+        }
+      }
+    },
+    "The changes to %@ have not been saved and will be lost." : {
+      "comment" : "Confirmation when closing a tab with unsaved changes; %@ = file name.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Änderungen an %@ wurden nicht gespeichert und gehen verloren."
+          }
+        }
+      }
+    },
+    "Unsaved changes" : {
+      "comment" : "Tab / list marker for a document with unsaved edits.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungesicherte Änderungen"
           }
         }
       }

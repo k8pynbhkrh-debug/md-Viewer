@@ -7,65 +7,43 @@ import UniformTypeIdentifiers
 // `DocumentError`, `maxFileSize`, `loadMarkdown(from:)` and `saveMarkdown(text:to:)`
 // live in Shared/MarkdownDocument.swift so the Share extension can reuse them.
 // `DocumentSource`, `MarkdownFileDocument` and `suggestedFilename(from:)` are in
-// MarkdownDraft.swift.
+// MarkdownDraft.swift. Per-document state lives in `DocumentSession`, the tabs
+// in `OpenDocumentsStore`.
 
 struct DocumentView: View {
-    /// What we were opened with. The backing file (`fileURL`) is resolved from
-    /// this in `.task`; for a draft it stays `nil` until the first save.
-    let source: DocumentSource
-
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var content: Result<String, DocumentError>?
-    @State private var highlightr = Highlightr()
+    /// The document shown — its content, editing state and undo history live
+    /// there so they survive tab switches. This view only exists for the
+    /// active tab; it is recreated (`.id(session.id)`) when the tab changes.
+    let session: DocumentSession
+    let store: OpenDocumentsStore
     /// Security-scoped bookmarks for folders granted access to, so relative
     /// image paths in the preview can resolve — see `ImageFolderAccess.swift`.
-    @State private var imageAccessStore = ImageFolderAccessStore()
+    /// Shared by all tabs.
+    let imageAccessStore: ImageFolderAccessStore
+    /// iPhone (compact width): shows the list of open documents. Presented by
+    /// `DocumentWorkspaceView`, so it survives the active tab changing.
+    var onShowDocumentList: () -> Void = {}
 
-    /// The file this document writes to, or `nil` while it is still an unsaved
-    /// draft. Once set (opened file, or first "save as"), the red checkmark
-    /// writes in place.
-    @State private var fileURL: URL?
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var highlightr = Highlightr()
 
-    /// While `isEditing`, `editedText` is the working copy. Leaving the editor —
-    /// via the X (discard) or a successful save — is the only way it affects the
-    /// document; the preview always renders `savedText`.
-    @State private var isEditing = false
-    @State private var editedText = ""
-    @State private var isSaving = false
-    @State private var saveError: String?
     @State private var showSaveConfirmation = false
     @State private var showDiscardConfirmation = false
     @State private var showExporter = false
     /// Drives the brief "Copied" toast after the "Copy All" toolbar button.
     @State private var showCopyConfirmation = false
-    /// While true the reader shows the plain-text, natively selectable view
-    /// instead of the rendered Markdown, so a passage can be selected and
-    /// copied. Never true together with `isEditing`. iOS/iPadOS only — on the
-    /// Mac the toolbar toggle `showFormattedPreview` does this job.
-    @State private var isSelectingText = false
-    #if targetEnvironment(macCatalyst)
-    /// Mac only. Like iOS/iPadOS, a document opens in the full MarkdownUI
-    /// rendering (bordered tables, syntax-highlighted code, images) — that is
-    /// what people want to read. It is not selectable under Catalyst, so the
-    /// toolbar toggles to `MarkdownAttributedText` — one continuous,
-    /// mouse-selectable string (⌘A / ⌘C work there), at the cost of tables
-    /// rendering as tab-separated rows — for when something needs copying.
-    @State private var showFormattedPreview = true
-    #endif
     @FocusState private var editorFocused: Bool
 
-    /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
-    @State private var undoHistory = EditorUndoHistory()
+    /// Mac/iPad (regular width) show a tab bar once there is more than one
+    /// document; the iPhone gets the document-list button instead.
+    private var showsTabBar: Bool {
+        horizontalSizeClass == .regular && store.documents.count > 1
+    }
 
-    /// True while there is no backing file yet — the document has never been
-    /// written to disk.
-    private var isDraft: Bool { fileURL == nil }
-
-    /// The open document's folder — where relative image paths resolve
-    /// against, and where a "grant folder access" picker starts browsing.
-    /// `nil` for an unsaved draft.
-    private var documentFolderURL: URL? { fileURL?.deletingLastPathComponent() }
+    private var showsDocumentListButton: Bool {
+        horizontalSizeClass != .regular
+    }
 
     /// highlight.js theme names (bundled with Highlightr) for each appearance.
     private func syntaxTheme(for scheme: ColorScheme) -> String {
@@ -87,111 +65,77 @@ struct DocumentView: View {
             ?? Color(uiColor: .secondarySystemBackground)
     }
 
-    /// The text currently "on disk" — for a draft, the last value handed to the
-    /// editor.
-    private var savedText: String {
-        (try? content?.get()) ?? ""
-    }
-
-    private var isLoaded: Bool {
-        if case .success = content { return true }
-        return false
-    }
-
-    /// Title shown in the navigation bar.
-    private var navigationTitle: String {
-        fileURL?.lastPathComponent ?? String(localized: "New Document")
-    }
-
-    /// True while editing and the working copy is worth keeping. Drives the
-    /// discard confirmation: for a draft, any text at all counts; for a file,
-    /// only a difference from disk.
-    private var hasUnsavedChanges: Bool {
-        guard isEditing else { return false }
-        if isDraft {
-            return !editedText.isEmpty
-        }
-        return editedText != savedText
-    }
-
-    /// True when there is something a save could actually write — a non-empty
-    /// draft, or a changed file.
-    private var canSave: Bool {
-        guard isEditing, !isSaving else { return false }
-        if isDraft {
-            return !editedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        }
-        return editedText != savedText
-    }
-
-    /// Offer "als Markdown speichern" while editing a text file that is not
-    /// already a `.md` (e.g. an opened `.txt`).
-    private var canSaveAsMarkdown: Bool {
-        guard isEditing, let ext = fileURL?.pathExtension.lowercased() else { return false }
-        return ext != "md" && ext != "markdown"
-    }
+    private var savedText: String { session.savedText }
+    private var documentFolderURL: URL? { session.documentFolderURL }
 
     var body: some View {
-        NavigationStack {
-            documentContent
-                .environment(imageAccessStore)
-                .navigationTitle(navigationTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar { toolbarContent }
-                .overlay { savingOverlay }
-                .overlay(alignment: .top) { copyConfirmationToast }
-        }
+        @Bindable var session = session
+        // No own NavigationStack: `DocumentWorkspaceView` hosts one for all
+        // tabs, so a tab switch swaps only this content instead of building a
+        // new navigation controller each time.
+        documentContent
+            .environment(imageAccessStore)
+            .navigationTitle(session.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarContent }
+            .overlay { savingOverlay }
+            .overlay(alignment: .top) { copyConfirmationToast }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if showsTabBar {
+                    DocumentTabBar(store: store)
+                }
+            }
         .alert("Error", isPresented: saveErrorBinding) {
-            Button("OK", role: .cancel) { saveError = nil }
+            Button("OK", role: .cancel) { session.saveError = nil }
         } message: {
-            Text(saveError ?? "")
+            Text(session.saveError ?? "")
         }
         .confirmationDialog(
             "Save Changes?",
             isPresented: $showSaveConfirmation,
             titleVisibility: .visible
         ) {
-            Button("Save to File", role: .destructive) { confirmSaveInPlace() }
+            Button("Save to File", role: .destructive) { Task { await session.saveInPlace() } }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("The original file \(fileURL?.lastPathComponent ?? "") will be overwritten with the edited text.")
+            Text("The original file \(session.fileURL?.lastPathComponent ?? "") will be overwritten with the edited text.")
         }
         .confirmationDialog(
-            isDraft ? "Discard Document?" : "Discard Changes?",
+            session.isDraft ? "Discard Document?" : "Discard Changes?",
             isPresented: $showDiscardConfirmation,
             titleVisibility: .visible
         ) {
             Button("Discard", role: .destructive) { discardEditing() }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(isDraft
+            Text(session.isDraft
                  ? "This document has not been saved yet and will be lost."
                  : "The changes have not been saved and will be lost.")
         }
         .fileExporter(
             isPresented: $showExporter,
-            document: MarkdownFileDocument(text: editedText),
+            document: MarkdownFileDocument(text: session.editedText),
             contentType: markdownUTType,
-            defaultFilename: suggestedFilename(from: editedText),
+            defaultFilename: suggestedFilename(from: session.editedText),
             onCompletion: handleExportResult
         )
         .onChange(of: colorScheme) { _, _ in applySyntaxTheme() }
-        .task { await load() }
+        .task { load() }
     }
 
     @ViewBuilder
     private var documentContent: some View {
-        switch content {
+        switch session.content {
         case .none:
             ProgressView("Loading…")
         case .success:
-            if isEditing {
+            if session.isEditing {
                 editor
-            } else if isSelectingText {
+            } else if session.isSelectingText {
                 SelectableTextView(text: plainText(fromMarkdown: savedText))
             } else {
                 #if targetEnvironment(macCatalyst)
-                if showFormattedPreview {
+                if session.showFormattedPreview {
                     preview(markdown: savedText)
                 } else {
                     // Selectable Mac preview (mouse, ⌘A, ⌘C) — MarkdownUI's
@@ -220,7 +164,7 @@ struct DocumentView: View {
 
     @ViewBuilder
     private var savingOverlay: some View {
-        if isSaving {
+        if session.isSaving {
             ProgressView("Saving…")
                 .padding(24)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
@@ -247,69 +191,41 @@ struct DocumentView: View {
     }
 
     private var saveErrorBinding: Binding<Bool> {
-        Binding(get: { saveError != nil }, set: { if !$0 { saveError = nil } })
-    }
-
-    private func confirmSaveInPlace() {
-        guard let url = fileURL else { return }
-        Task { await saveInPlace(to: url) }
+        Binding(get: { session.saveError != nil }, set: { if !$0 { session.saveError = nil } })
     }
 
     private func handleExportResult(_ result: Result<URL, Error>) {
         switch result {
         case .success(let url):
-            adoptSavedFile(at: url)
+            session.adoptSavedFile(at: url)
+            store.sessionDidAdoptFile(session)
         case .failure(let error):
             if !isUserCancelled(error) {
-                saveError = String(localized: "Saving failed.")
+                session.saveError = String(localized: "Saving failed.")
             }
         }
     }
 
-    /// Resolves `source` into a backing file (or a draft) and loads its content.
-    private func load() async {
+    /// Loads the document on first display (restored tabs load lazily) and
+    /// announces it to VoiceOver.
+    private func load() {
         applySyntaxTheme()
-        switch source {
-        case .existing(let url):
-            fileURL = url
-            content = loadMarkdown(from: url)
-            switch content {
-            case .success:
-                UIAccessibility.post(notification: .screenChanged, argument: nil)
-                #if DEBUG
-                // App-Store-Screenshot-Lauf: mit diesem Startargument direkt in
-                // den Editor (Tastatur per Cmd+K) und mit einer sichtbaren
-                // Änderung, damit der rote Speichern-Haken aktiv ist.
-                // Synthetische Taps im Simulator sind hier unzuverlässig.
-                // Nur DEBUG.
-                if ProcessInfo.processInfo.arguments.contains("-mdviewerScreenshotEdit"),
-                   case .success(let text) = content {
-                    beginEditing()
-                    editedText = text.replacingOccurrences(
-                        of: "- [ ] Write release notes",
-                        with: "- [x] Write release notes"
-                    )
-                }
-                // Startet direkt in der Text-auswählen-Ansicht (synthetische
-                // Taps im Simulator sind unzuverlässig). Nur DEBUG.
-                if ProcessInfo.processInfo.arguments.contains("-mdviewerSelectText") {
-                    isSelectingText = true
-                }
-                #endif
-            case .failure(let error):
-                UIAccessibility.post(notification: .announcement, argument: error.localizedDescription)
-            case .none:
-                break
-            }
-        case .draft(let initialText):
-            fileURL = nil
-            beginDraft(text: initialText)
+        let wasLoaded = session.content != nil
+        session.loadIfNeeded()
+        guard !wasLoaded else { return }
+        switch session.content {
+        case .success:
             UIAccessibility.post(notification: .screenChanged, argument: nil)
+        case .failure(let error):
+            UIAccessibility.post(notification: .announcement, argument: error.localizedDescription)
+        case .none:
+            break
         }
     }
 
     private var editor: some View {
-        TextEditor(text: $editedText)
+        @Bindable var session = session
+        return TextEditor(text: $session.editedText)
             .font(.system(.body, design: .monospaced))
             .focused($editorFocused)
             // Dismiss the keyboard by dragging down over the text, the way the
@@ -322,7 +238,6 @@ struct DocumentView: View {
             // setting it before this view mounts is dropped by SwiftUI and
             // leaves the keyboard down.
             .onAppear { editorFocused = true }
-            .onChange(of: editedText) { oldValue, _ in undoHistory.record(before: oldValue) }
     }
 
     private func preview(markdown: String) -> some View {
@@ -383,94 +298,110 @@ struct DocumentView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
+    /// iPhone: opens the list of open documents (switch, close, new, open).
+    @ToolbarContentBuilder
+    private var documentListItem: some ToolbarContent {
+        if showsDocumentListButton {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Open Documents", systemImage: "square.on.square") {
+                    onShowDocumentList()
+                }
+                .accessibilityValue(Text("\(store.documents.count) open"))
+                .accessibilityHint("Shows all open documents")
+            }
+        }
+    }
+
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        if isEditing {
+        if session.isEditing {
             // Leading X = leave the editor WITHOUT keeping changes (confirmed if
             // any were made). For a draft this closes the document; for a file
             // it returns to the preview. Keeping changes is only ever the red
             // checkmark.
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel", systemImage: "xmark") {
-                    if hasUnsavedChanges {
+                    if session.hasUnsavedChanges {
                         showDiscardConfirmation = true
                     } else {
                         discardEditing()
                     }
                 }
-                .disabled(isSaving)
-                .accessibilityHint(isDraft
+                .disabled(session.isSaving)
+                .accessibilityHint(session.isDraft
                                    ? "Discards the new document"
                                    : "Returns to the preview without keeping the changes")
             }
+            documentListItem
             ToolbarItem(placement: .cancellationAction) {
                 // Step-by-step undo of individual typing bursts, in addition to
                 // "Cancel" (discard everything).
                 Button("Undo", systemImage: "arrow.uturn.backward") {
-                    if let restored = undoHistory.undo() { editedText = restored }
+                    session.undo()
                 }
-                .disabled(isSaving || !undoHistory.canUndo)
+                .disabled(session.isSaving || !session.canUndo)
                 .accessibilityHint("Undoes the last change")
             }
-            if canSaveAsMarkdown {
+            if session.canSaveAsMarkdown {
                 ToolbarItem(placement: .secondaryAction) {
                     Button("Save as Markdown", systemImage: "square.and.arrow.down") {
                         showExporter = true
                     }
-                    .disabled(isSaving || editedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(session.isSaving || session.editedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             ToolbarItem(placement: .primaryAction) {
                 Button("Save", systemImage: "checkmark") {
-                    if isDraft {
+                    if session.isDraft {
                         showExporter = true
                     } else {
                         showSaveConfirmation = true
                     }
                 }
                 .tint(.red)
-                .disabled(!canSave)
-                .accessibilityHint(isDraft
+                .disabled(!session.canSave)
+                .accessibilityHint(session.isDraft
                                    ? "Saves the text as a new file"
                                    : "Overwrites the file with the edited text")
             }
-        } else if isSelectingText {
+        } else if session.isSelectingText {
             // Text-selection mode: the only way out is "Done" (or the X, which
             // also just returns to the rendered view — it does not close the
             // document from here).
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close", systemImage: "xmark") { isSelectingText = false }
+                Button("Close", systemImage: "xmark") { session.isSelectingText = false }
                     .accessibilityHint("Returns to the rendered document")
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Done") { isSelectingText = false }
+                Button("Done") { session.isSelectingText = false }
             }
         } else {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close", systemImage: "xmark") { dismiss() }
+                Button("Close", systemImage: "xmark") { store.userClose(session.id) }
                     .accessibilityHint("Closes the document")
             }
-            if isLoaded {
+            documentListItem
+            if session.isLoaded {
                 #if targetEnvironment(macCatalyst)
                 // The Mac opens in the full MarkdownUI rendering (bordered
                 // tables, syntax highlighting, images); this toggles to the
                 // selectable text preview for copying, and back.
                 ToolbarItem(placement: .primaryAction) {
                     Button(
-                        showFormattedPreview ? "Selectable Text" : "Formatted View",
-                        systemImage: showFormattedPreview ? "character.cursor.ibeam" : "doc.richtext"
+                        session.showFormattedPreview ? "Selectable Text" : "Formatted View",
+                        systemImage: session.showFormattedPreview ? "character.cursor.ibeam" : "doc.richtext"
                     ) {
-                        showFormattedPreview.toggle()
+                        session.showFormattedPreview.toggle()
                     }
                     .disabled(savedText.isEmpty)
-                    .accessibilityHint(showFormattedPreview
+                    .accessibilityHint(session.showFormattedPreview
                                        ? "Switches to the selectable preview"
                                        : "Switches to the fully rendered preview with tables and images, which cannot be selected")
                 }
                 #else
                 ToolbarItem(placement: .primaryAction) {
                     Button("Select Text", systemImage: "character.cursor.ibeam") {
-                        isSelectingText = true
+                        session.isSelectingText = true
                     }
                     .disabled(savedText.isEmpty)
                     .accessibilityHint("Switches to a plain-text view where a passage can be selected and copied")
@@ -482,7 +413,7 @@ struct DocumentView: View {
                         .accessibilityHint("Copies the whole document as plain text to the clipboard")
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Edit", systemImage: "pencil") { beginEditing() }
+                    Button("Edit", systemImage: "pencil") { session.beginEditing() }
                         .accessibilityHint("Edits the Markdown text")
                 }
             }
@@ -514,101 +445,12 @@ struct DocumentView: View {
                              argument: String(localized: "Copied"))
     }
 
-    /// Enters the editor with a fresh working copy of the saved text.
-    ///
-    /// - Precondition: the document loaded successfully.
-    /// - Postcondition: `isEditing && editedText == savedText` and the undo
-    ///   history is empty.
-    private func beginEditing() {
-        undoHistory.reset()
-        editedText = savedText
-        isEditing = true
-        assert(isEditing && editedText == savedText && !undoHistory.canUndo)
-    }
-
-    /// Enters the editor with an unsaved draft — no backing file yet.
-    ///
-    /// - Precondition: `fileURL == nil`.
-    /// - Postcondition: `content == .success(text)`, `editedText == text`,
-    ///   `isEditing`, and the undo history is empty.
-    private func beginDraft(text: String) {
-        precondition(fileURL == nil, "beginDraft called with a backing file present")
-        undoHistory.reset()
-        content = .success(text)
-        editedText = text
-        isEditing = true
-        assert(isEditing && editedText == text && savedText == text && !undoHistory.canUndo)
-    }
-
-    /// Leaves the editor without keeping the working copy. A draft has nothing
-    /// to fall back to, so the whole document closes; a file returns to its
-    /// preview.
-    ///
-    /// - Postcondition: `isDraft` ⟹ the cover is dismissed; otherwise
-    ///   `!isEditing` and the preview shows `savedText` again.
+    /// Leaves the editor without keeping the working copy (already confirmed
+    /// by the user if there were changes). A discarded draft closes its tab.
     private func discardEditing() {
-        undoHistory.reset()
-        if isDraft {
-            dismiss()
-        } else {
-            isEditing = false
-            assert(!isEditing)
+        if session.discardEditing() == .closeDocument {
+            store.close(session.id, discardingChanges: true)
         }
-    }
-
-    /// Writes the working copy to `url` in place and returns to the preview.
-    ///
-    /// - Precondition: `url` is a file URL and `canSave` (the button is disabled
-    ///   otherwise).
-    /// - Postcondition (success): `savedText == <written text> && !isEditing` —
-    ///   disk and in-memory content agree and the editor is closed.
-    /// - Postcondition (failure): `saveError` is set and the editor stays open
-    ///   with the working copy intact, so the user can retry.
-    ///
-    /// The file I/O runs off the main actor because `NSFileCoordinator` can
-    /// block for seconds on an iCloud / Files document that other presenters
-    /// hold; `isSaving` drives the progress overlay for that window.
-    @MainActor
-    private func saveInPlace(to url: URL) async {
-        precondition(url.isFileURL, "saveInPlace requires a file URL")
-        assert(canSave, "saveInPlace precondition violated: nothing to save")
-        let text = editedText
-        isSaving = true
-        defer { isSaving = false }
-        do {
-            try await Task.detached(priority: .userInitiated) {
-                try saveMarkdown(text: text, to: url)
-            }.value
-            content = .success(text)
-            isEditing = false
-            undoHistory.reset()
-            assert(savedText == text && !isEditing)
-        } catch {
-            saveError = (error as? DocumentError)?.errorDescription ?? String(localized: "Saving failed.")
-        }
-    }
-
-    /// Adopts `url` (just written by the `.fileExporter`) as the document's
-    /// backing file.
-    ///
-    /// - Precondition: `content` is `.success` — there was text to write.
-    /// - Postcondition: `fileURL == url`, `content == .success(editedText)`,
-    ///   `!isEditing`, undo history empty; the next save writes in place.
-    private func adoptSavedFile(at url: URL) {
-        assert(isLoaded, "adoptSavedFile precondition violated: nothing was written")
-        let text = editedText
-        fileURL = url
-        content = .success(text)
-        isEditing = false
-        undoHistory.reset()
-        assert(fileURL == url && !isEditing && savedText == text)
-        #if DEBUG
-        // The exporter wrote the file, not us — confirm it landed as our text.
-        let scoped = url.startAccessingSecurityScopedResource()
-        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        assert((try? String(contentsOf: url, encoding: .utf8)) == text,
-               "adoptSavedFile postcondition violated: file on disk differs from editedText")
-        #endif
     }
 }
 

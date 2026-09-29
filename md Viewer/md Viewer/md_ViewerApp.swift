@@ -10,37 +10,28 @@ import UniformTypeIdentifiers
 
 @main
 struct md_ViewerApp: App {
-    /// The document currently presented over the empty state — either a file
-    /// handed to us by the OS, or a new draft started from the empty state.
-    @State private var document: DocumentSource?
-
-    #if targetEnvironment(macCatalyst)
-    /// Drives the "Öffnen …" menu command's file dialog (Mac only — on iOS the
-    /// system opens files via the Files app / "Teilen" instead).
-    @State private var showOpenDialog = false
-    #endif
+    /// The open documents (tabs). Files handed to us by the OS, "Open…" and
+    /// new drafts all land here as tabs; open files are restored on launch.
+    @State private var store = OpenDocumentsStore()
+    /// Folder access grants for relative images — shared by all tabs.
+    @State private var imageAccessStore = ImageFolderAccessStore()
 
     var body: some Scene {
         WindowGroup {
-            ContentView { initialText in
-                document = .draft(initialText: initialText)
-            }
+            DocumentWorkspaceView(store: store, imageAccessStore: imageAccessStore)
             .onOpenURL { url in
-                document = .existing(url)
+                // A new tab — or the existing one if that file is already
+                // open. Never replaces the document being worked on.
+                store.open(url)
             }
-            #if targetEnvironment(macCatalyst)
             .fileImporter(
-                isPresented: $showOpenDialog,
-                allowedContentTypes: [markdownUTType, .plainText]
+                isPresented: $store.isPresentingOpenDialog,
+                allowedContentTypes: [markdownUTType, .plainText],
+                allowsMultipleSelection: true
             ) { result in
-                if case .success(let url) = result {
-                    document = .existing(url)
+                if case .success(let urls) = result {
+                    for url in urls { store.open(url) }
                 }
-            }
-            #endif
-            .fullScreenCover(item: $document) { source in
-                DocumentView(source: source)
-                    .id(source.id)
             }
             #if targetEnvironment(macCatalyst)
             // Fenster frei skalierbar machen. Ohne das `.frame` leitet SwiftUI
@@ -61,27 +52,43 @@ struct md_ViewerApp: App {
             .task {
                 let args = ProcessInfo.processInfo.arguments
                 if let i = args.firstIndex(of: "-mdviewerDraft") {
-                    document = .draft(initialText: i + 1 < args.count ? args[i + 1] : "")
+                    store.newDraft(text: i + 1 < args.count ? args[i + 1] : "")
                 }
             }
             #endif
         }
-        #if targetEnvironment(macCatalyst)
         .commands {
             // Ersetzt das Standard-„Ablage → Neu": md Viewer hat genau ein
-            // Fenster, „Neu" startet einen Entwurf, „Öffnen …" einen Dateidialog.
+            // Fenster mit Tabs; „Neu" startet einen Entwurf, „Öffnen …" einen
+            // Dateidialog — beides als neuer Tab. Auf dem iPad greifen die
+            // Kurzbefehle mit Hardware-Tastatur.
             CommandGroup(replacing: .newItem) {
                 Button("New Document") {
-                    document = .draft(initialText: "")
+                    store.newDraft(text: "")
                 }
                 .keyboardShortcut("n", modifiers: .command)
 
                 Button("Open…") {
-                    showOpenDialog = true
+                    store.isPresentingOpenDialog = true
                 }
                 .keyboardShortcut("o", modifiers: .command)
+
+                Divider()
+
+                Button("Close Tab") {
+                    if let id = store.activeID { store.userClose(id) }
+                }
+                .keyboardShortcut("w", modifiers: .command)
+                .disabled(store.activeID == nil)
+            }
+            CommandGroup(after: .windowArrangement) {
+                Button("Show Next Tab") { store.activateNeighbor(offset: 1) }
+                    .keyboardShortcut(.tab, modifiers: .control)
+                    .disabled(store.documents.count < 2)
+                Button("Show Previous Tab") { store.activateNeighbor(offset: -1) }
+                    .keyboardShortcut(.tab, modifiers: [.control, .shift])
+                    .disabled(store.documents.count < 2)
             }
         }
-        #endif
     }
 }
