@@ -39,7 +39,7 @@ struct DocumentWorkspaceView: View {
         }
         #endif
         .confirmationDialog(
-            "Discard Changes?",
+            pendingSession?.isDraft == true ? "Discard Document?" : "Discard Changes?",
             isPresented: pendingCloseBinding,
             titleVisibility: .visible,
             presenting: pendingSession
@@ -234,7 +234,7 @@ struct OpenDocumentsList: View {
                 }
             }
             .confirmationDialog(
-                "Discard Changes?",
+                pendingClose?.isDraft == true ? "Discard Document?" : "Discard Changes?",
                 isPresented: Binding(get: { pendingClose != nil },
                                      set: { if !$0 { pendingClose = nil } }),
                 titleVisibility: .visible,

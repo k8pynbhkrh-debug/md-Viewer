@@ -16,6 +16,19 @@ struct md_ViewerApp: App {
     /// Folder access grants for relative images — shared by all tabs.
     @State private var imageAccessStore = ImageFolderAccessStore()
 
+    init() {
+        #if targetEnvironment(macCatalyst)
+        // md Viewer hat eigene Tabs im Fenster. Die macOS-Fenster-Tabs
+        // („Vorherigen Tab anzeigen", „Tableiste einblenden", „Alle Fenster
+        // zusammenführen" …) doppeln das nur und werden abgeschaltet. AppKit
+        // ist unter Catalyst nicht direkt importierbar, daher per KVC auf die
+        // Klasseneigenschaft `NSWindow.allowsAutomaticWindowTabbing` — muss
+        // vor dem ersten Fenster passieren.
+        (NSClassFromString("NSWindow") as? NSObject.Type)?
+            .setValue(false, forKey: "allowsAutomaticWindowTabbing")
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             DocumentWorkspaceView(store: store, imageAccessStore: imageAccessStore)
@@ -62,7 +75,8 @@ struct md_ViewerApp: App {
             // Fenster mit Tabs; „Neu" startet einen Entwurf, „Öffnen …" einen
             // Dateidialog — beides als neuer Tab. Auf dem iPad greifen die
             // Kurzbefehle mit Hardware-Tastatur.
-            CommandGroup(replacing: .newItem) {
+            CommandGroup(replacing: .newItem) {}
+            CommandGroup(after: .newItem) {
                 Button("New Document") {
                     store.newDraft(text: "")
                 }
@@ -72,9 +86,11 @@ struct md_ViewerApp: App {
                     store.isPresentingOpenDialog = true
                 }
                 .keyboardShortcut("o", modifiers: .command)
-
-                Divider()
-
+            }
+            // Ersetzt die System-Gruppe „Schließen / Alle schließen / Sichern":
+            // ⌘W schließt den aktiven Tab (mit Rückfrage bei ungesicherten
+            // Änderungen), nicht das Fenster.
+            CommandGroup(replacing: .saveItem) {
                 Button("Close Tab") {
                     if let id = store.activeID { store.userClose(id) }
                 }
