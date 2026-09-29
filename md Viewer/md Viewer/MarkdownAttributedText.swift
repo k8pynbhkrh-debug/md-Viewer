@@ -60,12 +60,29 @@ struct MarkdownAttributedText: UIViewRepresentable {
         return view
     }
 
+    /// Remembers the folder-grant `revision` the images were last loaded
+    /// for, so a grant or revoke (in "Folder Access") reloads them.
+    final class Coordinator {
+        var imageRevision: Int
+        init(imageRevision: Int) { self.imageRevision = imageRevision }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(imageRevision: accessStore.revision)
+    }
+
     func updateUIView(_ view: UITextView, context: Context) {
         let rendered = attributedString(fromMarkdown: markdown, baseFont: Self.baseFont)
+        // Reading `revision` here also makes SwiftUI call `updateUIView`
+        // again whenever it changes.
+        let revision = accessStore.revision
         if view.attributedText != rendered {
             view.attributedText = rendered
             loadImages(into: view)
+        } else if revision != context.coordinator.imageRevision {
+            loadImages(into: view)
         }
+        context.coordinator.imageRevision = revision
         if let view = view as? CopyAllTextView {
             view.copyAllProvider = { plainTextForCopyAll }
             view.onCopyAll = onCopyAll
