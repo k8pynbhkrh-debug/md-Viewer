@@ -332,6 +332,11 @@ struct DocumentView: View {
                 Markdown(markdown, imageBaseURL: documentFolderURL)
                     .markdownImageProvider(AppImageProvider(documentFolderURL: documentFolderURL))
                     .markdownInlineImageProvider(AppInlineImageProvider(accessStore: imageAccessStore))
+                    // Inline images load once per view identity and don't
+                    // observe the store — re-create the rendering when folder
+                    // grants change so a revoked folder's images disappear
+                    // immediately (block images reload via their own task).
+                    .id(imageAccessStore.revision)
                     .markdownCodeSyntaxHighlighter(
                         HighlightrSyntaxHighlighter(highlightr: highlightr)
                     )

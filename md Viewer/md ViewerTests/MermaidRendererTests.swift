@@ -60,14 +60,22 @@ struct MermaidRendererTests {
     // and the next diagram renders normally.
     @Test("a missing JavaScript answer times out and the next diagram still renders")
     func missingAnswerTimesOutAndRecovers() async {
-        let renderer = MermaidRenderer(renderTimeout: .seconds(2))
+        // Production render timeout: a fresh page's first Mermaid call can
+        // take a few seconds in the simulator, and the recovery render below
+        // runs on a freshly rebuilt page.
+        let renderTimeout: Duration = .seconds(5)
+        let renderer = MermaidRenderer(renderTimeout: renderTimeout)
         let defaultScript = renderer.makeRenderScript
-        renderer.makeRenderScript = { _, _, _ in "void 0;" }
 
+        // Warm up so the timing below measures only the missing answer, not
+        // the page load.
+        #expect(isSuccess(await renderer.render(source: "flowchart TD\n  W --> U", colorScheme: .light)))
+
+        renderer.makeRenderScript = { _, _, _ in "void 0;" }
         let start = ContinuousClock.now
         let first = await renderer.render(source: simpleDiagram, colorScheme: .light)
         #expect(first == .failure(.timedOut))
-        #expect(ContinuousClock.now - start < .seconds(10))
+        #expect(ContinuousClock.now - start < renderTimeout + .seconds(3))
 
         renderer.makeRenderScript = defaultScript
         let second = await renderer.render(source: simpleDiagram, colorScheme: .dark)
@@ -90,7 +98,7 @@ struct MermaidRendererTests {
     // because the harness stays loaded.
     @Test("navigation attempts from the page are cancelled")
     func navigationAttemptsAreCancelled() async {
-        let renderer = MermaidRenderer(renderTimeout: .seconds(3))
+        let renderer = MermaidRenderer()
         let defaultScript = renderer.makeRenderScript
         renderer.makeRenderScript = { id, source, theme in
             "window.location.href = 'https://example.com/'; window.location.href = 'file:///etc/hosts'; "

@@ -33,8 +33,8 @@ enum MermaidRenderFailure: Equatable {
 ///
 /// ## Contract (`render(source:colorScheme:)`)
 /// - Precondition: none — any text is accepted; the source is untrusted.
-/// - Postcondition: returns within `pageLoadTimeout` + 2 × `renderTimeout`
-///   (page ready, script answer, snapshot — each bounded); `.success` images are at most
+/// - Postcondition: returns within `pageLoadTimeout` + 3 × `renderTimeout`
+///   (page ready, script answer, repaint, snapshot — each bounded); `.success` images are at most
 ///   `maxDiagramDimension` points and at most `maxDiagramDimension` pixels
 ///   on their longer side; oversized input or output yields
 ///   `.failure(.tooLarge)` without rasterizing.
@@ -211,7 +211,13 @@ final class MermaidRenderer: NSObject, WKNavigationDelegate {
             // drives its render loop on a predictable schedule. A brief
             // delay plus one idle JS round-trip gives WebKit time to
             // actually repaint at the new size before the snapshot.
-            _ = try? await webView.evaluateJavaScript("document.body.offsetHeight")
+            let repainted = await awaitWithTimeout(renderTimeout, onTimeout: false) { box in
+                webView.evaluateJavaScript("document.body.offsetHeight") { _, _ in box.resume(true) }
+            }
+            guard repainted else {
+                discardWebView()
+                return .failure(.timedOut)
+            }
             try? await Task.sleep(for: .milliseconds(100))
             guard let image = await snapshot(of: webView, size: size) else {
                 discardWebView()

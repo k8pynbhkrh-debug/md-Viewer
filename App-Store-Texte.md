@@ -155,7 +155,8 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 >
 > **Ergänzt durch T-2026-274 (P1-Härtung, 29.09.2026):** „Ordnerzugriffe" (Startbildschirm,
 > Mac: App-Menü) listet freigegebene Ordner nur mit Namen und entfernt einzelne oder alle.
-> Gespeichert wird nur noch der Ordnername, kein Pfad mehr. Mermaid läuft mit
+> Neben dem Bookmark selbst wird nur noch der Ordnername als Anzeigetext gespeichert,
+> kein separater Pfad mehr. Mermaid läuft mit
 > `securityLevel: 'strict'`, Navigationssperre, Größenlimits (20.000 Zeichen / 4096 px)
 > und Timeout; bei Überschreitung erscheint der Codeblock.
 
@@ -191,7 +192,7 @@ md Viewer displays Markdown (.md / .markdown) and .txt files and lets the user e
 ### App Review notes — Versionsnotiz (anhängen)
 
 ```
-This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images (folder name only, no path); a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. No new permissions, no data collection.
+This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images (the list shows the folder name only; no separate path string is stored); a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. No new permissions, no data collection.
 ```
 
 ---
