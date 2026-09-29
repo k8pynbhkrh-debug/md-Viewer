@@ -647,6 +647,126 @@
           }
         }
       }
+    },
+    "Folder Access" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordnerzugriffe"
+          }
+        }
+      }
+    },
+    "Folder Access…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordnerzugriffe …"
+          }
+        }
+      }
+    },
+    "No Folders Shared" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Ordner freigegeben"
+          }
+        }
+      }
+    },
+    "When a document shows images from its folder, md Viewer asks once for access. Those folders appear here and can be removed at any time." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt ein Dokument Bilder aus seinem Ordner, fragt md Viewer einmalig nach Zugriff. Diese Ordner erscheinen hier und lassen sich jederzeit entfernen."
+          }
+        }
+      }
+    },
+    "Remove access to all folders?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zugriff auf alle Ordner entfernen?"
+          }
+        }
+      }
+    },
+    "Remove All" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle entfernen"
+          }
+        }
+      }
+    },
+    "Images from these folders will no longer be shown until you choose the folder again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder aus diesen Ordnern werden nicht mehr angezeigt, bis du den Ordner erneut auswählst."
+          }
+        }
+      }
+    },
+    "Remove %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ entfernen"
+          }
+        }
+      }
+    },
+    "md Viewer may read images from these folders. Removing a folder only revokes this permission; no files are deleted." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "md Viewer darf Bilder aus diesen Ordnern lesen. Entfernen widerruft nur diese Berechtigung – es werden keine Dateien gelöscht."
+          }
+        }
+      }
+    },
+    "Shows and removes folders md Viewer may read images from" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt und entfernt Ordner, aus denen md Viewer Bilder lesen darf"
+          }
+        }
+      }
+    },
+    "Diagram too large – shown as code" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagramm zu groß – als Code angezeigt"
+          }
+        }
+      }
+    },
+    "Diagram took too long – shown as code" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagramm braucht zu lange – als Code angezeigt"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

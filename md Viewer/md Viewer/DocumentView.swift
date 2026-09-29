@@ -20,7 +20,8 @@ struct DocumentView: View {
     @State private var highlightr = Highlightr()
     /// Security-scoped bookmarks for folders granted access to, so relative
     /// image paths in the preview can resolve — see `ImageFolderAccess.swift`.
-    @State private var imageAccessStore = ImageFolderAccessStore()
+    /// App-wide instance, injected by `md_ViewerApp`.
+    @Environment(ImageFolderAccessStore.self) private var imageAccessStore
 
     /// The file this document writes to, or `nil` while it is still an unsaved
     /// draft. Once set (opened file, or first "save as"), the red checkmark

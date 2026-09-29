@@ -14,6 +14,11 @@ struct md_ViewerApp: App {
     /// handed to us by the OS, or a new draft started from the empty state.
     @State private var document: DocumentSource?
 
+    /// App-wide folder grants for relative images — one instance, so revoking
+    /// a folder in "Folder Access" also affects an open document.
+    @State private var folderAccessStore = ImageFolderAccessStore()
+    @State private var showFolderAccess = false
+
     #if targetEnvironment(macCatalyst)
     /// Drives the "Öffnen …" menu command's file dialog (Mac only — on iOS the
     /// system opens files via the Files app / "Teilen" instead).
@@ -22,8 +27,18 @@ struct md_ViewerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView { initialText in
-                document = .draft(initialText: initialText)
+            ContentView(
+                onNewDocument: { initialText in
+                    document = .draft(initialText: initialText)
+                },
+                onManageFolderAccess: { showFolderAccess = true }
+            )
+            .environment(folderAccessStore)
+            // Two presentation anchors for the same sheet: the start screen,
+            // or — Mac menu while a document is open — the document cover,
+            // since the root can't present while the cover is up.
+            .sheet(isPresented: folderAccessBinding(whileDocumentOpen: false)) {
+                FolderAccessView().environment(folderAccessStore)
             }
             .onOpenURL { url in
                 document = .existing(url)
@@ -41,6 +56,10 @@ struct md_ViewerApp: App {
             .fullScreenCover(item: $document) { source in
                 DocumentView(source: source)
                     .id(source.id)
+                    .environment(folderAccessStore)
+                    .sheet(isPresented: folderAccessBinding(whileDocumentOpen: true)) {
+                        FolderAccessView().environment(folderAccessStore)
+                    }
             }
             #if targetEnvironment(macCatalyst)
             // Fenster frei skalierbar machen. Ohne das `.frame` leitet SwiftUI
@@ -56,12 +75,15 @@ struct md_ViewerApp: App {
             #if DEBUG
             // Screenshot-/Smoke-Test-Hook: „-mdviewerDraft <text>" öffnet beim
             // Start direkt einen Entwurf (die Zwischenablage lässt sich im
-            // Simulator nicht zuverlässig per Skript in den PasteButton bringen).
-            // Nur DEBUG.
+            // Simulator nicht zuverlässig per Skript in den PasteButton bringen),
+            // „-mdviewerFolderAccess" die Ordnerzugriffe. Nur DEBUG.
             .task {
                 let args = ProcessInfo.processInfo.arguments
                 if let i = args.firstIndex(of: "-mdviewerDraft") {
                     document = .draft(initialText: i + 1 < args.count ? args[i + 1] : "")
+                }
+                if args.contains("-mdviewerFolderAccess") {
+                    showFolderAccess = true
                 }
             }
             #endif
@@ -81,7 +103,19 @@ struct md_ViewerApp: App {
                 }
                 .keyboardShortcut("o", modifiers: .command)
             }
+            CommandGroup(after: .appSettings) {
+                Button("Folder Access…") {
+                    showFolderAccess = true
+                }
+            }
         }
         #endif
+    }
+
+    private func folderAccessBinding(whileDocumentOpen: Bool) -> Binding<Bool> {
+        Binding(
+            get: { showFolderAccess && (document != nil) == whileDocumentOpen },
+            set: { showFolderAccess = $0 }
+        )
     }
 }
