@@ -31,6 +31,7 @@
 		E7FBEE15B98351D9C8E0BF62 /* MarkdownImageLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40516F9 /* MarkdownImageLoaderTests.swift */; };
 		E7FBEE15B98351D9C8E0BF95 /* MermaidRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA40517A4 /* MermaidRendererTests.swift */; };
 		E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */; };
+		327A0000000000000000B001 /* DocumentTabWidthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327A0000000000000000F001 /* DocumentTabWidthTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		65AC828D8063669DA40516F9 /* MarkdownImageLoaderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageLoaderTests.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA40517A4 /* MermaidRendererTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRendererTests.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OpenDocumentsStoreTests.swift; sourceTree = "<group>"; };
+		327A0000000000000000F001 /* DocumentTabWidthTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DocumentTabWidthTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -178,6 +180,7 @@
 				65AC828D8063669DA40517A4 /* MermaidRendererTests.swift */,
 				65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */,
 				65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */,
+				327A0000000000000000F001 /* DocumentTabWidthTests.swift */,
 			);
 			name = "md ViewerTests";
 			path = "md ViewerTests";
@@ -378,6 +381,7 @@
 				E7FBEE15B98351D9C8E0BF95 /* MermaidRendererTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF51 /* ImageFolderAccessTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */,
+				327A0000000000000000B001 /* DocumentTabWidthTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

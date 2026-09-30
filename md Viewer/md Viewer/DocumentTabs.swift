@@ -30,6 +30,12 @@ struct DocumentWorkspaceView: View {
         .sheet(isPresented: $showDocumentList) {
             OpenDocumentsList(store: store)
         }
+        #if targetEnvironment(macCatalyst)
+        // The Mac title bar follows the active tab. `.navigationTitle` alone
+        // is not enough: with one NavigationStack for all tabs the window
+        // title can stay on an earlier tab's name.
+        .background { WindowSceneTitle(title: store.active?.title ?? "") }
+        #endif
         #if DEBUG
         // Screenshot-/Smoke-Test-Hook: „-mdviewerDocumentList" zeigt beim Start
         // die Liste der (wiederhergestellten) Dokumente — synthetische Taps im
@@ -64,6 +70,42 @@ struct DocumentWorkspaceView: View {
     }
 }
 
+#if targetEnvironment(macCatalyst)
+/// Sets the hosting `UIWindowScene`'s title (= the Mac window title). An
+/// empty title lets macOS show the app name.
+private struct WindowSceneTitle: UIViewRepresentable {
+    let title: String
+
+    func makeUIView(context: Context) -> TitleView { TitleView() }
+
+    func updateUIView(_ view: TitleView, context: Context) {
+        view.title = title
+    }
+
+    final class TitleView: UIView {
+        var title = "" { didSet { apply() } }
+
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            isUserInteractionEnabled = false
+            isAccessibilityElement = false
+        }
+
+        required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            apply()
+        }
+
+        private func apply() {
+            guard let scene = window?.windowScene, scene.title != title else { return }
+            scene.title = title
+        }
+    }
+}
+#endif
+
 /// Shared by the window-level and the iPhone-list confirmation.
 func closeConfirmationMessage(for session: DocumentSession) -> String {
     session.isDraft
@@ -73,43 +115,81 @@ func closeConfirmationMessage(for session: DocumentSession) -> String {
 
 // MARK: - Mac / iPad
 
-/// Horizontal tab strip below the navigation bar (Mac and iPad, regular
-/// width, two or more documents). Tap = switch, × = close, "+" = new / open.
+/// Narrowest a tab gets before the bar scrolls instead (like Safari).
+let documentTabMinWidth: CGFloat = 140
+
+/// Width of every tab in a bar `available` points wide: the width split evenly,
+/// but never below `minWidth` — past that the bar scrolls.
+///
+/// - Precondition: `available >= 0`, `count >= 0`, `minWidth > 0`.
+/// - Postcondition: result `>= minWidth`; while `count * minWidth <= available`
+///   the tabs fill the bar exactly (`count * result == available`).
+func documentTabWidth(available: CGFloat, count: Int, minWidth: CGFloat = documentTabMinWidth) -> CGFloat {
+    precondition(available >= 0 && count >= 0 && minWidth > 0,
+                 "documentTabWidth: invalid input \(available), \(count), \(minWidth)")
+    guard count > 0 else { return minWidth }
+    return max(available / CGFloat(count), minWidth)
+}
+
+/// Finder-/Safari-style tab strip below the navigation bar (Mac and iPad,
+/// regular width, two or more documents): equally wide tabs across the full
+/// width, separated by lines; the active tab stands out. Tap = switch,
+/// × (on hover) = close, "+" = new / open.
 struct DocumentTabBar: View {
     let store: OpenDocumentsStore
 
     var body: some View {
         HStack(spacing: 0) {
-            ScrollViewReader { proxy in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 4) {
-                        ForEach(store.documents) { session in
-                            DocumentTab(
-                                session: session,
-                                isActive: session.id == store.activeID,
-                                onSelect: { store.activate(session.id) },
-                                onClose: { store.userClose(session.id) }
-                            )
-                            .id(session.id)
+            GeometryReader { geometry in
+                let width = documentTabWidth(available: geometry.size.width,
+                                             count: store.documents.count)
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 0) {
+                            ForEach(store.documents) { session in
+                                DocumentTab(
+                                    session: session,
+                                    isActive: session.id == store.activeID,
+                                    onSelect: { store.activate(session.id) },
+                                    onClose: { store.userClose(session.id) }
+                                )
+                                .frame(width: width)
+                                .overlay(alignment: .trailing) {
+                                    if session.id != store.documents.last?.id {
+                                        tabSeparator
+                                    }
+                                }
+                                .id(session.id)
+                            }
                         }
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
-                }
-                .onAppear { proxy.scrollTo(store.activeID) }
-                .onChange(of: store.activeID) { _, id in
-                    withAnimation { proxy.scrollTo(id) }
+                    .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+                    .onAppear { proxy.scrollTo(store.activeID) }
+                    .onChange(of: store.activeID) { _, id in
+                        withAnimation { proxy.scrollTo(id) }
+                    }
                 }
             }
+            tabSeparator
             NewDocumentMenu(store: store)
-                .padding(.trailing, 8)
+                .padding(.horizontal, 4)
         }
-        .background(.bar)
+        .frame(height: DocumentTab.height)
+        .background(Color(uiColor: .systemGray5))
         .overlay(alignment: .bottom) { Divider() }
+    }
+
+    private var tabSeparator: some View {
+        Rectangle()
+            .fill(Color(uiColor: .separator))
+            .frame(width: 1)
+            .accessibilityHidden(true)
     }
 }
 
 private struct DocumentTab: View {
+    static let height: CGFloat = 30
+
     let session: DocumentSession
     let isActive: Bool
     let onSelect: () -> Void
@@ -117,21 +197,20 @@ private struct DocumentTab: View {
 
     @State private var isHovering = false
 
-    var body: some View {
-        HStack(spacing: 6) {
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.caption2.weight(.semibold))
-                    .frame(width: 16, height: 16)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.borderless)
-            .foregroundStyle(.secondary)
-            .opacity(isActive || isHovering ? 1 : 0.5)
-            .accessibilityLabel(Text("Close \(session.title)"))
+    /// Mac: × only while the pointer is over the tab (like Finder). iPad
+    /// without a pointer has no hover, so the active tab keeps its × there.
+    private var showsCloseButton: Bool {
+        #if targetEnvironment(macCatalyst)
+        isHovering
+        #else
+        isHovering || isActive
+        #endif
+    }
 
+    var body: some View {
+        ZStack {
             Button(action: onSelect) {
-                HStack(spacing: 4) {
+                HStack(spacing: 5) {
                     Text(session.title)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -142,23 +221,47 @@ private struct DocumentTab: View {
                             .accessibilityHidden(true)
                     }
                 }
-                .font(.subheadline.weight(isActive ? .semibold : .regular))
+                .font(.subheadline.weight(isActive ? .medium : .regular))
                 .foregroundStyle(isActive ? .primary : .secondary)
-                .frame(minWidth: 60, maxWidth: 200)
+                // Room for the × on the left, symmetric so the title stays centred.
+                .padding(.horizontal, 26)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .help(session.title)
+            .accessibilityLabel(Text(session.title))
             .accessibilityValue(session.hasUnsavedChanges ? Text("Unsaved changes") : Text(""))
             .accessibilityAddTraits(isActive ? .isSelected : [])
+
+            HStack {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.caption2.weight(.semibold))
+                        .frame(width: 18, height: 18)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+                .opacity(showsCloseButton ? 1 : 0)
+                // A hidden × must not swallow taps meant for switching tabs.
+                .allowsHitTesting(showsCloseButton)
+                // Invisible, but still reachable for VoiceOver / Full Keyboard Access.
+                .accessibilityLabel(Text("Close \(session.title)"))
+                Spacer(minLength: 0)
+            }
+            .padding(.leading, 6)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 5)
-        .background {
-            RoundedRectangle(cornerRadius: 7)
-                .fill(isActive ? Color(uiColor: .systemBackground) : .clear)
-                .shadow(color: .black.opacity(isActive ? 0.12 : 0), radius: 1, y: 0.5)
-        }
+        .background(background)
         .onHover { isHovering = $0 }
+        .animation(.easeOut(duration: 0.12), value: isHovering)
+    }
+
+    /// Active tab: the document's own background, so it reads as the front
+    /// sheet; inactive tabs stay on the bar's grey and lighten on hover.
+    private var background: Color {
+        if isActive { return Color(uiColor: .systemBackground) }
+        return isHovering ? Color(uiColor: .systemGray4).opacity(0.6) : .clear
     }
 }
 
