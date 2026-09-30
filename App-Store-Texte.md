@@ -140,6 +140,9 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > „Sprachen" → „Suche", iPad 04 mit Tab-Leiste. **Mac-Screenshots unverändert** (Bildschirm
 > war gesperrt; `screenshots-mac-tabs-find.sh` liegt bereit). Auto-Release nach Genehmigung.
 > Release Notes ohne Halbgeviertstrich (Platzhalter „Externes Bild").
+> **30.09.2026 — beide zur Prüfung eingereicht** (per `ci/asc-submit.sh`): iOS 1.6 Submission
+> `7ed8a3b0-9ff8-4ec7-ac32-a542544e57ee`, macOS 1.5 Submission `a42745f9-26da-481b-9035-469100225b36`,
+> beide **WAITING_FOR_REVIEW**.
 > Anlass: ChatGPT-Prüfbericht vom 20.09.2026. Bis einschließlich iOS 1.5 lud die App
 > `http(s)`-Bilder aus geöffneten Dokumenten per `URLSession` nach. Das widersprach
 > „keine Netzwerkzugriffe" in Beschreibung, Review Notes und Datenschutzseite. (macOS
