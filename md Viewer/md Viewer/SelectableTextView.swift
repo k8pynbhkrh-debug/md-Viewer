@@ -13,9 +13,11 @@ import UIKit
 /// removed), so what the reader selects matches what they see.
 struct SelectableTextView: UIViewRepresentable {
     let text: String
+    /// Find requests from the session — see `TextFind.swift`.
+    var find = TextFindHooks.none
 
     func makeUIView(context: Context) -> UITextView {
-        let view = UITextView()
+        let view = FindableTextView()
         view.isEditable = false
         view.isSelectable = true
         view.isScrollEnabled = true
@@ -29,6 +31,7 @@ struct SelectableTextView: UIViewRepresentable {
         view.dataDetectorTypes = []
         view.font = UIFont.preferredFont(forTextStyle: .body)
         view.text = text
+        view.findHooks = find
         return view
     }
 
@@ -38,5 +41,6 @@ struct SelectableTextView: UIViewRepresentable {
         }
         // Keep up with a Dynamic Type change made while the view is on screen.
         view.font = UIFont.preferredFont(forTextStyle: .body)
+        (view as? FindableTextView)?.findHooks = find
     }
 }

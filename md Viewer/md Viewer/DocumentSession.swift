@@ -17,6 +17,9 @@ import Observation
 ///   until it is saved (becomes a file) or discarded (its tab closes).
 /// - Invariant: `undoHistory` only ever holds snapshots of the current editing
 ///   pass — it is reset whenever the editor is entered or left.
+/// - Invariant: `findRequest == .findAndReplace` ⟹ `isEditing`. Search never
+///   changes text; replacing only ever edits `editedText` (undoable, unsaved
+///   until the user saves).
 @MainActor
 @Observable
 final class DocumentSession: Identifiable {
@@ -58,6 +61,15 @@ final class DocumentSession: Identifiable {
 
     /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
     private var undoHistory = EditorUndoHistory()
+
+    /// A search the user asked for (⌘F, ⌥⌘F, magnifier) that the visible text
+    /// view has not presented yet. Set by `requestFind(replace:)`, cleared by
+    /// the view via `findRequestPresented()` once the find bar is up.
+    private(set) var findRequest: FindRequest?
+
+    /// The last search term used in this tab — pre-filled into the find bar the
+    /// next time it opens here. Tabs do not share it.
+    var lastSearchText = ""
 
     /// - Precondition: an `.existing` source is a file URL.
     /// - Postcondition: `.existing(url)` ⟹ `fileURL == url`, `content == nil`
@@ -164,6 +176,13 @@ final class DocumentSession: Identifiable {
         if ProcessInfo.processInfo.arguments.contains("-mdviewerSelectText") {
             isSelectingText = true
         }
+        // Öffnet direkt die Suchleiste (im Editor mit Ersetzen), optional mit
+        // vorbelegtem Begriff: „-mdviewerFind <begriff>". Nur DEBUG.
+        let args = ProcessInfo.processInfo.arguments
+        if let i = args.firstIndex(of: "-mdviewerFind"), canFind {
+            if i + 1 < args.count { lastSearchText = args[i + 1] }
+            requestFind(replace: isEditing)
+        }
         #endif
         assert(content != nil)
     }
@@ -189,6 +208,7 @@ final class DocumentSession: Identifiable {
     func beginEditing() {
         assert(isLoaded, "beginEditing precondition violated: document not loaded")
         isSelectingText = false
+        findRequest = nil
         isEditing = true
         editedText = savedText
         undoHistory.reset()
@@ -200,6 +220,57 @@ final class DocumentSession: Identifiable {
     /// - Postcondition: `editedText` is the most recent checkpoint, if any.
     func undo() {
         if let restored = undoHistory.undo() { editedText = restored }
+    }
+
+    // MARK: - Find
+
+    enum FindRequest: Equatable {
+        /// Find bar only.
+        case find
+        /// Find bar with the replace field — only ever while editing.
+        case findAndReplace
+    }
+
+    /// Whether search is possible at all — there is loaded, non-empty text.
+    var canFind: Bool {
+        isEditing || (isLoaded && !savedText.isEmpty)
+    }
+
+    /// Asks the visible text view to open the system find bar.
+    ///
+    /// The rendered MarkdownUI preview cannot be searched, so outside the
+    /// editor this switches to the plain-text view that can ("Select Text" on
+    /// iOS, the selectable preview on the Mac). Replacing is only offered in
+    /// the editor; outside it a replace request degrades to a plain search.
+    ///
+    /// - Precondition: `canFind`.
+    /// - Postcondition: `findRequest != nil`; `findRequest == .findAndReplace`
+    ///   ⟹ `isEditing`; `!isEditing` ⟹ the searchable text view is selected
+    ///   (`isSelectingText` on iOS, `!showFormattedPreview` on the Mac). No
+    ///   text changes.
+    func requestFind(replace: Bool) {
+        precondition(canFind, "requestFind without searchable text")
+        if isEditing {
+            // A following "Replace All" is its own undo step.
+            undoHistory.breakCoalescing()
+            findRequest = replace ? .findAndReplace : .find
+        } else {
+            #if targetEnvironment(macCatalyst)
+            showFormattedPreview = false
+            #else
+            isSelectingText = true
+            #endif
+            findRequest = .find
+        }
+        assert(findRequest != nil && (findRequest != .findAndReplace || isEditing))
+    }
+
+    /// Called by the text view once it presented the find bar for
+    /// `findRequest`.
+    ///
+    /// - Postcondition: `findRequest == nil`.
+    func findRequestPresented() {
+        findRequest = nil
     }
 
     enum DiscardOutcome: Equatable {
@@ -220,6 +291,7 @@ final class DocumentSession: Identifiable {
         precondition(isEditing, "discardEditing called outside the editor")
         precondition(!isSaving, "discardEditing during a save")
         undoHistory.reset()
+        findRequest = nil
         isEditing = false
         editedText = ""
         assert(!isEditing && !hasUnsavedChanges)
@@ -253,6 +325,7 @@ final class DocumentSession: Identifiable {
             }.value
             content = .success(text)
             isEditing = false
+            findRequest = nil
             undoHistory.reset()
             assert(savedText == text && !isEditing)
         } catch {
@@ -272,6 +345,7 @@ final class DocumentSession: Identifiable {
         fileURL = url
         content = .success(text)
         isEditing = false
+        findRequest = nil
         undoHistory.reset()
         assert(fileURL == url && !isEditing && savedText == text)
         #if DEBUG
