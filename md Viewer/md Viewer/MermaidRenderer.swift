@@ -395,6 +395,11 @@ private final class OneShot<T> {
     private var continuation: CheckedContinuation<T, Never>?
     var timeoutTask: Task<Void, Never>?
 
+    // Explicit, non-isolated deinit: the implicit one of this generic,
+    // main-actor class crashes the Swift 6.3 optimizer (EarlyPerfInliner)
+    // in Release builds. Nothing to clean up here.
+    nonisolated deinit {}
+
     func install(_ continuation: CheckedContinuation<T, Never>) {
         self.continuation = continuation
     }
