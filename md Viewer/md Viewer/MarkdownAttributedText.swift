@@ -41,6 +41,9 @@ struct MarkdownAttributedText: UIViewRepresentable {
     /// pasteboard write is otherwise silent).
     var onCopyAll: () -> Void = {}
 
+    /// Find requests from the session — see `TextFind.swift`.
+    var find = TextFindHooks.none
+
     func makeUIView(context: Context) -> UITextView {
         let view = CopyAllTextView()
         view.isEditable = false
@@ -56,6 +59,7 @@ struct MarkdownAttributedText: UIViewRepresentable {
         view.attributedText = attributedString(fromMarkdown: markdown, baseFont: Self.baseFont)
         view.copyAllProvider = { plainTextForCopyAll }
         view.onCopyAll = onCopyAll
+        view.findHooks = find
         loadImages(into: view)
         return view
     }
@@ -86,6 +90,7 @@ struct MarkdownAttributedText: UIViewRepresentable {
         if let view = view as? CopyAllTextView {
             view.copyAllProvider = { plainTextForCopyAll }
             view.onCopyAll = onCopyAll
+            view.findHooks = find
         }
     }
 
@@ -141,7 +146,7 @@ struct MarkdownAttributedText: UIViewRepresentable {
 ///   text and `onCopyAll` has run.
 /// - Postcondition (selection branch): `UIPasteboard.general.string` holds
 ///   the selected range's text with no `\u{2028}` or `\u{FFFC}` markers.
-final class CopyAllTextView: UITextView {
+final class CopyAllTextView: FindableTextView {
     /// Supplies the whole-document plain text for a no-selection ⌘C.
     var copyAllProvider: () -> String = { "" }
     /// Run after a successful no-selection "copy all".
@@ -154,7 +159,7 @@ final class CopyAllTextView: UITextView {
         didSet { oldValue?.cancel() }
     }
 
-    deinit { pendingImageTask?.cancel() }
+    isolated deinit { pendingImageTask?.cancel() }
 
     override var canBecomeFirstResponder: Bool { true }
 
@@ -169,6 +174,8 @@ final class CopyAllTextView: UITextView {
         guard window != nil, !isFirstResponder else { return }
         DispatchQueue.main.async { [weak self] in
             guard let self, self.window != nil, !self.isFirstResponder else { return }
+            // Don't pull focus out of a find bar that just opened.
+            guard self.findInteraction?.isFindNavigatorVisible != true else { return }
             self.becomeFirstResponder()
         }
     }

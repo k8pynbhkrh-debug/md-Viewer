@@ -111,6 +111,25 @@ struct md_ViewerApp: App {
                 .keyboardShortcut("w", modifiers: .command)
                 .disabled(store.activeID == nil)
             }
+            // „Bearbeiten → Suchen": eigene Befehle statt der System-Gruppe,
+            // weil die nur greift, wenn schon ein Textfeld den Fokus hat — in
+            // der formatierten Ansicht wäre ⌘F sonst tot. Wirkt auf den
+            // aktiven Tab; Ersetzen nur im Editor (siehe
+            // `DocumentSession.requestFind`).
+            CommandGroup(replacing: .textEditing) {
+                Button("Find…") { store.active?.requestFind(replace: false) }
+                    .keyboardShortcut("f", modifiers: .command)
+                    .disabled(!(store.active?.canFind ?? false))
+                Button("Find and Replace…") { store.active?.requestFind(replace: true) }
+                    .keyboardShortcut("f", modifiers: [.command, .option])
+                    .disabled(!(store.active?.isEditing ?? false))
+                Button("Find Next") { sendFindAction(#selector(UIResponder.findNext(_:))) }
+                    .keyboardShortcut("g", modifiers: .command)
+                    .disabled(!(store.active?.canFind ?? false))
+                Button("Find Previous") { sendFindAction(#selector(UIResponder.findPrevious(_:))) }
+                    .keyboardShortcut("g", modifiers: [.command, .shift])
+                    .disabled(!(store.active?.canFind ?? false))
+            }
             CommandGroup(after: .windowArrangement) {
                 Button("Show Next Tab") { store.activateNeighbor(offset: 1) }
                     .keyboardShortcut(.tab, modifiers: .control)
@@ -126,4 +145,10 @@ struct md_ViewerApp: App {
             }
         }
     }
+}
+
+/// ⌘G / ⇧⌘G: an den Ersthelfer (Textansicht bzw. Suchleiste) weiterreichen —
+/// der springt zum nächsten/vorigen Treffer des aktuellen Suchbegriffs.
+private func sendFindAction(_ action: Selector) {
+    UIApplication.shared.sendAction(action, to: nil, from: nil, for: nil)
 }

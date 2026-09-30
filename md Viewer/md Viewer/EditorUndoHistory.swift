@@ -17,6 +17,9 @@ import Foundation
 ///   removes it, or `nil` when `canUndo` is `false`. The caller assigns the
 ///   result to the edited text; the resulting `record(before:)` is the one that
 ///   gets skipped.
+/// - `breakCoalescing()` makes the next recorded change start a new step even
+///   if it follows the previous one within `coalesceInterval` — used when the
+///   find bar opens, so a "Replace All" never merges with the typing before it.
 /// - Invariant: `stack.count <= maxSteps` and `canUndo == !stack.isEmpty`.
 struct EditorUndoHistory {
     private(set) var stack: [String] = []
@@ -55,6 +58,15 @@ struct EditorUndoHistory {
         skipNextRecord = true
         lastPush = .distantPast
         return previous
+    }
+
+    /// Ends the current typing burst: the next `record(before:)` becomes its
+    /// own undo step. The history itself is unchanged.
+    ///
+    /// - Postcondition: `stack` is unchanged; a pending skip (from `undo()`)
+    ///   is kept.
+    mutating func breakCoalescing() {
+        lastPush = .distantPast
     }
 
     /// Clears the history (on entering the editor, discarding, or saving).

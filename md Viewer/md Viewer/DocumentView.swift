@@ -143,7 +143,7 @@ struct DocumentView: View {
             if session.isEditing {
                 editor
             } else if session.isSelectingText {
-                SelectableTextView(text: plainText(fromMarkdown: savedText))
+                SelectableTextView(text: plainText(fromMarkdown: savedText), find: findHooks)
             } else {
                 #if targetEnvironment(macCatalyst)
                 if session.showFormattedPreview {
@@ -157,7 +157,8 @@ struct DocumentView: View {
                         plainTextForCopyAll: plainText(fromMarkdown: savedText),
                         documentFolderURL: documentFolderURL,
                         accessStore: imageAccessStore,
-                        onCopyAll: { confirmCopied() }
+                        onCopyAll: { confirmCopied() },
+                        find: findHooks
                     )
                 }
                 #else
@@ -249,6 +250,33 @@ struct DocumentView: View {
             // setting it before this view mounts is dropped by SwiftUI and
             // leaves the keyboard down.
             .onAppear { editorFocused = true }
+            .background { EditorFindBridge(hooks: findHooks) }
+    }
+
+    /// Connects the visible text view's system find bar to this tab's session
+    /// (pending ⌘F / magnifier request, remembered search term).
+    private var findHooks: TextFindHooks {
+        let session = session
+        return TextFindHooks(
+            request: session.findRequest,
+            lastSearchText: session.lastSearchText,
+            onPresented: { session.findRequestPresented() },
+            onSearchTextChange: { session.lastSearchText = $0 }
+        )
+    }
+
+    /// Magnifier: opens the find bar — with the replace field in the editor.
+    /// Mac/iPad keyboards use ⌘F / ⌥⌘F from the Edit menu instead.
+    private var findItem: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button("Find", systemImage: "magnifyingglass") {
+                session.requestFind(replace: session.isEditing)
+            }
+            .disabled(!session.canFind || session.isSaving)
+            .accessibilityHint(session.isEditing
+                               ? "Searches the text and replaces matches"
+                               : "Searches the document")
+        }
     }
 
     private func preview(markdown: String) -> some View {
@@ -364,6 +392,7 @@ struct DocumentView: View {
                 .disabled(session.isSaving || !session.canUndo)
                 .accessibilityHint("Undoes the last change")
             }
+            findItem
             if session.canSaveAsMarkdown {
                 ToolbarItem(placement: .secondaryAction) {
                     Button("Save as Markdown", systemImage: "square.and.arrow.down") {
@@ -394,6 +423,7 @@ struct DocumentView: View {
                 Button("Close", systemImage: "xmark") { session.isSelectingText = false }
                     .accessibilityHint("Returns to the rendered document")
             }
+            findItem
             ToolbarItem(placement: .primaryAction) {
                 Button("Done") { session.isSelectingText = false }
             }
@@ -404,6 +434,7 @@ struct DocumentView: View {
             }
             documentListItem
             if session.isLoaded {
+                findItem
                 #if targetEnvironment(macCatalyst)
                 // The Mac opens in the full MarkdownUI rendering (bordered
                 // tables, syntax highlighting, images); this toggles to the
