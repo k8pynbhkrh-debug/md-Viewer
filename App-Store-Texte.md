@@ -129,7 +129,7 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ---
 
-## Nächste Version (iOS 1.6 / macOS 1.5) — Offline-Härtung (T-2026-261, 27.09.2026)
+## Nächste Version (iOS 1.6 / macOS 1.5) — Tabs, Suche, Offline-Härtung (T-2026-261, -274, -324, -325, -327)
 
 > **Noch nicht in ASC eingetragen** — alles unten erst mit der nächsten Version setzen.
 > Anlass: ChatGPT-Prüfbericht vom 20.09.2026. Bis einschließlich iOS 1.5 lud die App
@@ -164,10 +164,22 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > `securityLevel: 'strict'`, Navigationssperre, Größenlimits (20.000 Zeichen / 4096 px)
 > und Timeout; bei Überschreitung erscheint der Codeblock.
 
+> **Ergänzt 30.09.2026 (Release-Koordination):** Tabs (T-2026-324, Mac-Tab-Leiste im
+> Finder-Stil T-2026-327) und Suchen/Ersetzen (T-2026-325) kommen mit in diese Version.
+> Die Beschreibung wurde aus den live-Texten (iOS 1.5 / macOS 1.4, per ASC-API gelesen)
+> abgeleitet: zwei neue Funktionszeilen (Tabs, Suche), Offline-Zeile präzisiert
+> („lädt nichts aus dem Internet, auch keine Bilder"), Datenschutz-Absatz nennt die lokal
+> gemerkten Verweise auf offene Dokumente und freigegebene Ordner. macOS de-DE musste dafür
+> gekürzt werden (doppelte Standard-App-Zeile und .txt-Satz raus, jetzt 3.994 Zeichen).
+> Endfassungen der Beschreibungen: `docs/store-texte-ios16-mac15.json`.
+
 ### Neu in dieser Version / Release Notes (de-DE)
 
 ```
-Mehr Privatsphäre
+Tabs, Suche und mehr Privatsphäre
+
+• Mehrere Dokumente gleichzeitig öffnen: auf Mac und iPad als Tabs, auf dem iPhone über die Liste „Geöffnete Dokumente". Offene Dateien sind nach einem Neustart wieder da.
+• Suchen im Dokument mit ⌘F oder der Lupe. Beim Bearbeiten auch Suchen und Ersetzen; „Alle ersetzen" lässt sich in einem Schritt rückgängig machen.
 
 • md Viewer lädt keine Bilder mehr aus dem Internet. Bindet ein Dokument ein Bild per http/https-Adresse ein, erscheint stattdessen der Hinweis „Externes Bild – wird nicht geladen". Eingebettete Bilder und Bilder aus Ordnern auf deinem Gerät werden weiter angezeigt.
 • Sehr große Bilder werden beim Anzeigen automatisch verkleinert, damit auch umfangreiche Dokumente flüssig bleiben.
@@ -175,15 +187,30 @@ Mehr Privatsphäre
 • Mermaid-Diagramme, die zu groß sind oder zu lange brauchen, erscheinen als Code, statt die Vorschau aufzuhalten.
 ```
 
+Nur macOS 1.5, zusätzlich als letzte Zeile:
+
+```
+• Mermaid-Diagramme erscheinen auf dem Mac jetzt zuverlässig (bisher blieb die Grafik leer).
+```
+
 ### What's New / Release Notes (en-US)
 
 ```
-More privacy
+Tabs, Find, and more privacy
+
+• Keep several documents open at once: as tabs on Mac and iPad, via the Open Documents list on iPhone. Open files come back after a restart.
+• Find in the document with ⌘F or the magnifying glass. While editing, Find and Replace too; Replace All can be undone in one step.
 
 • md Viewer no longer loads images from the internet. If a document references an image by an http/https address, you'll see "External image – not loaded" instead. Embedded images and images from folders on your device still appear.
 • Very large images are automatically scaled down for display, so even big documents stay smooth.
 • New: "Folder Access" on the start screen shows which folders you've allowed images from. Remove one or all of them there at any time.
 • Mermaid diagrams that are too large or take too long now appear as code instead of holding up the preview.
+```
+
+macOS 1.5 only, as the last line:
+
+```
+• Mermaid diagrams now reliably appear on the Mac (previously the graphic stayed blank).
 ```
 
 ### App Review notes — ABOUT THE APP (ersetzt die bisherige Fassung)
@@ -196,7 +223,7 @@ md Viewer displays Markdown (.md / .markdown) and .txt files and lets the user e
 ### App Review notes — Versionsnotiz (anhängen)
 
 ```
-This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images (the list shows the folder name only; no separate path string is stored); a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. macOS only: the app now carries the com.apple.security.network.client entitlement. It is required solely because WebKit's WebContent process does not launch in a sandboxed app without it (the Mermaid web view stayed blank on the Mac before). The app contains no networking code and makes no requests; the web view only loads a bundled local page, its Content-Security-Policy blocks all loads, and every navigation other than that page is cancelled. No data collection.
+This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own bookmarks: folders the user granted for images (the list shows the folder name only; no separate path string is stored) and the documents currently open as tabs, so they can be restored on the next launch; a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. macOS only: the app now carries the com.apple.security.network.client entitlement. It is required solely because WebKit's WebContent process does not launch in a sandboxed app without it (the Mermaid web view stayed blank on the Mac before). The app contains no networking code and makes no requests; the web view only loads a bundled local page, its Content-Security-Policy blocks all loads, and every navigation other than that page is cancelled. New in this version: several documents can be open at once (tabs on Mac/iPad, a document list on iPhone), and Find (⌘F / magnifying glass) with Find and Replace in the editor, using the system find bar (UIFindInteraction); replacing only changes the in-app text until the user saves. No new permissions. No data collection.
 ```
 
 ---
