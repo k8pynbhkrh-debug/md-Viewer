@@ -131,7 +131,15 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 
 ## Nächste Version (iOS 1.6 / macOS 1.5) — Tabs, Suche, Offline-Härtung (T-2026-261, -274, -324, -325, -327)
 
-> **Noch nicht in ASC eingetragen** — alles unten erst mit der nächsten Version setzen.
+> **30.09.2026 — per ASC-API eingetragen (Release-Koordination, Erics Auftrag):** iOS **1.6 (15)**
+> Version `80974fc7-d037-4ebf-8641-f2af706755a0`, macOS **1.5 (23)** Version
+> `5c8083e2-34bf-422a-8a4e-f036d40e2a6e` (Mac-Builds 21/22 waren Test-Builds aus T-2026-274).
+> Beschreibung, „Neu in dieser Version", Werbetext (de/en) und Prüf-Notizen gesetzt und per
+> Rücklesen verglichen; Prüf-Notizen nennen jetzt auch die NetworkImage-Abhängigkeit von
+> swift-markdown-ui (Loader ungenutzt, eigene lokale Image-Provider). Screenshots iOS: 08
+> „Sprachen" → „Suche", iPad 04 mit Tab-Leiste. **Mac-Screenshots unverändert** (Bildschirm
+> war gesperrt; `screenshots-mac-tabs-find.sh` liegt bereit). Auto-Release nach Genehmigung.
+> Release Notes ohne Halbgeviertstrich (Platzhalter „Externes Bild").
 > Anlass: ChatGPT-Prüfbericht vom 20.09.2026. Bis einschließlich iOS 1.5 lud die App
 > `http(s)`-Bilder aus geöffneten Dokumenten per `URLSession` nach. Das widersprach
 > „keine Netzwerkzugriffe" in Beschreibung, Review Notes und Datenschutzseite. (macOS
@@ -180,8 +188,7 @@ Tabs, Suche und mehr Privatsphäre
 
 • Mehrere Dokumente gleichzeitig öffnen: auf Mac und iPad als Tabs, auf dem iPhone über die Liste „Geöffnete Dokumente". Offene Dateien sind nach einem Neustart wieder da.
 • Suchen im Dokument mit ⌘F oder der Lupe. Beim Bearbeiten auch Suchen und Ersetzen; „Alle ersetzen" lässt sich in einem Schritt rückgängig machen.
-
-• md Viewer lädt keine Bilder mehr aus dem Internet. Bindet ein Dokument ein Bild per http/https-Adresse ein, erscheint stattdessen der Hinweis „Externes Bild – wird nicht geladen". Eingebettete Bilder und Bilder aus Ordnern auf deinem Gerät werden weiter angezeigt.
+• md Viewer lädt keine Bilder mehr aus dem Internet. Bindet ein Dokument ein Bild per http/https-Adresse ein, erscheint stattdessen ein Platzhalter „Externes Bild". Eingebettete Bilder und Bilder aus Ordnern auf deinem Gerät werden weiter angezeigt.
 • Sehr große Bilder werden beim Anzeigen automatisch verkleinert, damit auch umfangreiche Dokumente flüssig bleiben.
 • Neu: „Ordnerzugriffe" auf dem Startbildschirm zeigt, für welche Ordner du Bilder freigegeben hast. Einzelne oder alle Freigaben lassen sich dort jederzeit entfernen.
 • Mermaid-Diagramme, die zu groß sind oder zu lange brauchen, erscheinen als Code, statt die Vorschau aufzuhalten.
@@ -200,8 +207,7 @@ Tabs, Find, and more privacy
 
 • Keep several documents open at once: as tabs on Mac and iPad, via the Open Documents list on iPhone. Open files come back after a restart.
 • Find in the document with ⌘F or the magnifying glass. While editing, Find and Replace too; Replace All can be undone in one step.
-
-• md Viewer no longer loads images from the internet. If a document references an image by an http/https address, you'll see "External image – not loaded" instead. Embedded images and images from folders on your device still appear.
+• md Viewer no longer loads images from the internet. If a document references an image by an http/https address, you'll see an "External image" placeholder instead. Embedded images and images from folders on your device still appear.
 • Very large images are automatically scaled down for display, so even big documents stay smooth.
 • New: "Folder Access" on the start screen shows which folders you've allowed images from. Remove one or all of them there at any time.
 • Mermaid diagrams that are too large or take too long now appear as code instead of holding up the preview.
