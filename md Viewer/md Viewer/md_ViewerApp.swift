@@ -16,6 +16,9 @@ struct md_ViewerApp: App {
     /// Folder access grants for relative images — shared by all tabs.
     @State private var imageAccessStore = ImageFolderAccessStore()
 
+    /// Drives the "Folder Access" sheet (start screen link, app menu).
+    @State private var showFolderAccess = false
+
     init() {
         #if targetEnvironment(macCatalyst)
         // md Viewer hat eigene Tabs im Fenster. Die macOS-Fenster-Tabs
@@ -31,7 +34,15 @@ struct md_ViewerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DocumentWorkspaceView(store: store, imageAccessStore: imageAccessStore)
+            DocumentWorkspaceView(
+                store: store,
+                imageAccessStore: imageAccessStore,
+                onManageFolderAccess: { showFolderAccess = true }
+            )
+            .environment(imageAccessStore)
+            .sheet(isPresented: $showFolderAccess) {
+                FolderAccessView().environment(imageAccessStore)
+            }
             .onOpenURL { url in
                 // A new tab — or the existing one if that file is already
                 // open. Never replaces the document being worked on.
@@ -60,12 +71,15 @@ struct md_ViewerApp: App {
             #if DEBUG
             // Screenshot-/Smoke-Test-Hook: „-mdviewerDraft <text>" öffnet beim
             // Start direkt einen Entwurf (die Zwischenablage lässt sich im
-            // Simulator nicht zuverlässig per Skript in den PasteButton bringen).
-            // Nur DEBUG.
+            // Simulator nicht zuverlässig per Skript in den PasteButton bringen),
+            // „-mdviewerFolderAccess" die Ordnerzugriffe. Nur DEBUG.
             .task {
                 let args = ProcessInfo.processInfo.arguments
                 if let i = args.firstIndex(of: "-mdviewerDraft") {
                     store.newDraft(text: i + 1 < args.count ? args[i + 1] : "")
+                }
+                if args.contains("-mdviewerFolderAccess") {
+                    showFolderAccess = true
                 }
             }
             #endif
@@ -123,6 +137,11 @@ struct md_ViewerApp: App {
                 Button("Show Previous Tab") { store.activateNeighbor(offset: -1) }
                     .keyboardShortcut(.tab, modifiers: [.control, .shift])
                     .disabled(store.documents.count < 2)
+            }
+            CommandGroup(after: .appSettings) {
+                Button("Folder Access…") {
+                    showFolderAccess = true
+                }
             }
         }
     }

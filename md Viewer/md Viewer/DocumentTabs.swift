@@ -7,6 +7,8 @@ import SwiftUI
 struct DocumentWorkspaceView: View {
     let store: OpenDocumentsStore
     let imageAccessStore: ImageFolderAccessStore
+    /// Opens "Folder Access" from the empty state.
+    var onManageFolderAccess: () -> Void = {}
 
     @State private var showDocumentList = false
 
@@ -19,9 +21,10 @@ struct DocumentWorkspaceView: View {
                         .id(active.id)
                 }
             } else {
-                ContentView { initialText in
-                    store.newDraft(text: initialText)
-                }
+                ContentView(
+                    onNewDocument: { initialText in store.newDraft(text: initialText) },
+                    onManageFolderAccess: onManageFolderAccess
+                )
             }
         }
         .sheet(isPresented: $showDocumentList) {
@@ -160,8 +163,9 @@ private struct DocumentTab: View {
 }
 
 /// "+" with "New Document" / "Open…". The same two actions as the empty state
-/// and the ⌘N / ⌘O menu commands.
-private struct NewDocumentMenu: View {
+/// and the ⌘N / ⌘O menu commands. Sits in the tab bar, and on the iPad in the
+/// toolbar while there is no tab bar yet (one document).
+struct NewDocumentMenu: View {
     let store: OpenDocumentsStore
 
     var body: some View {

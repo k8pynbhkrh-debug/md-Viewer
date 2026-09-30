@@ -135,7 +135,11 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > Anlass: ChatGPT-Prüfbericht vom 20.09.2026. Bis einschließlich iOS 1.5 lud die App
 > `http(s)`-Bilder aus geöffneten Dokumenten per `URLSession` nach. Das widersprach
 > „keine Netzwerkzugriffe" in Beschreibung, Review Notes und Datenschutzseite. (macOS
-> war nicht betroffen, denn die Catalyst-Sandbox hat kein `network.client`-Entitlement.)
+> war nicht betroffen, denn die Catalyst-Sandbox hatte kein `network.client`-Entitlement.
+> **Nachtrag 30.09.2026:** Genau deshalb startete dort der Mermaid-WebView nie – Diagramme
+> blieben auf dem Mac seit 1.3 leer (Ladekreis). macOS 1.5 bekommt `network.client`, nur
+> damit WebKit starten kann; Netzwerkcode gibt es weiterhin keinen, CSP + Navigationssperre
+> blocken jeden Abruf. Review-Notiz unten erklärt das.)
 > Ab dieser Version: kein Netzwerkcode mehr in der App, externe Bilder zeigen einen
 > Platzhalter, und der Mermaid-WebView sperrt jeden Abruf per Content-Security-Policy.
 > Privacy Manifest deklariert jetzt `UserDefaults` (CA92.1) für die Ordner-Bookmarks.
@@ -151,6 +155,14 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 >    rechte Maustaste → „Generate Privacy Report"): Haupt-App muss
 >    „User Defaults — CA92.1" zeigen.
 > 6. Datenschutzseite `docs/index.html` ist bereits angepasst (geht mit dem Merge live).
+> 7. Vor dem Upload `docs/release-checkliste.md` durchgehen.
+>
+> **Ergänzt durch T-2026-274 (P1-Härtung, 29.09.2026):** „Ordnerzugriffe" (Startbildschirm,
+> Mac: App-Menü) listet freigegebene Ordner nur mit Namen und entfernt einzelne oder alle.
+> Neben dem Bookmark selbst wird nur noch der Ordnername als Anzeigetext gespeichert,
+> kein separater Pfad mehr. Mermaid läuft mit
+> `securityLevel: 'strict'`, Navigationssperre, Größenlimits (20.000 Zeichen / 4096 px)
+> und Timeout; bei Überschreitung erscheint der Codeblock.
 
 ### Neu in dieser Version / Release Notes (de-DE)
 
@@ -159,6 +171,8 @@ Mehr Privatsphäre
 
 • md Viewer lädt keine Bilder mehr aus dem Internet. Bindet ein Dokument ein Bild per http/https-Adresse ein, erscheint stattdessen der Hinweis „Externes Bild – wird nicht geladen". Eingebettete Bilder und Bilder aus Ordnern auf deinem Gerät werden weiter angezeigt.
 • Sehr große Bilder werden beim Anzeigen automatisch verkleinert, damit auch umfangreiche Dokumente flüssig bleiben.
+• Neu: „Ordnerzugriffe" auf dem Startbildschirm zeigt, für welche Ordner du Bilder freigegeben hast. Einzelne oder alle Freigaben lassen sich dort jederzeit entfernen.
+• Mermaid-Diagramme, die zu groß sind oder zu lange brauchen, erscheinen als Code, statt die Vorschau aufzuhalten.
 ```
 
 ### What's New / Release Notes (en-US)
@@ -168,6 +182,8 @@ More privacy
 
 • md Viewer no longer loads images from the internet. If a document references an image by an http/https address, you'll see "External image – not loaded" instead. Embedded images and images from folders on your device still appear.
 • Very large images are automatically scaled down for display, so even big documents stay smooth.
+• New: "Folder Access" on the start screen shows which folders you've allowed images from. Remove one or all of them there at any time.
+• Mermaid diagrams that are too large or take too long now appear as code instead of holding up the preview.
 ```
 
 ### App Review notes — ABOUT THE APP (ersetzt die bisherige Fassung)
@@ -180,7 +196,7 @@ md Viewer displays Markdown (.md / .markdown) and .txt files and lets the user e
 ### App Review notes — Versionsnotiz (anhängen)
 
 ```
-This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images. No new permissions, no data collection.
+This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images (the list shows the folder name only; no separate path string is stored); a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. macOS only: the app now carries the com.apple.security.network.client entitlement. It is required solely because WebKit's WebContent process does not launch in a sandboxed app without it (the Mermaid web view stayed blank on the Mac before). The app contains no networking code and makes no requests; the web view only loads a bundled local page, its Content-Security-Policy blocks all loads, and every navigation other than that page is cancelled. No data collection.
 ```
 
 ---
@@ -549,7 +565,7 @@ FEATURES
 
 PRIVACY
 
-md Viewer collects no data. No analytics, no tracking, no account, no cloud sync. Files you open, edit, and create are processed only locally on your device. The only thing the app remembers on your device is which folders you have allowed it to show images from. The clipboard is read only when you explicitly tap Paste.
+md Viewer collects no data. No analytics, no tracking, no account, no cloud sync. Files you open, edit, and create are processed only locally on your device. The only thing the app remembers on your device is which folders you have allowed it to show images from — you can see and remove them at any time under "Folder Access" on the start screen. The clipboard is read only when you explicitly tap Paste.
 
 Who is it for? Anyone who regularly receives or manages .md or .txt files (notes, READMEs, technical docs, meeting notes) and wants to read them quickly and cleanly, edit them now and then, or jot down a new one, without opening a full editor.
 ```
@@ -769,7 +785,7 @@ FUNKTIONEN
 
 DATENSCHUTZ
 
-md Viewer erhebt keine Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete, bearbeitete und neu erstellte Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet. Auf dem Gerät merkt sich die App nur, für welche Ordner du Bilder freigegeben hast. Die Zwischenablage wird nur gelesen, wenn du ausdrücklich auf „Einsetzen" tippst.
+md Viewer erhebt keine Daten. Keine Analyse-Software, kein Tracking, kein Konto, keine Cloud-Synchronisation. Geöffnete, bearbeitete und neu erstellte Dateien werden ausschließlich lokal auf deinem Gerät verarbeitet. Auf dem Gerät merkt sich die App nur, für welche Ordner du Bilder freigegeben hast – unter „Ordnerzugriffe" auf dem Startbildschirm siehst und entfernst du sie jederzeit. Die Zwischenablage wird nur gelesen, wenn du ausdrücklich auf „Einsetzen" tippst.
 
 Für wen ist die App? Für alle, die regelmäßig .md- oder .txt-Dateien bekommen oder verwalten (Notizen, READMEs, technische Doku, Protokolle) und sie schnell und sauber lesen, ab und zu bearbeiten oder kurz neu anlegen wollen, ohne einen vollen Editor zu öffnen.
 ```

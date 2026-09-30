@@ -11,5 +11,14 @@
 	     Sandbox-Zugriff automatisch über LaunchServices. -->
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
+	<!-- Nur für WebKit auf dem Mac: Ohne diese Berechtigung startet der
+	     WebContent-Prozess des (unsichtbaren) Mermaid-WKWebView in einer
+	     Sandbox-App gar nicht („Application does not have permission to
+	     communicate with network resources“) – Diagramme blieben leer.
+	     Die App selbst baut keine Verbindungen auf: kein Netzwerkcode,
+	     und die Mermaid-Seite sperrt jeden Abruf per Content-Security-Policy
+	     und Navigationssperre (MermaidRenderer.swift). -->
+	<key>com.apple.security.network.client</key>
+	<true/>
 </dict>
 </plist>

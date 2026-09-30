@@ -15,9 +15,15 @@ struct ContentView: View {
     /// Called when the user starts a new document from the empty state — with
     /// pasted clipboard text, or `""` for an empty document.
     let onNewDocument: (String) -> Void
+    /// Opens "Folder Access" (manage/revoke shared image folders).
+    let onManageFolderAccess: () -> Void
 
-    init(onNewDocument: @escaping (String) -> Void = { _ in }) {
+    init(
+        onNewDocument: @escaping (String) -> Void = { _ in },
+        onManageFolderAccess: @escaping () -> Void = {}
+    ) {
         self.onNewDocument = onNewDocument
+        self.onManageFolderAccess = onManageFolderAccess
     }
 
     #if targetEnvironment(macCatalyst)
@@ -85,9 +91,13 @@ struct ContentView: View {
                         .padding(.top, 4)
                     #endif
 
-                    Link("Privacy & Legal Notice", destination: privacyPolicyURL)
+                    Button("Folder Access", action: onManageFolderAccess)
                         .font(.footnote)
                         .padding(.top, 8)
+                        .accessibilityHint("Shows and removes folders md Viewer may read images from")
+
+                    Link("Privacy & Legal Notice", destination: privacyPolicyURL)
+                        .font(.footnote)
                 }
                 .padding()
                 .frame(maxWidth: .infinity, minHeight: geometry.size.height)

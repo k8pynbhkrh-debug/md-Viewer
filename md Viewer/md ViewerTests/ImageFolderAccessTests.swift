@@ -84,4 +84,119 @@ struct ImageFolderAccessStoreTests {
         let file = folder.appendingPathComponent("foto.jpg")
         #expect(second.accessibleFolderURL(forFileAt: file) != nil)
     }
+
+    // Invariant — at most one entry per folder.
+    @Test("granting the same folder twice keeps a single entry")
+    func duplicateGrantIsDeduplicated() throws {
+        let store = freshStore()
+        let folder = try makeTempFolder()
+        try store.grantAccess(to: folder)
+        let firstID = try #require(store.folders.first?.id)
+        try store.grantAccess(to: folder)
+        #expect(store.folders.count == 1)
+        #expect(store.folders.first?.id == firstID)
+    }
+
+    @Test("the list shows only the folder name, not its path")
+    func listShowsOnlyFolderName() throws {
+        let store = freshStore()
+        let folder = try makeTempFolder()
+        try store.grantAccess(to: folder)
+        #expect(store.folders.map(\.displayName) == [folder.lastPathComponent])
+        let stored = try #require(UserDefaults(suiteName: #function)!.data(forKey: ImageFolderAccessStore.defaultsKey))
+        let json = try #require(String(data: stored, encoding: .utf8))
+        #expect(!json.contains("displayPath"))
+    }
+
+    // Postcondition (`removeAccess`) — local image access is gone.
+    @Test("removing a folder revokes resolution and persists")
+    func removeRevokesAccess() throws {
+        let suiteName = #function
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let store = ImageFolderAccessStore(defaults: defaults)
+        let folder = try makeTempFolder()
+        let other = try makeTempFolder()
+        try store.grantAccess(to: folder)
+        try store.grantAccess(to: other)
+        let file = folder.appendingPathComponent("foto.jpg")
+        let id = try #require(store.folders.first?.id)
+        let before = store.revision
+
+        store.removeAccess(id: id)
+
+        #expect(store.accessibleFolderURL(forFileAt: file) == nil)
+        #expect(store.folders.count == 1)
+        #expect(store.revision == before + 1)
+        let reloaded = ImageFolderAccessStore(defaults: defaults)
+        #expect(reloaded.accessibleFolderURL(forFileAt: file) == nil)
+        #expect(reloaded.accessibleFolderURL(forFileAt: other.appendingPathComponent("a.png")) != nil)
+    }
+
+    @Test("removing an unknown id changes nothing")
+    func removeUnknownIsNoOp() throws {
+        let store = freshStore()
+        try store.grantAccess(to: try makeTempFolder())
+        let before = store.revision
+        store.removeAccess(id: UUID())
+        #expect(store.folders.count == 1)
+        #expect(store.revision == before)
+    }
+
+    // Postcondition (`removeAll`) — nothing resolves, nothing stored.
+    @Test("remove all clears every folder and the stored data")
+    func removeAllClearsEverything() throws {
+        let suiteName = #function
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let store = ImageFolderAccessStore(defaults: defaults)
+        let folder = try makeTempFolder()
+        try store.grantAccess(to: folder)
+        try store.grantAccess(to: try makeTempFolder())
+        let before = store.revision
+
+        store.removeAll()
+
+        #expect(store.folders.isEmpty)
+        #expect(store.revision == before + 1)
+        #expect(defaults.data(forKey: ImageFolderAccessStore.defaultsKey) == nil)
+        #expect(store.accessibleFolderURL(forFileAt: folder.appendingPathComponent("foto.jpg")) == nil)
+    }
+
+    // Stale bookmarks (folder deleted) are cleaned up.
+    @Test("a bookmark to a deleted folder is dropped")
+    func deletedFolderIsDropped() throws {
+        let store = freshStore()
+        let gone = try makeTempFolder()
+        let kept = try makeTempFolder()
+        try store.grantAccess(to: gone)
+        try store.grantAccess(to: kept)
+        try FileManager.default.removeItem(at: gone)
+
+        store.removeUnresolvableBookmarks()
+
+        #expect(store.folders.map(\.displayName) == [kept.lastPathComponent])
+    }
+
+    // Migration — pre-1.5 entries stored the full path; they keep working
+    // and are rewritten with only the folder name.
+    @Test("legacy entries with displayPath are migrated to a folder name")
+    func legacyEntriesAreMigrated() throws {
+        let suiteName = #function
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let folder = try makeTempFolder()
+        let legacy: [[String: Any]] = [[
+            "bookmarkData": try folder.bookmarkData().base64EncodedString(),
+            "displayPath": folder.path,
+        ]]
+        defaults.set(try JSONSerialization.data(withJSONObject: legacy), forKey: ImageFolderAccessStore.defaultsKey)
+
+        let store = ImageFolderAccessStore(defaults: defaults)
+
+        #expect(store.folders.map(\.displayName) == [folder.lastPathComponent])
+        #expect(store.accessibleFolderURL(forFileAt: folder.appendingPathComponent("foto.jpg")) != nil)
+        let json = try #require(String(data: defaults.data(forKey: ImageFolderAccessStore.defaultsKey)!, encoding: .utf8))
+        #expect(!json.contains("displayPath"))
+    }
 }
