@@ -40,10 +40,17 @@ struct ImagePlaceholder: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+                // MarkdownUI puts `.accessibilityLabel(alt)` on the whole
+                // image slot, which replaces this text's label — with nothing
+                // for `![](…)` without alt text, so VoiceOver stayed silent.
+                // The value is not overridden: VoiceOver reads "alt, text".
+                .accessibilityValue(text)
             if let actionTitle, let action {
                 Button(actionTitle, action: action)
                     .font(.footnote)
                     .buttonStyle(.bordered)
+                    // Same override as above: the label becomes the alt text.
+                    .accessibilityValue(actionTitle)
             }
         }
         .frame(maxWidth: .infinity)

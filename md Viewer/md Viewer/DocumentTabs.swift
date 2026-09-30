@@ -28,7 +28,7 @@ struct DocumentWorkspaceView: View {
             }
         }
         .sheet(isPresented: $showDocumentList) {
-            OpenDocumentsList(store: store)
+            OpenDocumentsList(store: store, onManageFolderAccess: onManageFolderAccess)
         }
         #if DEBUG
         // Screenshot-/Smoke-Test-Hook: „-mdviewerDocumentList" zeigt beim Start
@@ -193,6 +193,9 @@ struct NewDocumentMenu: View {
 /// Document" and "Open…".
 struct OpenDocumentsList: View {
     let store: OpenDocumentsStore
+    /// Opens "Folder Access" — on the iPhone this list is the only way there
+    /// while documents are open (the start screen only shows with none).
+    var onManageFolderAccess: () -> Void = {}
 
     @Environment(\.dismiss) private var dismiss
     /// Closing a tab with unsaved changes from the list is confirmed here —
@@ -200,6 +203,8 @@ struct OpenDocumentsList: View {
     @State private var pendingClose: DocumentSession?
     /// "Open…" is presented from the window once this sheet is gone.
     @State private var openAfterDismiss = false
+    /// Likewise "Folder Access", which is its own sheet.
+    @State private var folderAccessAfterDismiss = false
 
     var body: some View {
         NavigationStack {
@@ -228,6 +233,13 @@ struct OpenDocumentsList: View {
                         openAfterDismiss = true
                         dismiss()
                     }
+                }
+                Section {
+                    Button("Folder Access", systemImage: "folder.badge.gearshape") {
+                        folderAccessAfterDismiss = true
+                        dismiss()
+                    }
+                    .accessibilityHint("Shows and removes folders md Viewer may read images from")
                 }
             }
             .navigationTitle("Open Documents")
@@ -259,6 +271,7 @@ struct OpenDocumentsList: View {
         .presentationDetents([.medium, .large])
         .onDisappear {
             if openAfterDismiss { store.isPresentingOpenDialog = true }
+            if folderAccessAfterDismiss { onManageFolderAccess() }
         }
     }
 

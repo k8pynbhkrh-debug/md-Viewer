@@ -5,12 +5,19 @@ Connect beschreibt der globale Skill `app-store-release`, die Texte stehen in
 `App-Store-Texte.md`, die Abhängigkeiten in `docs/dependencies.md`. Gebaut wird mit
 `ci/testflight.sh` bzw. `ci/testflight-mac.sh`, eingereicht mit `ci/asc-submit.sh`.
 
-Legende: **[auto]** deckt ein Unit-Test ab (`driver.sh test`). Es reicht, dass die Tests
-grün sind. **[manuell]** heißt: am Gerät bzw. im Simulator ausprobieren.
+Legende: **[auto]** deckt ein Unit-Test ab (`driver.sh test`). **[UI-Test]** deckt ein
+UI-Test ab (Target `md ViewerUITests`, tippt im Simulator). Es reicht jeweils, dass die
+Tests grün sind. **[manuell]** heißt: am Gerät bzw. im Simulator ausprobieren.
 
 ## 1. Automatische Tests
 
 - [ ] `.claude/skills/run-md-viewer/driver.sh test` ist grün, alle Suiten.
+- [ ] UI-Tests grün (`MdViewerUITests`, `ShareExtensionUITests`; laufen im selben
+      Schema mit). Die Share-Tests steuern die Dateien-App und brauchen einen Simulator
+      mit **Systemsprache Englisch**. Ein eigenes Gerät ist sinnvoll, damit parallele
+      Sessions nicht dazwischenfunken:
+      `xcrun simctl create "md UITest" "iPhone 17"`, dann
+      `xcrun simctl spawn <id> defaults write -g AppleLanguages -array en` und neu booten.
 - [ ] Build ohne neue Warnungen: iOS-Simulator und Mac Catalyst.
 
 ## 2. Bilder (Image-Loader)
@@ -35,8 +42,10 @@ grün sind. **[manuell]** heißt: am Gerät bzw. im Simulator ausprobieren.
       nicht nach einem Neustart.
 - [ ] **[auto]** Freigaben gelöschter Ordner werden bereinigt. Alte Einträge mit
       vollem Pfad werden auf den Ordnernamen umgestellt.
-- [ ] **[manuell]** Startbildschirm → „Ordnerzugriffe": Liste zeigt nur Ordnernamen,
-      Wischen entfernt einen Ordner, „Alle entfernen" fragt nach und leert die Liste.
+- [ ] **[UI-Test]** Startbildschirm → „Ordnerzugriffe": Liste zeigt nur Ordnernamen,
+      Wischen entfernt einen Ordner, „Alle entfernen" fragt nach, leert die Liste und
+      bleibt nach einem Neustart leer. iPhone mit offenem Dokument: erreichbar über die
+      Dokumentliste.
 - [ ] **[manuell]** Mac: App-Menü → „Ordnerzugriffe …" funktioniert mit und ohne offenes
       Dokument. Das Entfernen eines Ordners lässt dessen Bilder im offenen Dokument
       sofort zu „Ordner wählen" wechseln.
@@ -51,6 +60,8 @@ grün sind. **[manuell]** heißt: am Gerät bzw. im Simulator ausprobieren.
       Diagramm wieder, die Sperre hängt nicht.
 - [ ] **[auto]** Navigationsversuche aus der Seite (https, file) werden abgebrochen. Der
       Harness nutzt `securityLevel: 'strict'` und gibt keinen Fehlertext weiter.
+- [ ] **[auto]** fetch, XHR und `<img>` auf eine https-Adresse werden von der CSP der
+      Diagrammseite blockiert (Laufzeit-Test, auch als Mac Catalyst).
 - [ ] **[manuell]** Demo-Dokument `App-Store-Screenshots/demo-dokumente/de/Diagramme-Bilder.md`
       in Hell und Dunkel: Diagramme scharf, Farben passend.
 - [ ] **[auto, Mac]** Mermaid-Tests zusätzlich als Mac Catalyst laufen lassen. Der
@@ -75,24 +86,33 @@ grün sind. **[manuell]** heißt: am Gerät bzw. im Simulator ausprobieren.
 
 - [ ] **[manuell]** Datei in iCloud Drive bearbeiten und speichern. Danach in der
       Dateien-App öffnen: Inhalt ist aktuell.
-- [ ] **[manuell]** Schreibgeschützte Datei (z. B. aus einem geteilten Ordner mit
-      Leserecht) speichern: verständliche Fehlermeldung, Entwurf bleibt erhalten.
+- [ ] **[UI-Test]** Bearbeiten → Speichern schreibt die Datei, die Vorschau zeigt den
+      neuen Text.
+- [ ] **[UI-Test]** Speichern in einen schreibgeschützten Ordner: Fehlermeldung, der
+      getippte Text bleibt im Editor erhalten.
 - [ ] **[manuell]** „Als .md speichern" und „Neues Dokument aus Text": Dialog abbrechen
       lässt den Entwurf unverändert. Speichern in iCloud Drive und „Auf meinem iPhone"
       funktioniert.
-- [ ] **[manuell]** Datei während des Bearbeitens in der Dateien-App löschen oder
-      umbenennen, dann speichern: Fehler statt stiller Datenverlust.
+- [ ] **[auto]** Datei während des Bearbeitens gelöscht: Speichern legt sie neu an, der
+      Text geht nicht verloren (`saveMarkdown` „creates the file if it does not exist yet").
+- [ ] **[manuell]** Datei während des Bearbeitens in der Dateien-App umbenennen, dann
+      speichern: kein Datenverlust.
 - [ ] **[manuell]** Undo/Redo nach Speichern und Zurücksetzen verhält sich wie erwartet.
 
 ## 7. Share Extension
 
-- [ ] **[manuell]** Leere Datei teilen: Hinweis „leer", kein Absturz.
-- [ ] **[manuell]** Datei über 5 MB teilen: Hinweis „zu groß".
-- [ ] **[manuell]** Datei mit ungültigem UTF-8 (z. B. Latin-1-Text) teilen: Hinweis zur
-      Kodierung.
-- [ ] **[manuell]** Sehr langes Dokument (knapp 5 MB) teilen: Vorschau lädt, bleibt
-      scrollbar, die Extension wird nicht vom System beendet.
-- [ ] **[manuell]** Dokument mit externen Bildern teilen: Platzhalter, kein Abruf.
+Alle Punkte per **[UI-Test]** (`ShareExtensionUITests`: Dateien-App → lange drücken →
+Teilen → md Viewer):
+
+- [ ] Normale Datei teilen: Inhalt wird angezeigt.
+- [ ] Leere Datei teilen: Hinweis „leer", kein Absturz.
+- [ ] Datei über 5 MB teilen: Hinweis „zu groß".
+- [ ] Datei mit ungültigem UTF-8 (Latin-1-Text) teilen: Hinweis zur Kodierung.
+- [ ] Sehr langes Dokument (4,5 MB) teilen: Vorschau lädt, die Extension bleibt offen.
+      **Bekannter Fehler T-2026-328:** Das Blatt bleibt leer. Der Test ist bis zur Lösung
+      mit `XCTExpectFailure` markiert.
+- [ ] Dokument mit externem Bild teilen: Platzhalter „wird nicht geladen", den auch
+      VoiceOver vorliest.
 
 ## 8. Gerätecheck
 
