@@ -241,6 +241,61 @@
         }
       }
     },
+    "Find" : {
+      "comment" : "Toolbar button (magnifier): opens the find bar; in the editor with the replace field.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen"
+          }
+        }
+      }
+    },
+    "Find and Replace…" : {
+      "comment" : "Edit menu command (⌥⌘F): search and replace, editor only.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen und ersetzen …"
+          }
+        }
+      }
+    },
+    "Find Next" : {
+      "comment" : "Edit menu command (⌘G): next match.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitersuchen"
+          }
+        }
+      }
+    },
+    "Find Previous" : {
+      "comment" : "Edit menu command (⇧⌘G): previous match.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückwärts suchen"
+          }
+        }
+      }
+    },
+    "Find…" : {
+      "comment" : "Edit menu command (⌘F): search in the active document.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen …"
+          }
+        }
+      }
+    },
     "Loading…" : {
       "localizations" : {
         "de" : {
@@ -269,6 +324,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geöffnete Dokumente"
+          }
+        }
+      }
+    },
+    "Searches the document" : {
+      "comment" : "Accessibility hint of the Find button while reading.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durchsucht das Dokument"
+          }
+        }
+      }
+    },
+    "Searches the text and replaces matches" : {
+      "comment" : "Accessibility hint of the Find button in the editor.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durchsucht den Text und ersetzt Treffer"
           }
         }
       }
