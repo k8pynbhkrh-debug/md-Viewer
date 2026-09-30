@@ -35,6 +35,7 @@
 		EEAE592DCC984E3EFC9C10C5 /* MdViewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4995205B99A0C29FA7A14A /* MdViewerUITests.swift */; };
 		F09FF8A887F143E21843614D /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 28D91C7732C42B6A9E591E63 /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F9377B32045948206EDCDC3C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5767D86ACF34E68B083D5984 /* ShareViewController.swift */; };
+		327A0000000000000000B001 /* DocumentTabWidthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327A0000000000000000F001 /* DocumentTabWidthTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,7 @@
 		CC2CBBCA03C04D370582E232 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultMarkdownAppRegistration.swift; sourceTree = "<group>"; };
 		FC4995205B99A0C29FA7A14A /* MdViewerUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MdViewerUITests.swift; sourceTree = "<group>"; };
+		327A0000000000000000F001 /* DocumentTabWidthTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DocumentTabWidthTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -204,6 +206,7 @@
 				65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */,
 				65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */,
 				4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */,
+				327A0000000000000000F001 /* DocumentTabWidthTests.swift */,
 			);
 			name = "md ViewerTests";
 			path = "md ViewerTests";
@@ -444,6 +447,7 @@
 				E7FBEE15B98351D9C8E0BF51 /* ImageFolderAccessTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */,
 				C89C25A7A6FFE9B682B8A17A /* TextFindTests.swift in Sources */,
+				327A0000000000000000B001 /* DocumentTabWidthTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -619,7 +623,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -636,7 +640,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -658,7 +662,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -675,7 +679,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -698,7 +702,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -712,7 +716,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -772,7 +776,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -786,7 +790,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
