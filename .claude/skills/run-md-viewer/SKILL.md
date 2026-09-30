@@ -50,6 +50,17 @@ openurl` copies into `Inbox/` and renames on collision (`Notiz-1.md`), so the
 "same file → same tab" rule does not kick in there; the Files app opens in
 place and does.
 
+Since v1.5 there is **search (⌘F) and, in the editor, replace** (T-2026-325):
+the system find bar (`UIFindInteraction`) of the text view on screen. The
+MarkdownUI preview can't be searched, so find switches to "Text auswählen"
+(Mac: the selectable preview) first; the editor's `TextEditor` is reached via
+`EditorFindBridge` (`TextFind.swift`). DEBUG hook `-mdviewerFind <term>` opens
+the find bar on load with that term (combine with `-mdviewerScreenshotEdit`
+for the replace field). Keystrokes sent to the Simulator via System Events
+(⌘F, Ctrl-Tab) did not reach the app in testing — use the hook. Run parallel
+sessions on their own simulator (`MD_VIEWER_SIM_UDID`), a shared "iPhone 17"
+gets shut down by the other session's test runs.
+
 There is also a **Share extension** target `ShareExtension`
 (`com.eribert.md-Viewer.ShareExtension`, `com.apple.share-services`) that
 renders a shared Markdown/text file in a sheet right inside the share
