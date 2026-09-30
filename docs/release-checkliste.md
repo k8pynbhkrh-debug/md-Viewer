@@ -53,6 +53,12 @@ grün sind. **[manuell]** heißt: am Gerät bzw. im Simulator ausprobieren.
       Harness nutzt `securityLevel: 'strict'` und gibt keinen Fehlertext weiter.
 - [ ] **[manuell]** Demo-Dokument `App-Store-Screenshots/demo-dokumente/de/Diagramme-Bilder.md`
       in Hell und Dunkel: Diagramme scharf, Farben passend.
+- [ ] **[auto, Mac]** Mermaid-Tests zusätzlich als Mac Catalyst laufen lassen. Der
+      iOS-Simulator merkt nicht, wenn WebKit in der Mac-Sandbox nicht startet:
+      `xcodebuild test -project "md Viewer/md Viewer.xcodeproj" -scheme "md Viewer" -destination "platform=macOS,variant=Mac Catalyst" -only-testing:"md ViewerTests/MermaidRendererTests"`
+- [ ] **[manuell, Mac]** Im TestFlight-Build ein Dokument mit Diagramm öffnen: Die Grafik
+      erscheint nach wenigen Sekunden, kein „braucht zu lange". Voraussetzung ist die
+      Berechtigung `com.apple.security.network.client`.
 - [ ] **[manuell]** Nach einem Mermaid-Update: SHA-256 in `docs/dependencies.md`
       nachtragen und Abschnitt 4 komplett durchgehen.
 

@@ -135,7 +135,11 @@ Stand: 27.09.2026 · Alle Felder unten sind copy-paste-fertig für App Store Con
 > Anlass: ChatGPT-Prüfbericht vom 20.09.2026. Bis einschließlich iOS 1.5 lud die App
 > `http(s)`-Bilder aus geöffneten Dokumenten per `URLSession` nach. Das widersprach
 > „keine Netzwerkzugriffe" in Beschreibung, Review Notes und Datenschutzseite. (macOS
-> war nicht betroffen, denn die Catalyst-Sandbox hat kein `network.client`-Entitlement.)
+> war nicht betroffen, denn die Catalyst-Sandbox hatte kein `network.client`-Entitlement.
+> **Nachtrag 30.09.2026:** Genau deshalb startete dort der Mermaid-WebView nie – Diagramme
+> blieben auf dem Mac seit 1.3 leer (Ladekreis). macOS 1.5 bekommt `network.client`, nur
+> damit WebKit starten kann; Netzwerkcode gibt es weiterhin keinen, CSP + Navigationssperre
+> blocken jeden Abruf. Review-Notiz unten erklärt das.)
 > Ab dieser Version: kein Netzwerkcode mehr in der App, externe Bilder zeigen einen
 > Platzhalter, und der Mermaid-WebView sperrt jeden Abruf per Content-Security-Policy.
 > Privacy Manifest deklariert jetzt `UserDefaults` (CA92.1) für die Ordner-Bookmarks.
@@ -192,7 +196,7 @@ md Viewer displays Markdown (.md / .markdown) and .txt files and lets the user e
 ### App Review notes — Versionsnotiz (anhängen)
 
 ```
-This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images (the list shows the folder name only; no separate path string is stored); a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. No new permissions, no data collection.
+This version removes the only network code path the app had: images referenced by http/https URL in an opened document were previously fetched; they are now never loaded and a placeholder ("External image – not loaded") is shown. Local images (relative paths, security-scoped folder bookmark) and embedded data: images still render; all images are downsampled to at most 4096 px on decode. The privacy manifest now declares UserDefaults (reason CA92.1), used only to persist the user's own folder-access bookmarks for images (the list shows the folder name only; no separate path string is stored); a new "Folder Access" screen on the start screen (Mac: app menu) lists them and lets the user remove one or all. The Mermaid web view now runs with securityLevel 'strict', cancels every navigation other than its local harness page, and falls back to the plain code block for oversized diagrams or on a render timeout. macOS only: the app now carries the com.apple.security.network.client entitlement. It is required solely because WebKit's WebContent process does not launch in a sandboxed app without it (the Mermaid web view stayed blank on the Mac before). The app contains no networking code and makes no requests; the web view only loads a bundled local page, its Content-Security-Policy blocks all loads, and every navigation other than that page is cancelled. No data collection.
 ```
 
 ---
