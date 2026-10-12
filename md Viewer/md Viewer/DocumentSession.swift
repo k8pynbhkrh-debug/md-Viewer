@@ -20,6 +20,9 @@ import Observation
 /// - Invariant: `findRequest == .findAndReplace` ⟹ `isEditing`. Search never
 ///   changes text; replacing only ever edits `editedText` (undoable, unsaved
 ///   until the user saves).
+/// - Invariant: remembering the reading position (`readingAnchor`) never
+///   changes `savedText`, `editedText` or the undo history, and is not
+///   observed — updating it re-renders nothing.
 @MainActor
 @Observable
 final class DocumentSession: Identifiable {
@@ -54,10 +57,20 @@ final class DocumentSession: Identifiable {
     /// While true the reader shows the plain-text, natively selectable view
     /// instead of the rendered Markdown. Never true together with `isEditing`.
     /// iOS/iPadOS only — on the Mac `showFormattedPreview` does this job.
-    var isSelectingText = false
+    var isSelectingText = false {
+        didSet { if oldValue != isSelectingText { captureReadingPosition() } }
+    }
     /// Mac only: rendered MarkdownUI preview (default) vs. the mouse-selectable
     /// `MarkdownAttributedText`.
-    var showFormattedPreview = true
+    var showFormattedPreview = true {
+        didSet { if oldValue != showFormattedPreview { captureReadingPosition() } }
+    }
+
+    /// Where the document was last seen — see "Reading position" below.
+    @ObservationIgnored private(set) var readingAnchor: ReadingAnchor?
+    /// The view currently showing the document, asked for the place whenever
+    /// the view is about to change.
+    @ObservationIgnored private var positionSource: (owner: ObjectIdentifier, capture: () -> ReadingAnchor?)?
 
     /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
     private var undoHistory = EditorUndoHistory()
@@ -211,6 +224,7 @@ final class DocumentSession: Identifiable {
     ///   history is empty.
     func beginEditing() {
         assert(isLoaded, "beginEditing precondition violated: document not loaded")
+        captureReadingPosition()
         isSelectingText = false
         findRequest = nil
         isEditing = true
@@ -277,6 +291,44 @@ final class DocumentSession: Identifiable {
         findRequest = nil
     }
 
+    // MARK: - Reading position
+
+    /// The view that now shows the document announces itself; `capture`
+    /// returns the place it currently shows, or `nil` while it cannot tell
+    /// (not laid out yet, still restoring).
+    ///
+    /// - Postcondition: `owner` is the position source; a previous source is
+    ///   dropped without being asked.
+    func registerPositionSource(owner: AnyObject, capture: @escaping () -> ReadingAnchor?) {
+        positionSource = (ObjectIdentifier(owner), capture)
+    }
+
+    /// The view `owner` is going away (tab switch, window closed). If it is
+    /// still the position source, its place is remembered first.
+    ///
+    /// - Postcondition: `owner` is not the position source.
+    func unregisterPositionSource(owner: AnyObject) {
+        guard positionSource?.owner == ObjectIdentifier(owner) else { return }
+        captureReadingPosition()
+    }
+
+    /// Remembers the place the visible view shows. Called *before* anything
+    /// that swaps the view (edit, discard, save, select text, formatted
+    /// toggle), while that view still holds the text it was showing.
+    ///
+    /// - Postcondition: `readingAnchor` is the visible view's place if it
+    ///   could tell, otherwise unchanged; there is no position source until
+    ///   the next view registers. Text, working copy and undo history are
+    ///   untouched.
+    func captureReadingPosition() {
+        guard let source = positionSource else { return }
+        positionSource = nil
+        if let anchor = source.capture() {
+            assert((0...1).contains(anchor.position.fraction))
+            readingAnchor = anchor
+        }
+    }
+
     enum DiscardOutcome: Equatable {
         /// A file returned to its preview.
         case returnedToPreview
@@ -294,6 +346,7 @@ final class DocumentSession: Identifiable {
     func discardEditing() -> DiscardOutcome {
         precondition(isEditing, "discardEditing called outside the editor")
         precondition(!isSaving, "discardEditing during a save")
+        captureReadingPosition()
         undoHistory.reset()
         findRequest = nil
         isEditing = false
@@ -327,6 +380,7 @@ final class DocumentSession: Identifiable {
             try await Task.detached(priority: .userInitiated) {
                 try saveMarkdown(text: text, to: url)
             }.value
+            captureReadingPosition()
             content = .success(text)
             isEditing = false
             findRequest = nil
@@ -346,6 +400,7 @@ final class DocumentSession: Identifiable {
         precondition(isEditing, "adoptSavedFile precondition violated: nothing was written")
         precondition(url.isFileURL, "adoptSavedFile requires a file URL")
         let text = editedText
+        captureReadingPosition()
         fileURL = url
         content = .success(text)
         isEditing = false

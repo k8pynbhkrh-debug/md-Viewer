@@ -44,6 +44,10 @@ struct MarkdownAttributedText: UIViewRepresentable {
     /// Find requests from the session — see `TextFind.swift`.
     var find = TextFindHooks.none
 
+    /// The document shown — lets the view keep the reading position across
+    /// view changes (`ReadingPositionViews.swift`).
+    var session: DocumentSession?
+
     func makeUIView(context: Context) -> UITextView {
         let view = CopyAllTextView()
         view.isEditable = false
@@ -60,6 +64,9 @@ struct MarkdownAttributedText: UIViewRepresentable {
         view.copyAllProvider = { plainTextForCopyAll }
         view.onCopyAll = onCopyAll
         view.findHooks = find
+        if let session {
+            view.positionKeeper = TextViewPositionKeeper(textView: view, session: session, kind: .attributedText)
+        }
         loadImages(into: view)
         return view
     }
@@ -121,7 +128,11 @@ struct MarkdownAttributedText: UIViewRepresentable {
                 accessStore: accessStore
             )
             guard !Task.isCancelled else { return }
+            // Replacing the text must not lose the reader's place.
+            let offset = view.contentOffset
             view.attributedText = withImages
+            view.layoutIfNeeded()
+            view.setContentOffset(offset, animated: false)
         }
     }
 

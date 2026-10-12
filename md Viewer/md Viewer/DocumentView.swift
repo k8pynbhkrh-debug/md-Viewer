@@ -34,6 +34,9 @@ struct DocumentView: View {
     /// Drives the brief "Copied" toast after the "Copy All" toolbar button.
     @State private var showCopyConfirmation = false
     @FocusState private var editorFocused: Bool
+    /// Keeps the rendered preview's reading position — see
+    /// `ReadingPositionViews.swift`.
+    @State private var previewPosition = PreviewPositionController()
 
     /// Mac/iPad (regular width) show a tab bar once there is more than one
     /// document; the iPhone gets the document-list button instead.
@@ -143,7 +146,7 @@ struct DocumentView: View {
             if session.isEditing {
                 editor
             } else if session.isSelectingText {
-                SelectableTextView(text: plainText(fromMarkdown: savedText), find: findHooks)
+                SelectableTextView(text: plainText(fromMarkdown: savedText), find: findHooks, session: session)
             } else {
                 #if targetEnvironment(macCatalyst)
                 if session.showFormattedPreview {
@@ -158,7 +161,8 @@ struct DocumentView: View {
                         documentFolderURL: documentFolderURL,
                         accessStore: imageAccessStore,
                         onCopyAll: { confirmCopied() },
-                        find: findHooks
+                        find: findHooks,
+                        session: session
                     )
                 }
                 #else
@@ -250,7 +254,7 @@ struct DocumentView: View {
             // setting it before this view mounts is dropped by SwiftUI and
             // leaves the keyboard down.
             .onAppear { editorFocused = true }
-            .background { EditorFindBridge(hooks: findHooks) }
+            .background { EditorFindBridge(hooks: findHooks, session: session) }
     }
 
     /// Connects the visible text view's system find bar to this tab's session
@@ -298,6 +302,7 @@ struct DocumentView: View {
                             configuration.label
                                 .fixedSize(horizontal: false, vertical: true)
                         }
+                        .reportsRenderedBlock(text: configuration.content.renderPlainText())
                         .markdownMargin(top: 0, bottom: 16)
                     }
                     .markdownBlockStyle(\.codeBlock) { configuration in
@@ -311,8 +316,10 @@ struct DocumentView: View {
                                 codeBlockContainer(configuration)
                             }
                         }
+                        .reportsRenderedBlock(text: configuration.content)
                         .markdownMargin(top: 0, bottom: 16)
                     }
+                    .reportingTextBlocks()
                     // Fill the available width (MarkdownUI otherwise sizes
                     // to the content's natural width and pins it leading,
                     // which looks broken on iPad). ~24pt side margins.
@@ -324,6 +331,7 @@ struct DocumentView: View {
                     // toolbar action switches to `SelectableTextView` for that.
                     // Kept for Mac Catalyst, where inline selection does work.
                     .textSelection(.enabled)
+                    .keepsReadingPosition(with: previewPosition, session: session)
             }
         }
     }

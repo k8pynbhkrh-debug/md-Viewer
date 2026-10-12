@@ -15,6 +15,9 @@ struct SelectableTextView: UIViewRepresentable {
     let text: String
     /// Find requests from the session — see `TextFind.swift`.
     var find = TextFindHooks.none
+    /// The document shown — lets the view keep the reading position across
+    /// view changes (`ReadingPositionViews.swift`).
+    var session: DocumentSession?
 
     func makeUIView(context: Context) -> UITextView {
         let view = FindableTextView()
@@ -32,6 +35,9 @@ struct SelectableTextView: UIViewRepresentable {
         view.font = UIFont.preferredFont(forTextStyle: .body)
         view.text = text
         view.findHooks = find
+        if let session {
+            view.positionKeeper = TextViewPositionKeeper(textView: view, session: session, kind: .selectableText)
+        }
         return view
     }
 

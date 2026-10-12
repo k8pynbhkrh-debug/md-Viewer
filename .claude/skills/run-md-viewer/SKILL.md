@@ -301,6 +301,26 @@ Open `md Viewer/md Viewer.xcodeproj` in Xcode, select a simulator, Cmd-R.
 Only useful when a human is watching; the agent path above is
 non-interactive and scriptable.
 
+## Fernsteuerung ohne Taps: `DebugRemote` (seit 11.10.2026)
+
+Synthetische Taps/Wischgesten (`cliclick`, System Events) kommen nur an, solange
+der Mac-Bildschirm **entsperrt** ist — bei gesperrtem Bildschirm laufen sie ins
+Leere und `screencapture` liefert Schwarz (`simctl io screenshot` geht weiter).
+Die DEBUG-Fassung lauscht deshalb auf Darwin-Notifications
+(`md Viewer/md Viewer/DebugRemote.swift`):
+
+```bash
+xcrun simctl spawn <udid> notifyutil -p mdviewer.debug.<befehl>
+```
+
+Befehle: `scroll0` … `scroll100` (5er-Schritte, scrollt die sichtbare
+Dokumentansicht anteilig), `edit`, `discard`, `select`, `read`, `formatted`
+(Mac-Umschalter), `tabnext`, `type` (hängt an der Schreibmarke eine Zeile an),
+`fakekeyboard` (meldet eine Tastatur über den unteren 336 pt und malt dort eine
+graue Fläche — die echte Bildschirmtastatur erscheint unter `simctl` nur nach
+Cmd+K bei entsperrtem Mac). Nach jedem Befehl ~2,5 s warten, dann Screenshot.
+Auf dem Mac (Catalyst-Debug-Build) dieselben Namen direkt mit `notifyutil -p`.
+
 ## Gotchas
 
 - **`GENERATE_INFOPLIST_FILE = NO` silently breaks installation.** This
