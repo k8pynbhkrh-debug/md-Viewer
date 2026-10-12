@@ -30,6 +30,33 @@ private extension UIScrollView {
     }
 }
 
+/// Notes whether the reader scrolled a view by hand (finger, trackpad, mouse
+/// wheel) since `watch` — also when the gesture is already over. The restore
+/// passes stop then instead of pulling the view back. The scroll offset is no
+/// substitute: text views shift it themselves while they refine their layout.
+@MainActor
+final class UserScrollWatcher: NSObject {
+    private(set) var userScrolled = false
+    private weak var scrollView: UIScrollView?
+
+    /// - Postcondition: `userScrolled == false`, watching `scrollView` only.
+    func watch(_ scrollView: UIScrollView) {
+        stop()
+        userScrolled = false
+        self.scrollView = scrollView
+        scrollView.panGestureRecognizer.addTarget(self, action: #selector(panned(_:)))
+    }
+
+    func stop() {
+        scrollView?.panGestureRecognizer.removeTarget(self, action: #selector(panned(_:)))
+        scrollView = nil
+    }
+
+    @objc private func panned(_ recognizer: UIPanGestureRecognizer) {
+        if recognizer.state == .began || recognizer.state == .changed { userScrolled = true }
+    }
+}
+
 // MARK: - Text views (editor, "Select Text", Mac selectable preview)
 
 /// Remembers and restores the reading position of one `UITextView`.
@@ -55,6 +82,7 @@ final class TextViewPositionKeeper {
     /// moved the caret, and later passes must not pull the view back.
     private var restoredSelection: NSRange?
     private var restoredTextLength = 0
+    private let scrollWatcher = UserScrollWatcher()
 
     init(textView: UITextView, session: DocumentSession, kind: ReadingAnchor.ViewKind) {
         self.textView = textView
@@ -63,9 +91,10 @@ final class TextViewPositionKeeper {
     }
 
     func appeared() {
-        guard let session, textView != nil else { return }
+        guard let session, let textView else { return }
         generation += 1
         didRestore = false
+        scrollWatcher.watch(textView)
         session.registerPositionSource(owner: self) { [weak self] in self?.capture() }
         guard let anchor = session.readingAnchor else {
             didRestore = true
@@ -82,6 +111,7 @@ final class TextViewPositionKeeper {
 
     func disappearing() {
         generation += 1
+        scrollWatcher.stop()
         session?.unregisterPositionSource(owner: self)
     }
 
@@ -117,7 +147,8 @@ final class TextViewPositionKeeper {
         let length = (textView.text as NSString).length
         if !isFirstPass {
             // The reader took over — scrolling, typing or moving the caret.
-            guard !textView.isUserScrolling, length == restoredTextLength else { return }
+            guard !textView.isUserScrolling, !scrollWatcher.userScrolled,
+                  length == restoredTextLength else { return }
             if kind == .editor, textView.selectedRange != restoredSelection { return }
         }
         textView.layoutIfNeeded()
@@ -321,10 +352,12 @@ final class PreviewPositionController {
     private var pendingUntil = Date.distantPast
     private var didRestore = false
     private var generation = 0
+    private let scrollWatcher = UserScrollWatcher()
 
     func attach(scrollView: UIScrollView, session: DocumentSession) {
         self.scrollView = scrollView
         self.session = session
+        scrollWatcher.watch(scrollView)
         generation += 1
         didRestore = false
         session.registerPositionSource(owner: self) { [weak self] in self?.capture() }
@@ -345,6 +378,7 @@ final class PreviewPositionController {
 
     func detach() {
         generation += 1
+        scrollWatcher.stop()
         session?.unregisterPositionSource(owner: self)
         pending = nil
         scrollView = nil
@@ -366,7 +400,7 @@ final class PreviewPositionController {
             pending = nil
             return
         }
-        if didRestore, scrollView.isUserScrolling {
+        if didRestore, scrollView.isUserScrolling || scrollWatcher.userScrolled {
             pending = nil
             return
         }
