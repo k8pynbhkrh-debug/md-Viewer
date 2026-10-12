@@ -211,7 +211,7 @@ struct DocumentSessionReadingPositionTests {
     // Postcondition of captureReadingPosition — anchor taken, source gone.
     @Test("capturing asks the source once and disconnects it")
     func captureOnce() {
-        let session = DocumentSession(source: .draft("Text"))
+        let session = DocumentSession(source: .draft(initialText: "Text"))
         let owner = Owner()
         var asked = 0
         session.registerPositionSource(owner: owner) { asked += 1; return self.anchor(0.4) }
@@ -224,11 +224,11 @@ struct DocumentSessionReadingPositionTests {
     // A view that cannot tell yet must not erase the remembered place.
     @Test("a source without an answer leaves the anchor unchanged")
     func nilKeepsAnchor() {
-        let session = DocumentSession(source: .draft("Text"))
+        let session = DocumentSession(source: .draft(initialText: "Text"))
         let first = Owner(), second = Owner()
         session.registerPositionSource(owner: first) { self.anchor(0.4) }
         session.captureReadingPosition()
-        session.registerPositionSource(owner: second) { nil }
+        session.registerPositionSource(owner: second) { () -> ReadingAnchor? in nil }
         session.captureReadingPosition()
         #expect(session.readingAnchor == anchor(0.4))
     }
@@ -236,7 +236,7 @@ struct DocumentSessionReadingPositionTests {
     // Postcondition of unregisterPositionSource — only the current source.
     @Test("a view that is no longer the source is not asked when it goes away")
     func staleOwner() {
-        let session = DocumentSession(source: .draft("Text"))
+        let session = DocumentSession(source: .draft(initialText: "Text"))
         let old = Owner(), new = Owner()
         session.registerPositionSource(owner: old) { self.anchor(0.1) }
         session.registerPositionSource(owner: new) { self.anchor(0.9) }
@@ -249,7 +249,7 @@ struct DocumentSessionReadingPositionTests {
     // Leaving the editor captures while the working copy is still there.
     @Test("discarding captures before the working copy is cleared")
     func discardCapturesFirst() {
-        let session = DocumentSession(source: .draft("Arbeitskopie"))
+        let session = DocumentSession(source: .draft(initialText: "Arbeitskopie"))
         let owner = Owner()
         var seenText = ""
         session.registerPositionSource(owner: owner) {
@@ -264,7 +264,7 @@ struct DocumentSessionReadingPositionTests {
     // Invariant — remembering the place changes neither text nor undo.
     @Test("capturing changes neither text nor undo history")
     func capturingIsReadOnly() {
-        let session = DocumentSession(source: .draft("Start"))
+        let session = DocumentSession(source: .draft(initialText: "Start"))
         session.editedText = "Start und mehr"
         let couldUndo = session.canUndo
         session.registerPositionSource(owner: Owner()) { self.anchor(0.3) }
@@ -276,7 +276,7 @@ struct DocumentSessionReadingPositionTests {
 
     @Test("switching to the text selection view captures the place")
     func selectingTextCaptures() {
-        let session = DocumentSession(source: .draft("Text"))
+        let session = DocumentSession(source: .draft(initialText: "Text"))
         session.registerPositionSource(owner: Owner()) { self.anchor(0.7) }
         session.isSelectingText = true
         #expect(session.readingAnchor == anchor(0.7))
