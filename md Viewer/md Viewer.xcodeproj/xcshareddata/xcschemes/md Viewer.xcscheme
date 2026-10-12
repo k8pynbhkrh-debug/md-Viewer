@@ -53,6 +53,16 @@
                ReferencedContainer = "container:md Viewer.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E87EECA29D92A5543876324C"
+               BuildableName = "md ViewerUITests.xctest"
+               BlueprintName = "md ViewerUITests"
+               ReferencedContainer = "container:md Viewer.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
