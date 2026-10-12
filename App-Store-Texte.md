@@ -237,6 +237,37 @@ This version removes the only network code path the app had: images referenced b
 
 ---
 
+## iOS 1.6.1 / macOS 1.5.1 — Stelle merken, Schreibzeile über der Tastatur (T-2026-337, -345, 11.10.2026)
+
+Builds: iOS **1.6.1 (16)**, macOS **1.5.1 (24)**. Nur Release Notes neu, Beschreibung,
+Screenshots und Review Notes bleiben wie bei 1.6 / 1.5.
+
+### Neu in dieser Version / Release Notes — iOS 1.6.1 (de-DE)
+
+```
+• md Viewer merkt sich jetzt, wo du im Dokument bist: Beim Wechsel zwischen Lesen, Bearbeiten und „Text auswählen" bleibst du an derselben Stelle, statt wieder am Anfang zu landen. Das gilt auch, wenn du zwischen offenen Dokumenten wechselst.
+• Beim Schreiben bleibt die aktuelle Zeile über der Tastatur sichtbar.
+```
+
+### What's New / Release Notes — iOS 1.6.1 (en-US)
+
+```
+• md Viewer now remembers where you are in a document: switching between reading, editing, and Select Text keeps you at the same spot instead of jumping back to the top. The same goes for switching between open documents.
+• While typing, the current line stays visible above the keyboard.
+```
+
+### Neu in dieser Version / Release Notes — macOS 1.5.1 (de-DE)
+
+```
+• md Viewer merkt sich jetzt, wo du im Dokument bist: Beim Wechsel zwischen Lesen und Bearbeiten, zwischen formatierter und auswählbarer Ansicht und zwischen Tabs bleibst du an derselben Stelle, statt wieder am Anfang zu landen.
+```
+
+### What's New / Release Notes — macOS 1.5.1 (en-US)
+
+```
+• md Viewer now remembers where you are in a document: switching between reading and editing, between the formatted and the selectable view, and between tabs keeps you at the same spot instead of jumping back to the top.
+```
+
 ## Version 1.4 — geänderte Texte (iOS, 10.09.2026)
 
 Nur der iOS-Strang. Beschreibung/Keywords/Werbetext/Untertitel bleiben wie 1.3
