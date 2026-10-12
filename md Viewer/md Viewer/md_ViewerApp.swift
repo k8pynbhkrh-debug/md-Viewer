@@ -12,14 +12,21 @@ import UniformTypeIdentifiers
 struct md_ViewerApp: App {
     /// The open documents (tabs). Files handed to us by the OS, "Open…" and
     /// new drafts all land here as tabs; open files are restored on launch.
-    @State private var store = OpenDocumentsStore()
+    @State private var store: OpenDocumentsStore
     /// Folder access grants for relative images — shared by all tabs.
-    @State private var imageAccessStore = ImageFolderAccessStore()
+    @State private var imageAccessStore: ImageFolderAccessStore
 
-    /// Drives the "Folder Access" sheet (start screen link, app menu).
+    /// Drives the "Folder Access" sheet (start screen link, document list,
+    /// app menu).
     @State private var showFolderAccess = false
 
     init() {
+        #if DEBUG
+        // UI tests: clear persisted state before the stores read it.
+        UITestSupport.resetIfRequested()
+        #endif
+        _store = State(initialValue: OpenDocumentsStore())
+        _imageAccessStore = State(initialValue: ImageFolderAccessStore())
         #if targetEnvironment(macCatalyst)
         // md Viewer hat eigene Tabs im Fenster. Die macOS-Fenster-Tabs
         // („Vorherigen Tab anzeigen", „Tableiste einblenden", „Alle Fenster
@@ -40,8 +47,14 @@ struct md_ViewerApp: App {
                 onManageFolderAccess: { showFolderAccess = true }
             )
             .environment(imageAccessStore)
-            .sheet(isPresented: $showFolderAccess) {
-                FolderAccessView().environment(imageAccessStore)
+            // Own anchor view: on the same view as the `.fileImporter` below,
+            // SwiftUI presents only one of the two and "Folder Access" never
+            // appeared (iOS).
+            .background {
+                Color.clear
+                    .sheet(isPresented: $showFolderAccess) {
+                        FolderAccessView().environment(imageAccessStore)
+                    }
             }
             .onOpenURL { url in
                 // A new tab — or the existing one if that file is already
@@ -81,6 +94,8 @@ struct md_ViewerApp: App {
                 if args.contains("-mdviewerFolderAccess") {
                     showFolderAccess = true
                 }
+                // UI-Test-Fixtures (Ordnerfreigaben, Testdateien), siehe UITestSupport.
+                UITestSupport.applyFixtures(store: store, imageAccessStore: imageAccessStore)
             }
             #endif
         }

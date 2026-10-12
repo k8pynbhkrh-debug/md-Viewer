@@ -5,7 +5,8 @@ import SwiftUI
 ///
 /// A deliberately lean cousin of the app's `DocumentView`: no syntax
 /// highlighting engine (keeps the extension well inside its memory budget),
-/// but the same wide-table handling and full-width layout.
+/// but the same wide-table handling and full-width layout. Documents above
+/// `LargeDocument.shareExtensionThreshold` are shown as plain text.
 struct ShareMarkdownView: View {
     let title: String
     let result: Result<String, DocumentError>
@@ -18,6 +19,14 @@ struct ShareMarkdownView: View {
         NavigationStack {
             Group {
                 switch result {
+                case .success(let markdown)
+                    where LargeDocument.exceeds(markdown, threshold: LargeDocument.shareExtensionThreshold):
+                    // The formatted rendering would exhaust the extension's
+                    // memory budget and leave the sheet blank.
+                    VStack(spacing: 0) {
+                        LargeDocumentNotice()
+                        LargeDocumentTextView(text: markdown)
+                    }
                 case .success(let markdown):
                     ScrollView {
                         Markdown(markdown)
