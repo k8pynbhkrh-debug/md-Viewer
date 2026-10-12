@@ -237,21 +237,21 @@ This version removes the only network code path the app had: images referenced b
 
 ---
 
-## iOS 1.6.1 / macOS 1.5.1 — Stelle merken, Schreibzeile über der Tastatur (T-2026-337, -345, 11.10.2026)
+## iOS 1.6.1 / macOS 1.5.1 — Stelle merken, Schreibzeile über der Tastatur, große Dokumente (T-2026-337, -345, -328, 12.10.2026)
 
-Builds: iOS **1.6.1 (16)**, macOS **1.5.1 (24)**. Nur Release Notes neu, Beschreibung,
-Screenshots und Review Notes bleiben wie bei 1.6 / 1.5.
+Builds: iOS **1.6.1 (17)**, macOS **1.5.1 (25)**, gemeinsam von `main` mit allen drei
+Tickets. Die Builds 16 / 24 vom 12.10. enthalten T-2026-328 nicht und bleiben ungenutzt.
+Nur Release Notes neu, Beschreibung, Screenshots und Review Notes bleiben wie bei 1.6 / 1.5.
 
-Stand 12.10.2026: beide Builds hochgeladen, Versionen in ASC angelegt (iOS
-`aa59c21d-8bb1-4915-bc52-7a6bd5748ba5`, macOS `6dbe8aa1-16fe-463f-9c70-edb4969f500a`),
-Release Notes gesetzt, Build angehängt, `ci/asc-submit.sh <id> --dry-run` ok.
-**Noch nicht eingereicht** (wartet auf Erics Ja nach Gegenprobe per TestFlight).
+ASC-Versionen: iOS `aa59c21d-8bb1-4915-bc52-7a6bd5748ba5`, macOS
+`6dbe8aa1-16fe-463f-9c70-edb4969f500a`.
 
 ### Neu in dieser Version / Release Notes — iOS 1.6.1 (de-DE)
 
 ```
 • md Viewer merkt sich jetzt, wo du im Dokument bist: Beim Wechsel zwischen Lesen, Bearbeiten und „Text auswählen" bleibst du an derselben Stelle, statt wieder am Anfang zu landen. Das gilt auch, wenn du zwischen offenen Dokumenten wechselst.
 • Beim Schreiben bleibt die aktuelle Zeile über der Tastatur sichtbar.
+• Sehr große Dokumente öffnen sich jetzt sofort: Sie werden als einfacher Text angezeigt, statt die App auszubremsen. Mit „Formatiert anzeigen" bekommst du bei Bedarf die gewohnte Ansicht. Auch beim Teilen aus anderen Apps bleibt die Vorschau nicht mehr leer.
 ```
 
 ### What's New / Release Notes — iOS 1.6.1 (en-US)
@@ -259,18 +259,21 @@ Release Notes gesetzt, Build angehängt, `ci/asc-submit.sh <id> --dry-run` ok.
 ```
 • md Viewer now remembers where you are in a document: switching between reading, editing, and Select Text keeps you at the same spot instead of jumping back to the top. The same goes for switching between open documents.
 • While typing, the current line stays visible above the keyboard.
+• Very large documents now open right away: they are shown as plain text instead of slowing the app down. Tap Show Formatted to get the usual view when you need it. The preview no longer stays empty when sharing from other apps.
 ```
 
 ### Neu in dieser Version / Release Notes — macOS 1.5.1 (de-DE)
 
 ```
 • md Viewer merkt sich jetzt, wo du im Dokument bist: Beim Wechsel zwischen Lesen und Bearbeiten, zwischen formatierter und auswählbarer Ansicht und zwischen Tabs bleibst du an derselben Stelle, statt wieder am Anfang zu landen.
+• Sehr große Dokumente öffnen sich jetzt sofort: Sie werden als einfacher Text angezeigt, statt die App auszubremsen. Mit „Formatiert anzeigen" bekommst du bei Bedarf die gewohnte Ansicht.
 ```
 
 ### What's New / Release Notes — macOS 1.5.1 (en-US)
 
 ```
 • md Viewer now remembers where you are in a document: switching between reading and editing, between the formatted and the selectable view, and between tabs keeps you at the same spot instead of jumping back to the top.
+• Very large documents now open right away: they are shown as plain text instead of slowing the app down. Choose Show Formatted to get the usual view when you need it.
 ```
 
 ## Version 1.4 — geänderte Texte (iOS, 10.09.2026)
