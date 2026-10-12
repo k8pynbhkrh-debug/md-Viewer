@@ -34,7 +34,15 @@ final class DocumentSession: Identifiable {
 
     /// `nil` until `loadIfNeeded()` ran (restored tabs load lazily when first
     /// shown).
-    private(set) var content: Result<String, DocumentError>?
+    private(set) var content: Result<String, DocumentError>? {
+        didSet {
+            // "Show Formatted Anyway" was a choice for the text the user saw.
+            // A saved or reloaded document with other text asks again.
+            if (try? oldValue?.get()) != (try? content?.get()) {
+                formatsLargeDocumentAnyway = false
+            }
+        }
+    }
 
     /// While `isEditing`, `editedText` is the working copy. Leaving the editor —
     /// via discard or a successful save — is the only way it affects the
@@ -62,7 +70,9 @@ final class DocumentSession: Identifiable {
     var showFormattedPreview = true
 
     /// Set by "Show Formatted Anyway" — this tab then renders its document
-    /// even though it is large. Not persisted; a reopened tab asks again.
+    /// even though it is large. Holds only for the text it was given for:
+    /// reset whenever `savedText` changes (save, reload). Not persisted; a
+    /// reopened tab asks again.
     private(set) var formatsLargeDocumentAnyway = false
 
     /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
@@ -130,12 +140,15 @@ final class DocumentSession: Identifiable {
     /// The user's explicit choice to render a large document anyway.
     ///
     /// - Precondition: `isLargeDocument`.
-    /// - Postcondition: `!showsLargeDocumentAsText`, for as long as this
-    ///   session lives. No text changes.
+    /// - Postcondition: `!showsLargeDocumentAsText`, until `savedText`
+    ///   changes; `!isSelectingText`. No text changes.
     func formatLargeDocumentAnyway() {
         precondition(isLargeDocument, "formatLargeDocumentAnyway on a document that is formatted already")
         formatsLargeDocumentAnyway = true
-        assert(!showsLargeDocumentAsText)
+        // "Select Text" may still be on from before the document grew large;
+        // the user asked for the rendering, not for that view.
+        isSelectingText = false
+        assert(!showsLargeDocumentAsText && !isSelectingText)
     }
 
     /// Tab / navigation-bar title.

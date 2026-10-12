@@ -128,6 +128,52 @@ struct DocumentSessionLargeDocumentTests {
         #expect(session.showsLargeDocumentAsText == false)
     }
 
+    // The choice holds for the text it was made for — a saved change asks again.
+    @Test("\"show formatted anyway\" is reset when the saved text changes")
+    func formatAnywayResetOnSave() async throws {
+        let (session, url) = try loadedFile(bytes: LargeDocument.appThreshold + 1)
+        defer { try? FileManager.default.removeItem(at: url) }
+        session.formatLargeDocumentAnyway()
+        session.beginEditing()
+        session.editedText += String(repeating: "b", count: 1000)
+        await session.saveInPlace()
+        #expect(session.isEditing == false)
+        #expect(session.formatsLargeDocumentAnyway == false)
+        #expect(session.showsLargeDocumentAsText)
+    }
+
+    // "Select Text" left on from before the document grew large must not
+    // stand in for the rendering the user asked for.
+    @Test("\"show formatted anyway\" leaves the \"Select Text\" view")
+    func formatAnywayLeavesSelectingText() throws {
+        let (session, url) = try loadedFile(bytes: LargeDocument.appThreshold + 1)
+        defer { try? FileManager.default.removeItem(at: url) }
+        session.isSelectingText = true
+        session.formatLargeDocumentAnyway()
+        #expect(session.isSelectingText == false)
+        #expect(session.showsLargeDocumentAsText == false)
+    }
+
+    @Test("\"show formatted anyway\" survives a reload of the same text")
+    func formatAnywayKeptOnUnchangedReload() throws {
+        let (session, url) = try loadedFile(bytes: LargeDocument.appThreshold + 1)
+        defer { try? FileManager.default.removeItem(at: url) }
+        session.formatLargeDocumentAnyway()
+        session.retarget(to: url)
+        #expect(session.showsLargeDocumentAsText == false)
+    }
+
+    @Test("\"show formatted anyway\" is reset when the file is loaded with other text")
+    func formatAnywayResetOnReload() throws {
+        let (session, url) = try loadedFile(bytes: LargeDocument.appThreshold + 1)
+        defer { try? FileManager.default.removeItem(at: url) }
+        session.formatLargeDocumentAnyway()
+        try Data(repeating: UInt8(ascii: "c"), count: 4 * LargeDocument.appThreshold).write(to: url)
+        session.retarget(to: url)
+        #expect(session.formatsLargeDocumentAnyway == false)
+        #expect(session.showsLargeDocumentAsText)
+    }
+
     // Follows the saved text — saving a shortened document formats it again.
     @Test("a document saved below the threshold is formatted again")
     func shrinkingFormatsAgain() async throws {
