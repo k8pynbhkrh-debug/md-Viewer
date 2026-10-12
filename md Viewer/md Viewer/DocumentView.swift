@@ -145,6 +145,8 @@ struct DocumentView: View {
         case .success:
             if session.isEditing {
                 editor
+            } else if session.showsLargeDocumentAsText {
+                LargeDocumentReader(session: session, find: findHooks)
             } else if session.isSelectingText {
                 SelectableTextView(text: plainText(fromMarkdown: savedText), find: findHooks, session: session)
             } else {
@@ -423,7 +425,7 @@ struct DocumentView: View {
                                    ? "Saves the text as a new file"
                                    : "Overwrites the file with the edited text")
             }
-        } else if session.isSelectingText {
+        } else if session.isSelectingText && !session.showsLargeDocumentAsText {
             // Text-selection mode: the only way out is "Done" (or the X, which
             // also just returns to the rendered view — it does not close the
             // document from here).
@@ -443,6 +445,8 @@ struct DocumentView: View {
             documentListItem
             if session.isLoaded {
                 findItem
+                // A large document shown as text is selectable already.
+                if !session.showsLargeDocumentAsText {
                 #if targetEnvironment(macCatalyst)
                 // The Mac opens in the full MarkdownUI rendering (bordered
                 // tables, syntax highlighting, images); this toggles to the
@@ -468,6 +472,7 @@ struct DocumentView: View {
                     .accessibilityHint("Switches to a plain-text view where a passage can be selected and copied")
                 }
                 #endif
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Copy All", systemImage: "doc.on.doc") { copyAll() }
                         .disabled(savedText.isEmpty)

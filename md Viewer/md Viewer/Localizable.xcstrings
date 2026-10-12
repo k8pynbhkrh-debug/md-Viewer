@@ -296,6 +296,27 @@
         }
       }
     },
+    "Formatting a document this large can take a long time. The app does not respond until it is done." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei einem so großen Dokument kann das Formatieren lange dauern. Die App reagiert so lange nicht."
+          }
+        }
+      }
+    },
+    "Large document – shown as text" : {
+      "comment" : "Notice above a document that is too large for the formatted rendering.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Großes Dokument – als Text angezeigt"
+          }
+        }
+      }
+    },
     "Loading…" : {
       "localizations" : {
         "de" : {
@@ -346,6 +367,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Durchsucht den Text und ersetzt Treffer"
+          }
+        }
+      }
+    },
+    "Show Formatted" : {
+      "comment" : "Button in the large-document notice: render the document anyway.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formatiert anzeigen"
+          }
+        }
+      }
+    },
+    "Show Formatted Anyway" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trotzdem formatiert anzeigen"
+          }
+        }
+      }
+    },
+    "Show Formatted?" : {
+      "comment" : "Title of the warning before rendering a large document.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formatiert anzeigen?"
           }
         }
       }

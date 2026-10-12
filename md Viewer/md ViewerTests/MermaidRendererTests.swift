@@ -116,6 +116,56 @@ struct MermaidRendererTests {
         #expect(isSuccess(result))
     }
 
+    // Invariant — the page can't load anything from the network. Since the
+    // Mac build carries `network.client` (WebKit needs it to start), the
+    // page's Content-Security-Policy is what blocks requests, so check it
+    // at runtime: fetch, XHR and an <img> to a remote URL must all fail
+    // *and* raise a CSP violation (so an offline machine can't make this
+    // pass by accident). The probe reports back through the renderer's
+    // own message channel: "success" only if everything was blocked.
+    @Test("the diagram page blocks fetch, XHR and remote images")
+    func networkRequestsAreBlocked() async {
+        let renderer = makeRenderer()
+        renderer.makeRenderScript = { id, _, _ in
+            let jsID = MermaidRenderer.jsString(id)
+            return """
+            (function() {
+              var violations = 0;
+              document.addEventListener('securitypolicyviolation', function() { violations++; });
+              var probes = [
+                fetch('https://example.com/probe').then(function() { return 'loaded'; }, function() { return 'blocked'; }),
+                new Promise(function(resolve) {
+                  try {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'https://example.com/xhr');
+                    xhr.onload = function() { resolve('loaded'); };
+                    xhr.onerror = function() { resolve('blocked'); };
+                    xhr.send();
+                  } catch (e) { resolve('blocked'); }
+                }),
+                new Promise(function(resolve) {
+                  var img = new Image();
+                  img.onload = function() { resolve('loaded'); };
+                  img.onerror = function() { resolve('blocked'); };
+                  img.src = 'https://example.com/probe.png';
+                })
+              ];
+              Promise.all(probes).then(function(results) {
+                setTimeout(function() {
+                  var allBlocked = results.every(function(r) { return r === 'blocked'; });
+                  window.webkit.messageHandlers.mermaid.postMessage(
+                    allBlocked && violations > 0
+                      ? { id: \(jsID), status: 'success', width: 10, height: 10 }
+                      : { id: \(jsID), status: 'error' });
+                }, 300);
+              });
+            })();
+            """
+        }
+        let result = await renderer.render(source: simpleDiagram, colorScheme: .light)
+        #expect(isSuccess(result), "a remote request was not blocked by the page's CSP")
+    }
+
     @Test("navigation policy allows only the initial harness load")
     func navigationPolicy() {
         let harness = Bundle.main.resourceURL

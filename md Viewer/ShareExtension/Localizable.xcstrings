@@ -52,6 +52,17 @@
         }
       }
     },
+    "Large document – shown as text" : {
+      "comment" : "Notice above a document that is too large for the formatted rendering.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Großes Dokument – als Text angezeigt"
+          }
+        }
+      }
+    },
     "The file could not be read as text. Only UTF-8 encoded files are supported." : {
       "localizations" : {
         "de" : {

@@ -23,6 +23,8 @@ import Observation
 /// - Invariant: remembering the reading position (`readingAnchor`) never
 ///   changes `savedText`, `editedText` or the undo history, and is not
 ///   observed — updating it re-renders nothing.
+/// - Invariant: `showsLargeDocumentAsText` ⟹ `!isEditing && isLargeDocument`.
+///   Only the reader falls back to plain text; the editor is unaffected.
 @MainActor
 @Observable
 final class DocumentSession: Identifiable {
@@ -35,7 +37,15 @@ final class DocumentSession: Identifiable {
 
     /// `nil` until `loadIfNeeded()` ran (restored tabs load lazily when first
     /// shown).
-    private(set) var content: Result<String, DocumentError>?
+    private(set) var content: Result<String, DocumentError>? {
+        didSet {
+            // "Show Formatted Anyway" was a choice for the text the user saw.
+            // A saved or reloaded document with other text asks again.
+            if (try? oldValue?.get()) != (try? content?.get()) {
+                formatsLargeDocumentAnyway = false
+            }
+        }
+    }
 
     /// While `isEditing`, `editedText` is the working copy. Leaving the editor —
     /// via discard or a successful save — is the only way it affects the
@@ -71,6 +81,12 @@ final class DocumentSession: Identifiable {
     /// The view currently showing the document, asked for the place whenever
     /// the view is about to change.
     @ObservationIgnored private var positionSource: (owner: ObjectIdentifier, capture: () -> ReadingAnchor?)?
+
+    /// Set by "Show Formatted Anyway" — this tab then renders its document
+    /// even though it is large. Holds only for the text it was given for:
+    /// reset whenever `savedText` changes (save, reload). Not persisted; a
+    /// reopened tab asks again.
+    private(set) var formatsLargeDocumentAnyway = false
 
     /// Own undo history for the "Rückgängig" button — see `EditorUndoHistory`.
     private var undoHistory = EditorUndoHistory()
@@ -119,6 +135,33 @@ final class DocumentSession: Identifiable {
     var isLoaded: Bool {
         if case .success = content { return true }
         return false
+    }
+
+    /// True for a loaded document above `LargeDocument.appThreshold` — the
+    /// formatted rendering would block the app for seconds to minutes.
+    var isLargeDocument: Bool {
+        isLoaded && LargeDocument.exceeds(savedText, threshold: LargeDocument.appThreshold)
+    }
+
+    /// Whether the reader shows the raw text with a notice instead of the
+    /// rendered Markdown. Follows the saved text: a document edited down below
+    /// the threshold is formatted again.
+    var showsLargeDocumentAsText: Bool {
+        !isEditing && isLargeDocument && !formatsLargeDocumentAnyway
+    }
+
+    /// The user's explicit choice to render a large document anyway.
+    ///
+    /// - Precondition: `isLargeDocument`.
+    /// - Postcondition: `!showsLargeDocumentAsText`, until `savedText`
+    ///   changes; `!isSelectingText`. No text changes.
+    func formatLargeDocumentAnyway() {
+        precondition(isLargeDocument, "formatLargeDocumentAnyway on a document that is formatted already")
+        formatsLargeDocumentAnyway = true
+        // "Select Text" may still be on from before the document grew large;
+        // the user asked for the rendering, not for that view.
+        isSelectingText = false
+        assert(!showsLargeDocumentAsText && !isSelectingText)
     }
 
     /// Tab / navigation-bar title.
@@ -260,12 +303,13 @@ final class DocumentSession: Identifiable {
     /// editor this switches to the plain-text view that can ("Select Text" on
     /// iOS, the selectable preview on the Mac). Replacing is only offered in
     /// the editor; outside it a replace request degrades to a plain search.
+    /// A large document shown as text is searchable as it is — no switch.
     ///
     /// - Precondition: `canFind`.
     /// - Postcondition: `findRequest != nil`; `findRequest == .findAndReplace`
-    ///   ⟹ `isEditing`; `!isEditing` ⟹ the searchable text view is selected
-    ///   (`isSelectingText` on iOS, `!showFormattedPreview` on the Mac). No
-    ///   text changes.
+    ///   ⟹ `isEditing`; `!isEditing` ⟹ a searchable text view is on screen
+    ///   (`showsLargeDocumentAsText`, else `isSelectingText` on iOS,
+    ///   `!showFormattedPreview` on the Mac). No text changes.
     func requestFind(replace: Bool) {
         precondition(canFind, "requestFind without searchable text")
         if isEditing {
@@ -273,11 +317,13 @@ final class DocumentSession: Identifiable {
             undoHistory.breakCoalescing()
             findRequest = replace ? .findAndReplace : .find
         } else {
-            #if targetEnvironment(macCatalyst)
-            showFormattedPreview = false
-            #else
-            isSelectingText = true
-            #endif
+            if !showsLargeDocumentAsText {
+                #if targetEnvironment(macCatalyst)
+                showFormattedPreview = false
+                #else
+                isSelectingText = true
+                #endif
+            }
             findRequest = .find
         }
         assert(findRequest != nil && (findRequest != .findAndReplace || isEditing))
