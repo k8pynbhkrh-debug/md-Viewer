@@ -242,6 +242,11 @@ This version removes the only network code path the app had: images referenced b
 Builds: iOS **1.6.1 (16)**, macOS **1.5.1 (24)**. Nur Release Notes neu, Beschreibung,
 Screenshots und Review Notes bleiben wie bei 1.6 / 1.5.
 
+Stand 12.10.2026: beide Builds hochgeladen, Versionen in ASC angelegt (iOS
+`aa59c21d-8bb1-4915-bc52-7a6bd5748ba5`, macOS `6dbe8aa1-16fe-463f-9c70-edb4969f500a`),
+Release Notes gesetzt, Build angehängt, `ci/asc-submit.sh <id> --dry-run` ok.
+**Noch nicht eingereicht** (wartet auf Erics Ja nach Gegenprobe per TestFlight).
+
 ### Neu in dieser Version / Release Notes — iOS 1.6.1 (de-DE)
 
 ```
