@@ -246,6 +246,12 @@ Nur Release Notes neu, Beschreibung, Screenshots und Review Notes bleiben wie be
 ASC-Versionen: iOS `aa59c21d-8bb1-4915-bc52-7a6bd5748ba5`, macOS
 `6dbe8aa1-16fe-463f-9c70-edb4969f500a`.
 
+> **12.10.2026 — beide zur Prüfung eingereicht** (Erics Freigabe, per `ci/asc-submit.sh`):
+> iOS 1.6.1 Submission `2edd5623-b7ee-466b-9749-3d9c74435e4e`, macOS 1.5.1 Submission
+> `6d3eb6e2-7b19-4ec2-bddf-cfb9a7fa8831`, beide **WAITING_FOR_REVIEW**, Release
+> automatisch nach Freigabe. Vorher grün: Unit-Tests Mac Catalyst und der komplette
+> Simulator-Lauf inkl. UI-Tests.
+
 ### Neu in dieser Version / Release Notes — iOS 1.6.1 (de-DE)
 
 ```
