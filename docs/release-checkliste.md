@@ -108,11 +108,22 @@ Teilen → md Viewer):
 - [ ] Leere Datei teilen: Hinweis „leer", kein Absturz.
 - [ ] Datei über 5 MB teilen: Hinweis „zu groß".
 - [ ] Datei mit ungültigem UTF-8 (Latin-1-Text) teilen: Hinweis zur Kodierung.
-- [ ] Sehr langes Dokument (4,5 MB) teilen: Vorschau lädt, die Extension bleibt offen.
-      **Bekannter Fehler T-2026-328:** Das Blatt bleibt leer. Der Test ist bis zur Lösung
-      mit `XCTExpectFailure` markiert.
+- [ ] Großes Dokument (über 25 KB, `LargeDocument.shareExtensionThreshold`) teilen:
+      Hinweis „Großes Dokument – als Text angezeigt", darunter der Rohtext; „Fertig"
+      schließt das Blatt.
+- [ ] **[manuell]** Sehr langes Dokument (Long.md, 4,5 MB) teilen: Hinweis und Text
+      erscheinen sofort, das Blatt bleibt offen. Nicht automatisiert – XCUITest wird mit
+      dem Abbild einer so langen Textansicht nicht fertig.
 - [ ] Dokument mit externem Bild teilen: Platzhalter „wird nicht geladen", den auch
       VoiceOver vorliest.
+
+Große Dokumente in der App (über 50 KB, `LargeDocument.appThreshold`):
+
+- [ ] **[UI-Test]** Großes Dokument öffnen: Hinweis und Rohtext statt formatierter
+      Ansicht; „Formatiert anzeigen" → Rückfrage → formatierte Ansicht
+      (`MdViewerUITests`). Ein kleines Dokument zeigt keinen Hinweis.
+- [ ] **[manuell]** Dokument mit mehreren MB auf iPhone und Mac öffnen: sofort lesbar,
+      Suchen funktioniert, die App friert nicht ein.
 
 ## 8. Gerätecheck
 

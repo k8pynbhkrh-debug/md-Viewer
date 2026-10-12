@@ -202,4 +202,32 @@ final class MdViewerUITests: XCTestCase {
         let editor = app.textViews.firstMatch
         XCTAssertTrue((editor.value as? String ?? "").contains("Unsaved words."))
     }
+
+    // MARK: - Large documents (T-2026-328)
+
+    /// A document above the threshold opens as plain text with a notice;
+    /// "Show Formatted" warns first, and only the confirmation renders it.
+    func testLargeDocumentIsShownAsTextUntilFormattedOnRequest() {
+        launch(extra: ["-mdviewerOpenFixture", "large"])
+        let notice = app.staticTexts["Large document – shown as text"]
+        waitFor(notice)
+        waitFor(app.textViews["largeDocumentText"])
+        XCTAssertFalse(app.buttons["Select Text"].exists, "the text is selectable already")
+
+        // Tapping the notice's button only asks — the text stays until confirmed.
+        app.buttons["Show Formatted"].tap()
+        waitFor(app.buttons["Show Formatted Anyway"])
+        XCTAssertTrue(notice.exists, "the warning alone must not switch the view")
+        confirm("Show Formatted Anyway")
+        waitFor(app.staticTexts["Large fixture"], 30)
+        XCTAssertFalse(notice.exists)
+        XCTAssertFalse(app.textViews["largeDocumentText"].exists)
+    }
+
+    /// A normal document is formatted without a notice.
+    func testSmallDocumentHasNoLargeDocumentNotice() {
+        launch(extra: ["-mdviewerOpenFixture", "plain"])
+        waitFor(app.staticTexts["Original text."])
+        XCTAssertFalse(app.staticTexts["Large document – shown as text"].exists)
+    }
 }

@@ -17,11 +17,14 @@
 		5A1E0261000000000000BB02 /* MarkdownImageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA02 /* MarkdownImageViews.swift */; };
 		5A1E0261000000000000CC01 /* MarkdownImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */; };
 		5A1E0261000000000000CC02 /* MarkdownImageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA02 /* MarkdownImageViews.swift */; };
+		328A0000000000000000BB01 /* LargeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328A0000000000000000AA01 /* LargeDocument.swift */; };
+		328A0000000000000000CC01 /* LargeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328A0000000000000000AA01 /* LargeDocument.swift */; };
 		5A1E0261000000000000CC03 /* ShareImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1E0261000000000000AA03 /* ShareImageProvider.swift */; };
 		6277079D31413FB1588D3E66 /* MarkdownDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFB66A34FE0D074B20808ED /* MarkdownDocument.swift */; };
 		6577216D633AD899B25D261C /* Highlightr in Frameworks */ = {isa = PBXBuildFile; productRef = 02A4013D95F2D7E0A55AEF14 /* Highlightr */; };
 		7A93A0912E8E5C037FE69918 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2CBBCA03C04D370582E232 /* Foundation.framework */; };
 		C07F649CBFF9AF5A4AE6D525 /* ShareMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11733AF827EF488B2827C882 /* ShareMarkdownView.swift */; };
+		328A0000000000000000DD01 /* LargeDocumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328A0000000000000000AA02 /* LargeDocumentTests.swift */; };
 		C89C25A7A6FFE9B682B8A17A /* TextFindTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */; };
 		CA266B663FFD35A802BAAD3B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 13CA08FF6F2F9B746465C409 /* Localizable.xcstrings */; };
 		DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */; };
@@ -83,10 +86,12 @@
 		13CA08FF6F2F9B746465C409 /* Localizable.xcstrings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		28D91C7732C42B6A9E591E63 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "md ViewerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		328A0000000000000000AA02 /* LargeDocumentTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LargeDocumentTests.swift; sourceTree = "<group>"; };
 		4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextFindTests.swift; sourceTree = "<group>"; };
 		5767D86ACF34E68B083D5984 /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageLoading.swift; sourceTree = "<group>"; };
 		5A1E0261000000000000AA02 /* MarkdownImageViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageViews.swift; sourceTree = "<group>"; };
+		328A0000000000000000AA01 /* LargeDocument.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LargeDocument.swift; sourceTree = "<group>"; };
 		5A1E0261000000000000AA03 /* ShareImageProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareImageProvider.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA40516C6 /* DocumentViewTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DocumentViewTests.swift; sourceTree = "<group>"; };
 		65AC828D8063669DA40516D7 /* MarkdownAttributedTextTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownAttributedTextTests.swift; sourceTree = "<group>"; };
@@ -206,6 +211,7 @@
 				65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */,
 				65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */,
 				4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */,
+				328A0000000000000000AA02 /* LargeDocumentTests.swift */,
 				327A0000000000000000F001 /* DocumentTabWidthTests.swift */,
 			);
 			name = "md ViewerTests";
@@ -237,6 +243,7 @@
 				DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */,
 				5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */,
 				5A1E0261000000000000AA02 /* MarkdownImageViews.swift */,
+				328A0000000000000000AA01 /* LargeDocument.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -433,6 +440,7 @@
 				DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */,
 				5A1E0261000000000000BB01 /* MarkdownImageLoading.swift in Sources */,
 				5A1E0261000000000000BB02 /* MarkdownImageViews.swift in Sources */,
+				328A0000000000000000BB01 /* LargeDocument.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,6 +455,7 @@
 				E7FBEE15B98351D9C8E0BF51 /* ImageFolderAccessTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */,
 				C89C25A7A6FFE9B682B8A17A /* TextFindTests.swift in Sources */,
+				328A0000000000000000DD01 /* LargeDocumentTests.swift in Sources */,
 				327A0000000000000000B001 /* DocumentTabWidthTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,6 +470,7 @@
 				5A1E0261000000000000CC01 /* MarkdownImageLoading.swift in Sources */,
 				5A1E0261000000000000CC02 /* MarkdownImageViews.swift in Sources */,
 				5A1E0261000000000000CC03 /* ShareImageProvider.swift in Sources */,
+				328A0000000000000000CC01 /* LargeDocument.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

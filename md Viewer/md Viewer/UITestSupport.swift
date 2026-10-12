@@ -11,8 +11,9 @@ import UIKit
 /// - `-mdviewerSeedFolders <a,b,…>` — create these folders in the app's
 ///   Documents/UITest directory and grant image access to each (what the
 ///   folder picker would do).
-/// - `-mdviewerOpenFixture <plain|readonly|remote|image>` — write a small
-///   Markdown file (in UITest/doc-<kind>) and open it as a tab. `readonly`
+/// - `-mdviewerOpenFixture <plain|readonly|remote|image|large>` — write a
+///   Markdown file (in UITest/doc-<kind>) and open it as a tab. `large` is
+///   just above `LargeDocument.appThreshold` (shown as text); `readonly`
 ///   puts it in a write-protected folder, so saving must fail with a visible
 ///   error; `remote` adds an http(s) image without alt text; `image` adds a
 ///   local image "Testbild" next to it (grant access with
@@ -68,6 +69,12 @@ enum UITestSupport {
                 }
                 try? png.write(to: folder.appendingPathComponent("foto.png"))
                 text = "# Fixture\n\n![Testbild](foto.png)\n\nOriginal text.\n"
+            case "large":
+                var large = "# Large fixture\n\n"
+                while large.utf8.count <= LargeDocument.appThreshold {
+                    large += "Paragraph with **bold** text and more words to fill the page.\n\n"
+                }
+                text = large
             default:
                 text = "# Fixture\n\nOriginal text.\n"
             }
@@ -96,7 +103,14 @@ enum UITestSupport {
             long += "Paragraph with **bold** text and more words to fill the page.\n\n"
         }
         long += "End of long document.\n"
+        // For checking by hand only: XCUITest never finishes its snapshot of
+        // a text view with ~70,000 paragraphs. The automated test uses Large.md.
         write("Long.md", Data(long.utf8))
+        var large = "# Large document\n\n"
+        while large.utf8.count <= 2 * LargeDocument.shareExtensionThreshold {
+            large += "Paragraph with **bold** text and more words to fill the page.\n\n"
+        }
+        write("Large.md", Data(large.utf8))
         write("Remote.md", Data("# Remote image\n\n![](https://example.com/x.png)\n\nText after the image.\n".utf8))
         write("Normal.md", Data("# Shared note\n\nHello from the share test.\n".utf8))
     }

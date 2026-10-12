@@ -107,16 +107,25 @@ final class ShareExtensionUITests: XCTestCase {
         closeExtension()
     }
 
-    func testLongFileLoadsAndStaysAlive() {
-        // Known bug T-2026-328: the extension stays blank for a 4.5 MB file.
-        // Strict — once it works, this expectation fails: remove it then.
-        XCTExpectFailure("T-2026-328: Share extension stays blank for very large documents", strict: true)
-        share("Long")
-        expectText(containing: "Long document", timeout: 45)
+    /// T-2026-328: a file above `LargeDocument.shareExtensionThreshold` is
+    /// shown as plain text with a notice instead of being formatted (a 4.5 MB
+    /// file used to leave the sheet blank). Large.md is twice the threshold;
+    /// the 4.5 MB Long.md is for checking by hand — XCUITest's snapshot of a
+    /// text view that long never finishes.
+    func testLargeFileIsShownAsText() {
+        share("Large")
+        let notice = files.staticTexts["Large document – shown as text"].firstMatch
+        XCTAssertTrue(notice.waitForExistence(timeout: 15), "no large-document notice")
+        let text = files.textViews["largeDocumentText"].firstMatch
+        XCTAssertTrue(text.waitForExistence(timeout: 5), "no text view for the large document")
         sleep(3)
         // Still there (not killed for memory) and still responsive.
-        expectText(containing: "Long document", timeout: 5)
-        closeExtension()
+        XCTAssertTrue(notice.exists)
+        let done = files.buttons["Done"].firstMatch
+        XCTAssertTrue(done.isHittable, "Done is not reachable")
+        done.tap()
+        XCTAssertTrue(notice.waitForNonExistence(timeout: 5), "sheet did not close")
+        files.terminate()
     }
 
     func testRemoteImageIsNotLoaded() {
