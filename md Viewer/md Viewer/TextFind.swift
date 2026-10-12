@@ -53,6 +53,9 @@ class FindableTextView: UITextView {
         didSet { presentPendingFindWhenVisible() }
     }
     private var presentationScheduled = false
+    /// Keeps the reading position across view changes — see
+    /// `ReadingPositionViews.swift`. Set by the representable.
+    var positionKeeper: TextViewPositionKeeper?
 
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -68,11 +71,13 @@ class FindableTextView: UITextView {
         if newWindow == nil, let text = currentSearchText {
             findHooks.onSearchTextChange(text)
         }
+        if newWindow == nil { positionKeeper?.disappearing() }
         super.willMove(toWindow: newWindow)
     }
 
     override func didMoveToWindow() {
         super.didMoveToWindow()
+        if window != nil { positionKeeper?.appeared() }
         presentPendingFindWhenVisible()
     }
 
@@ -100,11 +105,19 @@ class FindableTextView: UITextView {
 /// Replacing through the find bar edits the text view, which updates the
 /// `editedText` binding like typing does — so it lands in
 /// `EditorUndoHistory` and marks the document unsaved.
+///
+/// The same located text view also gets the editor's two scroll duties: the
+/// reading position across view changes (`TextViewPositionKeeper`) and the
+/// caret staying above the keyboard (`CaretVisibilityKeeper`).
 struct EditorFindBridge: UIViewRepresentable {
     var hooks: TextFindHooks
+    /// The document being edited; `nil` leaves the scroll duties off.
+    var session: DocumentSession?
 
     func makeUIView(context: Context) -> LocatorView {
-        LocatorView()
+        let view = LocatorView()
+        view.session = session
+        return view
     }
 
     func updateUIView(_ view: LocatorView, context: Context) {
@@ -123,6 +136,9 @@ struct EditorFindBridge: UIViewRepresentable {
         }
         private(set) weak var textView: UITextView?
         private var presentationScheduled = false
+        weak var session: DocumentSession?
+        private var positionKeeper: TextViewPositionKeeper?
+        private var caretKeeper: CaretVisibilityKeeper?
 
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -131,6 +147,15 @@ struct EditorFindBridge: UIViewRepresentable {
         }
 
         required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+
+        override func willMove(toWindow newWindow: UIWindow?) {
+            if newWindow == nil {
+                positionKeeper?.disappearing()
+                positionKeeper = nil
+                caretKeeper = nil
+            }
+            super.willMove(toWindow: newWindow)
+        }
 
         override func didMoveToWindow() {
             super.didMoveToWindow()
@@ -166,6 +191,11 @@ struct EditorFindBridge: UIViewRepresentable {
                 if let found = Self.firstEditableTextView(in: current) {
                     found.isFindInteractionEnabled = true
                     textView = found
+                    if let session {
+                        caretKeeper = CaretVisibilityKeeper(textView: found)
+                        positionKeeper = TextViewPositionKeeper(textView: found, session: session, kind: .editor)
+                        positionKeeper?.appeared()
+                    }
                     return
                 }
                 ancestor = current.superview

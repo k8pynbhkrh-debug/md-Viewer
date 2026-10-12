@@ -45,3 +45,6 @@ docs/videos/roh/
 /apple-review-video-*.MP4
 /apple-review-video-*.mov
 Downloads/
+
+# QA-Bilder (gross) — nur lokal, der Bericht in docs/qa/ nennt sie
+docs/qa/bilder-*/

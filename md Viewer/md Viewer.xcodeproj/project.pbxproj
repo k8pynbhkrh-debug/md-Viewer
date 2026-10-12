@@ -26,6 +26,7 @@
 		C07F649CBFF9AF5A4AE6D525 /* ShareMarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11733AF827EF488B2827C882 /* ShareMarkdownView.swift */; };
 		328A0000000000000000DD01 /* LargeDocumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328A0000000000000000AA02 /* LargeDocumentTests.swift */; };
 		C89C25A7A6FFE9B682B8A17A /* TextFindTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */; };
+		D3A7F0C2B5E84A1196C2E345 /* ReadingPositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1E9D40C6F24A83A5D0E337 /* ReadingPositionTests.swift */; };
 		CA266B663FFD35A802BAAD3B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 13CA08FF6F2F9B746465C409 /* Localizable.xcstrings */; };
 		DEFA0170000000000000BB01 /* DefaultMarkdownAppRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEFA0170000000000000AA01 /* DefaultMarkdownAppRegistration.swift */; };
 		E25154232EEBE8031DEDF99A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2CBBCA03C04D370582E232 /* Foundation.framework */; };
@@ -88,6 +89,7 @@
 		3BC528220233B80D36AA61A1 /* md ViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "md ViewerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		328A0000000000000000AA02 /* LargeDocumentTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LargeDocumentTests.swift; sourceTree = "<group>"; };
 		4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextFindTests.swift; sourceTree = "<group>"; };
+		7B1E9D40C6F24A83A5D0E337 /* ReadingPositionTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReadingPositionTests.swift; sourceTree = "<group>"; };
 		5767D86ACF34E68B083D5984 /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		5A1E0261000000000000AA01 /* MarkdownImageLoading.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageLoading.swift; sourceTree = "<group>"; };
 		5A1E0261000000000000AA02 /* MarkdownImageViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MarkdownImageViews.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				65AC828D8063669DA40516E8 /* ImageFolderAccessTests.swift */,
 				65AC828D8063669DA405170A /* OpenDocumentsStoreTests.swift */,
 				4AD5B27ECC42586B6509DB17 /* TextFindTests.swift */,
+				7B1E9D40C6F24A83A5D0E337 /* ReadingPositionTests.swift */,
 				328A0000000000000000AA02 /* LargeDocumentTests.swift */,
 				327A0000000000000000F001 /* DocumentTabWidthTests.swift */,
 			);
@@ -455,6 +458,7 @@
 				E7FBEE15B98351D9C8E0BF51 /* ImageFolderAccessTests.swift in Sources */,
 				E7FBEE15B98351D9C8E0BF73 /* OpenDocumentsStoreTests.swift in Sources */,
 				C89C25A7A6FFE9B682B8A17A /* TextFindTests.swift in Sources */,
+				D3A7F0C2B5E84A1196C2E345 /* ReadingPositionTests.swift in Sources */,
 				328A0000000000000000DD01 /* LargeDocumentTests.swift in Sources */,
 				327A0000000000000000B001 /* DocumentTabWidthTests.swift in Sources */,
 			);
@@ -633,7 +637,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -650,7 +654,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.6.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -672,7 +676,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "md Viewer/md Viewer.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -689,7 +693,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.6.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -712,7 +716,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -726,7 +730,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.6.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -786,7 +790,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 17;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = 2Y8RS9U52W;
@@ -800,7 +804,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.6.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.eribert.md-Viewer.ShareExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

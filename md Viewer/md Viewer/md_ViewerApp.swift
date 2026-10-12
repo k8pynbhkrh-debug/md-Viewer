@@ -87,6 +87,7 @@ struct md_ViewerApp: App {
             // Simulator nicht zuverlässig per Skript in den PasteButton bringen),
             // „-mdviewerFolderAccess" die Ordnerzugriffe. Nur DEBUG.
             .task {
+                DebugRemote.start(store: store)
                 let args = ProcessInfo.processInfo.arguments
                 if let i = args.firstIndex(of: "-mdviewerDraft") {
                     store.newDraft(text: i + 1 < args.count ? args[i + 1] : "")
